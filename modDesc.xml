@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="92">
+    <author>TisonK</author>
+    <version>1.1.0.0</version>
+    <modName>FS25_FarmTablet</modName>
+    <title>
+        <en>Farm Tablet</en>
+        <de>Farm-Tablet</de>
+        <fr>Tablette de Ferme</fr>
+        <pl>Tablet Farmowy</pl>
+        <es>Tablet Agrícola</es>
+        <it>Tablet Agricolo</it>
+        <cz>Farmářský Tablet</cz>
+        <br>Tablet Agrícola</br>
+        <uk>Фермерський планшет</uk>
+        <ru>Фермерский планшет</ru>
+    </title>
+    <description>
+        <en>Central tablet interface for farm management with modular apps system.</en>
+        <de>Zentrale Tablet-Oberfläche zur Farmverwaltung mit modularem App-System.</de>
+        <fr>Interface tablette centrale pour la gestion de ferme avec système d'applications modulaire.</fr>
+        <pl>Centralny interfejs tabletu do zarządzania farmą z modułowym systemem aplikacji.</pl>
+        <es>Interfaz central de tablet para gestión agrícola con sistema modular de aplicaciones.</es>
+        <it>Interfaccia tablet centrale per la gestione aziendale con sistema modulare di app.</it>
+        <cz>Centrální tabletové rozhraní pro správu farmy s modulárním systémem aplikací.</cz>
+        <br>Interface central de tablet para gestão agrícola com sistema modular de aplicativos.</br>
+        <uk>Центральний планшетний інтерфейс для управління фермою з модульною системою додатків.</uk>
+        <ru>Центральный планшетный интерфейс для управления фермой с модульной системой приложений.</ru>
+    </description>
+    <iconFilename>icon.dds</iconFilename>
+    
+    <multiplayer supported="true"/>
+    
+    <extraSourceFiles>
+        <sourceFile filename="src/main.lua" />
+    </extraSourceFiles>
+
+    <l10n>
+        <text name="ft_section">
+            <en>Farm Tablet</en>
+            <de>Farm-Tablet</de>
+            <fr>Tablette de Ferme</fr>
+            <pl>Tablet Farmowy</pl>
+            <es>Tablet Agrícola</es>
+            <it>Tablet Agricolo</it>
+            <cz>Farmářský Tablet</cz>
+            <br>Tablet Agrícola</br>
+            <uk>Фермерський планшет</uk>
+            <ru>Фермерский планшет</ru>
+        </text>
+
+        <text name="ft_welcome_title">
+            <en>Tablet loaded successfully</en>
+            <de>Tablet erfolgreich geladen</de>
+            <fr>Tablette chargée avec succès</fr>
+            <pl>Tablet został pomyślnie załadowany</pl>
+            <es>Tablet cargado correctamente</es>
+            <it>Tablet caricato con successo</it>
+            <cz>Tablet úspěšně načten</cz>
+            <br>Tablet carregado com sucesso</br>
+            <uk>Планшет успішно завантажено</uk>
+            <ru>Планшет успешно загружен</ru>
+        </text>
+
+        <text name="ft_welcome_message">
+            <en>Press "T" to open/close</en>
+            <de>Drücke "T" zum Öffnen/Schließen</de>
+            <fr>Appuyez sur "T" pour ouvrir/fermer</fr>
+            <pl>Naciśnij "T", aby otworzyć/zamknąć</pl>
+            <es>Presiona "T" para abrir/cerrar</es>
+            <it>Premi "T" per aprire/chiudere</it>
+            <cz>Stiskněte "T" pro otevření/zavření</cz>
+            <br>Pressione "T" para abrir/fechar</br>
+            <uk>Натисніть "T", щоб відкрити/закрити</uk>
+            <ru>Нажмите "T", чтобы открыть/закрыть</ru>
+        </text>
+        
+        <text name="ft_enabled_short">
+            <en>Enable Tablet</en>
+            <de>Tablet aktivieren</de>
+            <fr>Activer la tablette</fr>
+            <pl>Włącz tablet</pl>
+            <es>Activar tablet</es>
+            <it>Attiva tablet</it>
+            <cz>Povolit tablet</cz>
+            <br>Ativar tablet</br>
+            <uk>Увімкнути планшет</uk>
+            <ru>Включить планшет</ru>
+        </text>
+        
+        <text name="ft_enabled_long">
+            <en>Enable or disable the farm tablet system</en>
+            <de>Farm-Tablet-System aktivieren oder deaktivieren</de>
+            <fr>Activer ou désactiver le système de tablette de ferme</fr>
+            <pl>Włącz lub wyłącz system tabletu farmowego</pl>
+            <es>Activar o desactivar el sistema de tablet agrícola</es>
+            <it>Attiva o disattiva il sistema tablet agricolo</it>
+            <cz>Povolit nebo zakázat systém farmářského tabletu</cz>
+            <br>Ativar ou desativar o sistema de tablet agrícola</br>
+            <uk>Увімкнути або вимкнути систему фермерського планшета</uk>
+            <ru>Включить или выключить систему фермерского планшета</ru>
+        </text>
+        
+        <text name="ft_keybind_short">
+            <en>Open Key</en>
+            <de>Öffnen-Taste</de>
+            <fr>Touche d'ouverture</fr>
+            <pl>Klawisz otwarcia</pl>
+            <es>Tecla abrir</es>
+            <it>Tasto apertura</it>
+            <cz>Klávesa otevření</cz>
+            <br>Tecla abrir</br>
+            <uk>Клавіша відкриття</uk>
+            <ru>Клавиша открытия</ru>
+        </text>
+        
+        <text name="ft_keybind_long">
+            <en>Key to open/close the farm tablet</en>
+            <de>Taste zum Öffnen/Schließen des Farm-Tablets</de>
+            <fr>Touche pour ouvrir/fermer la tablette de ferme</fr>
+            <pl>Klawisz do otwierania/zamykania tabletu farmowego</pl>
+            <es>Tecla para abrir/cerrar la tablet agrícola</es>
+            <it>Tasto per aprire/chiudere il tablet agricolo</it>
+            <cz>Klávesa pro otevření/zavření farmářského tabletu</cz>
+            <br>Tecla para abrir/fechar o tablet agrícola</br>
+            <uk>Клавіша для відкриття/закриття фермерського планшета</uk>
+            <ru>Клавиша для открытия/закрытия фермерского планшета</ru>
+        </text>
+        
+        <text name="ft_notifications_short">
+            <en>Notifications</en>
+            <de>Benachrichtigungen</de>
+            <fr>Notifications</fr>
+            <pl>Powiadomienia</pl>
+            <es>Notificaciones</es>
+            <it>Notifiche</it>
+            <cz>Upozornění</cz>
+            <br>Notificações</br>
+            <uk>Сповіщення</uk>
+            <ru>Уведомления</ru>
+        </text>
+        
+        <text name="ft_notifications_long">
+            <en>Show tablet notifications</en>
+            <de>Tablet-Benachrichtigungen anzeigen</de>
+            <fr>Afficher les notifications de la tablette</fr>
+            <pl>Pokazuj powiadomienia tabletu</pl>
+            <es>Mostrar notificaciones de tablet</es>
+            <it>Mostra notifiche tablet</it>
+            <cz>Zobrazit upozornění tabletu</cz>
+            <br>Mostrar notificações do tablet</br>
+            <uk>Показувати сповіщення планшета</uk>
+            <ru>Показывать уведомления планшета</ru>
+        </text>
+        
+        <text name="ft_startupapp_short">
+            <en>Startup App</en>
+            <de>Start-App</de>
+            <fr>App de démarrage</fr>
+            <pl>Aplikacja startowa</pl>
+            <es>App inicio</es>
+            <it>App avvio</it>
+            <cz>Spouštěcí aplikace</cz>
+            <br>Aplicativo inicial</br>
+            <uk>Стартова програма</uk>
+            <ru>Стартовое приложение</ru>
+        </text>
+        
+        <text name="ft_startupapp_long">
+            <en>Default app when opening the tablet</en>
+            <de>Standard-App beim Öffnen des Tablets</de>
+            <fr>Application par défaut à l'ouverture de la tablette</fr>
+            <pl>Domyślna aplikacja przy otwieraniu tabletu</pl>
+            <es>Aplicación predeterminada al abrir la tablet</es>
+            <it>Applicazione predefinita all'apertura del tablet</it>
+            <cz>Výchozí aplikace při otevření tabletu</cz>
+            <br>Aplicativo padrão ao abrir o tablet</br>
+            <uk>Програма за замовчуванням при відкритті планшета</uk>
+            <ru>Приложение по умолчанию при открытии планшета</ru>
+        </text>
+        
+        <text name="ft_startupapp_1">
+            <en>Dashboard</en>
+            <de>Dashboard</de>
+            <fr>Tableau de bord</fr>
+            <pl>Pulpit</pl>
+            <es>Panel</es>
+            <it>Cruscotto</it>
+            <cz>Řídicí panel</cz>
+            <br>Painel</br>
+            <uk>Панель</uk>
+            <ru>Панель</ru>
+        </text>
+        
+        <text name="ft_startupapp_2">
+            <en>App Store</en>
+            <de>App Store</de>
+            <fr>Boutique d'apps</fr>
+            <pl>Sklep z aplikacjami</pl>
+            <es>Tienda de apps</es>
+            <it>Negozio app</it>
+            <cz>Obchod s aplikacemi</cz>
+            <br>Loja de aplicativos</br>
+            <uk>Магазин додатків</uk>
+            <ru>Магазин приложений</ru>
+        </text>
+        
+        <text name="ft_startupapp_3">
+            <en>Weather</en>
+            <de>Wetter</de>
+            <fr>Météo</fr>
+            <pl>Pogoda</pl>
+            <es>Clima</es>
+            <it>Meteo</it>
+            <cz>Počasí</cz>
+            <br>Tempo</br>
+            <uk>Погода</uk>
+            <ru>Погода</ru>
+        </text>
+        
+        <text name="ft_startupapp_4">
+            <en>Digging</en>
+            <de>Graben</de>
+            <fr>Excavation</fr>
+            <pl>Kopanie</pl>
+            <es>Excavación</es>
+            <it>Scavo</it>
+            <cz>Kopání</cz>
+            <br>Escavação</br>
+            <uk>Копання</uk>
+            <ru>Копание</ru>
+        </text>
+        
+        <text name="ft_soundeffects_short">
+            <en>Sound Effects</en>
+            <de>Soundeffekte</de>
+            <fr>Effets sonores</fr>
+            <pl>Efekty dźwiękowe</pl>
+            <es>Efectos de sonido</es>
+            <it>Effetti sonori</it>
+            <cz>Zvukové efekty</cz>
+            <br>Efeitos sonoros</br>
+            <uk>Звукові ефекти</uk>
+            <ru>Звуковые эффекты</ru>
+        </text>
+        
+        <text name="ft_soundeffects_long">
+            <en>Play sound effects for tablet interactions</en>
+            <de>Soundeffekte für Tablet-Interaktionen abspielen</de>
+            <fr>Jouer des effets sonores pour les interactions avec la tablette</fr>
+            <pl>Odtwarzaj efekty dźwiękowe dla interakcji z tabletem</pl>
+            <es>Reproducir efectos de sonido para interacciones con la tablet</es>
+            <it>Riprodurre effetti sonori per interazioni con il tablet</it>
+            <cz>Přehrávat zvukové efekty pro interakce s tabletem</cz>
+            <br>Reproduzir efeitos sonoros para interações com o tablet</br>
+            <uk>Відтворювати звукові ефекти для взаємодії з планшетом</uk>
+            <ru>Воспроизводить звуковые эффекты для взаимодействия с планшетом</ru>
+        </text>
+        
+        <text name="ft_debug_short">
+            <en>Debug Mode</en>
+            <de>Debug-Modus</de>
+            <fr>Mode debug</fr>
+            <pl>Tryb debug</pl>
+            <es>Modo debug</es>
+            <it>Modalità debug</it>
+            <cz>Režim ladění</cz>
+            <br>Modo debug</br>
+            <uk>Режим налагодження</uk>
+            <ru>Режим отладки</ru>
+        </text>
+        
+        <text name="ft_debug_long">
+            <en>Enable debug logging in console</en>
+            <de>Debug-Protokollierung in der Konsole aktivieren</de>
+            <fr>Activer la journalisation de débogage dans la console</fr>
+            <pl>Włącz rejestrowanie debug w konsoli</pl>
+            <es>Activar registro de depuración en la consola</es>
+            <it>Attiva registrazione debug nella console</it>
+            <cz>Povolit ladění v konzoli</cz>
+            <br>Ativar registro de depuração no console</br>
+            <uk>Увімкнути налагодження в консолі</uk>
+            <ru>Включить отладку в консоли</ru>
+        </text>
+        
+        <text name="ft_reset">
+            <en>Reset Tablet Settings</en>
+            <de>Tablet-Einstellungen zurücksetzen</de>
+            <fr>Réinitialiser paramètres tablette</fr>
+            <pl>Resetuj ustawienia tabletu</pl>
+            <es>Restablecer config. tablet</es>
+            <it>Ripristina impostazioni tablet</it>
+            <cz>Resetovat nastavení tabletu</cz>
+            <br>Restaurar configurações do tablet</br>
+            <uk>Скинути налаштування планшета</uk>
+            <ru>Сбросить настройки планшета</ru>
+        </text>
+        
+        <!-- App names -->
+        <text name="ft_app_dashboard">
+            <en>Dashboard</en>
+            <de>Dashboard</de>
+            <fr>Tableau de bord</fr>
+            <pl>Pulpit</pl>
+            <es>Panel</es>
+            <it>Cruscotto</it>
+            <cz>Řídicí panel</cz>
+            <br>Painel</br>
+            <uk>Панель</uk>
+            <ru>Панель</ru>
+        </text>
+        
+        <text name="ft_app_store">
+            <en>App Store</en>
+            <de>App Store</de>
+            <fr>Boutique d'apps</fr>
+            <pl>Sklep z aplikacjami</pl>
+            <es>Tienda de apps</es>
+            <it>Negozio app</it>
+            <cz>Obchod s aplikacemi</cz>
+            <br>Loja de aplicativos</br>
+            <uk>Магазин додатків</uk>
+            <ru>Магазин приложений</ru>
+        </text>
+        
+        <text name="ft_app_updates">
+            <en>Updates</en>
+            <de>Updates</de>
+            <fr>Mises à jour</fr>
+            <pl>Aktualizacje</pl>
+            <es>Actualizaciones</es>
+            <it>Aggiornamenti</it>
+            <cz>Aktualizace</cz>
+            <br>Atualizações</br>
+            <uk>Оновлення</uk>
+            <ru>Обновления</ru>
+        </text>
+        
+        <text name="ft_app_settings">
+            <en>Settings</en>
+            <de>Einstellungen</de>
+            <fr>Paramètres</fr>
+            <pl>Ustawienia</pl>
+            <es>Ajustes</es>
+            <it>Impostazioni</it>
+            <cz>Nastavení</cz>
+            <br>Configurações</br>
+            <uk>Налаштування</uk>
+            <ru>Настройки</ru>
+        </text>
+        
+        <text name="ft_app_workshop">
+            <en>Workshop</en>
+            <de>Werkstatt</de>
+            <fr>Atelier</fr>
+            <pl>Warsztat</pl>
+            <es>Taller</es>
+            <it>Officina</it>
+            <cz>Dílna</cz>
+            <br>Oficina</br>
+            <uk>Майстерня</uk>
+            <ru>Мастерская</ru>
+        </text>
+        
+        <text name="ft_app_weather">
+            <en>Weather</en>
+            <de>Wetter</de>
+            <fr>Météo</fr>
+            <pl>Pogoda</pl>
+            <es>Clima</es>
+            <it>Meteo</it>
+            <cz>Počasí</cz>
+            <br>Tempo</br>
+            <uk>Погода</uk>
+            <ru>Погода</ru>
+        </text>
+        
+        <text name="ft_app_digging">
+            <en>Digging</en>
+            <de>Graben</de>
+            <fr>Excavation</fr>
+            <pl>Kopanie</pl>
+            <es>Excavación</es>
+            <it>Scavo</it>
+            <cz>Kopání</cz>
+            <br>Escavação</br>
+            <uk>Копання</uk>
+            <ru>Копание</ru>
+        </text>
+        
+        <text name="ft_app_bucket_tracker">
+            <en>Bucket Tracker</en>
+            <de>Eimer-Zähler</de>
+            <fr>Compteur de Godets</fr>
+            <pl>Licznik łyżek</pl>
+            <es>Contador de Cucharones</es>
+            <it>Contatore Benne</it>
+            <cz>Počítač kbelíků</cz>
+            <br>Contador de Baldes</br>
+            <uk>Лічильник ковшів</uk>
+            <ru>Счетчик ковшей</ru>
+        </text>
+        
+        <text name="ft_app_income_mod">
+            <en>Income Mod</en>
+            <de>Einkommens-Mod</de>
+            <fr>Mod Revenus</fr>
+            <pl>Mod Dochodu</pl>
+            <es>Mod Ingresos</es>
+            <it>Mod Reddito</it>
+            <cz>Příjmový Mod</cz>
+            <br>Mod de Renda</br>
+            <uk>Мод доходу</uk>
+            <ru>Мод дохода</ru>
+        </text>
+        
+        <text name="ft_app_tax_mod">
+            <en>Tax Mod</en>
+            <de>Steuer-Mod</de>
+            <fr>Mod Taxes</fr>
+            <pl>Mod Podatkowy</pl>
+            <es>Mod Impuestos</es>
+            <it>Mod Tasse</it>
+            <cz>Daňový Mod</cz>
+            <br>Mod de Impostos</br>
+            <uk>Мод податків</uk>
+            <ru>Мод налогов</ru>
+        </text>
+    </l10n>
+</modDesc>
