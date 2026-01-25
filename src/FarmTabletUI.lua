@@ -1,5 +1,5 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.0)
+-- FS25 Farm Tablet Mod (version 1.1.0.1)
 -- =========================================================
 -- Central tablet interface for farm management mods
 -- =========================================================
@@ -331,7 +331,7 @@ function FarmTabletUI:loadDefaultApp()
     local lineHeight = 0.022
     
     local lines = {
-        "Welcome to Farm Tablet v1.1.0.0",
+        "Welcome to Farm Tablet v1.1.0.1",
         "Central interface for farm management",
         "",
         "Select an app from the navigation bar",
@@ -369,8 +369,8 @@ function FarmTabletUI:loadCurrentApp()
         self:loadUpdatesApp()
     elseif appId == "weather" then
         self:loadWeatherApp()
-    elseif appId == "workshop" then
-        self:loadWorkshopApp()
+    -- elseif appId == "workshop" then
+    --     self:loadWorkshopApp()
     elseif appId == "digging" then
         self:loadDiggingApp()
     elseif appId == "bucket_tracker" then
@@ -557,10 +557,13 @@ function FarmTabletUI:update(dt)
         -- Could add live updates here
     end
 
-    if self.tabletSystem.currentApp == "workshop" then
-        self:updateWorkshopApp(dt)
-    end
+    -- if self.tabletSystem.currentApp == "workshop" then
+    --     self:updateWorkshopApp(dt)
+    -- end
 
+    if self.tabletSystem.currentApp == "digging" then
+        self:updateDiggingApp(dt)
+    end
 
 end
 
@@ -639,11 +642,11 @@ function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
     -- Check for app-specific buttons (NO conversion needed)
     local appId = self.tabletSystem.currentApp
     
-    if appId == "workshop" then
-        if self:handleWorkshopMouseEvent(posX, posY) then
-            return true
-        end
-    elseif appId == "bucket_tracker" then
+    -- if appId == "workshop" then
+    --     if self:handleWorkshopMouseEvent(posX, posY) then
+    --         return true
+    --     end
+    if appId == "bucket_tracker" then
         if self:handleBucketTrackerMouseEvent(posX, posY) then
             return true
         end
@@ -660,18 +663,18 @@ function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
     return false
 end
 
--- Workshop app mouse events
-function FarmTabletUI:handleWorkshopMouseEvent(posX, posY)
-    if self.ui.workshopButton then
-        local b = self.ui.workshopButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            self:openWorkshopForNearestVehicle(15)
-            return true
-        end
-    end
-    return false
-end
+-- -- Workshop app mouse events
+-- function FarmTabletUI:handleWorkshopMouseEvent(posX, posY)
+--     if self.ui.workshopButton then
+--         local b = self.ui.workshopButton
+--         if posX >= b.x and posX <= b.x + b.width and
+--            posY >= b.y and posY <= b.y + b.height then
+--             self:openWorkshopForNearestVehicle(15)
+--             return true
+--         end
+--     end
+--     return false
+-- end
 
 -- Bucket tracker app mouse events
 function FarmTabletUI:handleBucketTrackerMouseEvent(posX, posY)
