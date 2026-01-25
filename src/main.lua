@@ -1,5 +1,5 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.0)
+-- FS25 Farm Tablet Mod (version 1.1.0.1)
 -- =========================================================
 -- Central tablet interface for farm management mods
 -- =========================================================
@@ -20,6 +20,7 @@ source(modDirectory .. "src/settings/SettingsGUI.lua")
 source(modDirectory .. "src/settings/SettingsUI.lua")
 source(modDirectory .. "src/utils/UIHelper.lua")
 source(modDirectory .. "src/utils/InputHandler.lua")
+source(modDirectory .. "src/utils/FunctionHooks.lua")
 source(modDirectory .. "src/FarmTabletSystem.lua")
 source(modDirectory .. "src/FarmTabletUI.lua")
 source(modDirectory .. "src/FarmTabletManager.lua")
@@ -30,7 +31,7 @@ source(modDirectory .. "src/apps/AppStoreApp.lua")
 source(modDirectory .. "src/apps/SettingsApp.lua")
 source(modDirectory .. "src/apps/UpdatesApp.lua")
 source(modDirectory .. "src/apps/WeatherApp.lua")
-source(modDirectory .. "src/apps/WorkshopApp.lua")
+-- source(modDirectory .. "src/apps/WorkshopApp.lua") -- TEMP DISABLED
 source(modDirectory .. "src/apps/DiggingApp.lua")
 source(modDirectory .. "src/apps/BucketTrackerApp.lua")
 source(modDirectory .. "src/apps/IncomeApp.lua")
