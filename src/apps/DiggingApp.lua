@@ -1,466 +1,233 @@
 -- =========================================================
--- FS25 Farm Tablet Mod - Digging App (Fixed)
--- =========================================================
--- Shows terrain deformation and digging information
+-- FS25 Farm Tablet -- Digging / Terrain App
 -- =========================================================
 
 function FarmTabletUI:loadDiggingApp()
+    self.ui.appTexts = {}
     local content = self.ui.appContentArea
-    if not content then
-        self:log("No content area in digging app")
-        return
-    end
+    if not content then return end
 
+    local C    = self.UI_CONSTANTS
     local padX = self:px(15)
-    local padY = self:py(15)
-    local titleY = content.y + content.height - padY - 0.03
+    local padY = self:py(12)
 
-    -- Title
-    table.insert(self.ui.appTexts, {
-        text = "Digging Information",
-        x = content.x + padX,
-        y = titleY,
-        size = 0.022,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
+    local titleY = content.y + content.height - padY - 0.028
+    self:drawText("Digging & Terrain", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
-    local diggingInfo = self:getDiggingInfo()
-    local yPos = titleY - 0.035
+    local info = self:getDiggingInfo()
+    local y = titleY - 0.030
 
-    -- FS25 Terrain System Check
-    if not diggingInfo.hasTerrainSystem then
-        table.insert(self.ui.appTexts, {
-            text = "Terrain system not available",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {1, 0.5, 0, 1}
-        })
-        yPos = yPos - 0.024
-        table.insert(self.ui.appTexts, {
-            text = "Ensure you're on terrain",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.014,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.8, 0.8, 0.8, 1}
-        })
+    if not info.hasTerrainSystem then
+        self:drawText("Terrain system not available.", content.x + padX, y, 0.015,
+            RenderText.ALIGN_LEFT, C.WARNING_COLOR)
+        y = y - 0.022
+        self:drawText("Ensure you are on a terrain map.", content.x + padX, y, 0.013,
+            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
         return
     end
 
-    -- System status
-    table.insert(self.ui.appTexts, {
-        text = "Terrain System: FS25",
-        x = content.x + padX,
-        y = yPos,
-        size = 0.016,
-        align = RenderText.ALIGN_LEFT,
-        color = {0.4, 0.8, 0.4, 1}
-    })
-    
-    -- Player position and height
-    if diggingInfo.currentPosition then
-        yPos = yPos - 0.024
-        table.insert(self.ui.appTexts, {
-            text = string.format("Position: X %.1f  Z %.1f",
-                diggingInfo.currentPosition.x,
-                diggingInfo.currentPosition.z),
-            x = content.x + padX,
-            y = yPos,
-            size = 0.015,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.8, 0.8, 0.8, 1}
-        })
+    -- Position & height
+    self:drawSectionHeader("TERRAIN", y)
+    y = y - 0.022
 
-        yPos = yPos - 0.020
-        table.insert(self.ui.appTexts, {
-            text = string.format("Height: %.2f m", diggingInfo.currentTerrainHeight),
-            x = content.x + padX,
-            y = yPos,
-            size = 0.015,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.8, 0.8, 0.8, 1}
-        })
-        
-        -- Ground type info (FS25 has this)
-        if diggingInfo.groundType then
-            yPos = yPos - 0.020
-            table.insert(self.ui.appTexts, {
-                text = "Ground: " .. diggingInfo.groundType,
-                x = content.x + padX,
-                y = yPos,
-                size = 0.015,
-                align = RenderText.ALIGN_LEFT,
-                color = diggingInfo.groundType == "FIELD" and {0.4, 0.9, 0.4, 1} or
-                       diggingInfo.groundType == "PAVED" and {0.7, 0.7, 0.7, 1} or
-                       {0.9, 0.7, 0.4, 1}
-            })
+    if info.currentPosition then
+        self:drawRow("Position",
+            string.format("X %.1f  Z %.1f", info.currentPosition.x, info.currentPosition.z),
+            y, C.LABEL_COLOR, C.VALUE_COLOR)
+        y = y - 0.022
+        self:drawRow("Height",
+            string.format("%.2f m", info.currentTerrainHeight or 0),
+            y, C.LABEL_COLOR, C.VALUE_COLOR)
+        y = y - 0.022
+
+        if info.groundType then
+            local gtColor = info.groundType == "FIELD" and C.POSITIVE_COLOR or
+                            info.groundType == "PAVED" and C.MUTED_COLOR   or C.WARNING_COLOR
+            self:drawRow("Ground Type", info.groundType, y, C.LABEL_COLOR, gtColor)
+            y = y - 0.022
         end
     end
 
-    -- Digging-capable vehicles
-    yPos = yPos - 0.030
-    table.insert(self.ui.appTexts, {
-        text = string.format("Excavation Vehicles: %d", diggingInfo.diggingVehicles),
-        x = content.x + padX,
-        y = yPos,
-        size = 0.016,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
-    
-    table.insert(self.ui.appTexts, {
-        text = string.format("Nearby: %d", diggingInfo.nearbyVehicles),
-        x = content.x + content.width - padX,
-        y = yPos,
-        size = 0.016,
-        align = RenderText.ALIGN_RIGHT,
-        color = {0.4, 0.8, 0.4, 1}
-    })
+    -- Excavation vehicles
+    y = y - 0.010
+    self:drawSectionHeader("EXCAVATION VEHICLES", y)
+    y = y - 0.022
 
-    -- List specific excavators (better detection)
-    if #diggingInfo.excavationVehicles > 0 then
-        yPos = yPos - 0.030
-        table.insert(self.ui.appTexts, {
-            text = "Active Excavators:",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.3, 0.6, 0.8, 1}
-        })
+    self:drawRow("Total",  tostring(info.diggingVehicles), y, C.LABEL_COLOR, C.VALUE_COLOR)
+    y = y - 0.022
+    self:drawRow("Nearby (100 m)", tostring(info.nearbyVehicles), y, C.LABEL_COLOR, C.VALUE_COLOR)
+    y = y - 0.022
 
-        yPos = yPos - 0.022
-        for i = 1, math.min(4, #diggingInfo.excavationVehicles) do
-            local vehicle = diggingInfo.excavationVehicles[i]
-            local displayName = vehicle.name or "Unknown"
-            
-            -- Shorten long names
-            if #displayName > 20 then
-                displayName = displayName:sub(1, 17) .. "..."
-            end
-            
-            table.insert(self.ui.appTexts, {
-                text = "• " .. displayName,
-                x = content.x + padX + 0.01,
-                y = yPos,
-                size = 0.013,
-                align = RenderText.ALIGN_LEFT,
-                color = vehicle.isDigging and {0.9, 0.7, 0.4, 1} or {0.8, 0.8, 0.8, 1}
-            })
-
-            table.insert(self.ui.appTexts, {
-                text = vehicle.isDigging and "DIGGING" or "Idle",
-                x = content.x + content.width - padX,
-                y = yPos,
-                size = 0.013,
-                align = RenderText.ALIGN_RIGHT,
-                color = vehicle.isDigging and {1, 0.6, 0, 1} or {0.7, 0.7, 0.7, 1}
-            })
-
-            yPos = yPos - 0.018
+    if #info.excavationVehicles > 0 then
+        for i = 1, math.min(4, #info.excavationVehicles) do
+            local v    = info.excavationVehicles[i]
+            local name = v.name or "Unknown"
+            if #name > 22 then name = name:sub(1, 19) .. "..." end
+            local stateColor = v.isDigging and C.WARNING_COLOR or C.MUTED_COLOR
+            self:drawRow("• " .. name, v.isDigging and "DIGGING" or "Idle",
+                y, C.VALUE_COLOR, stateColor)
+            y = y - 0.020
         end
     else
-        yPos = yPos - 0.024
-        table.insert(self.ui.appTexts, {
-            text = "No excavation vehicles found",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.014,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.7, 0.7, 0.7, 1}
-        })
+        self:drawText("No excavation vehicles nearby.", content.x + padX, y, 0.013,
+            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+        y = y - 0.020
     end
 
-    -- Digging tools information
-    if diggingInfo.detectedTools > 0 then
-        yPos = yPos - 0.030
-        table.insert(self.ui.appTexts, {
-            text = "Detected Tools:",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.3, 0.6, 0.8, 1}
-        })
-
-        yPos = yPos - 0.022
-        for i = 1, math.min(3, #diggingInfo.tools) do
-            local tool = diggingInfo.tools[i]
-            table.insert(self.ui.appTexts, {
-                text = "• " .. tool.type,
-                x = content.x + padX + 0.01,
-                y = yPos,
-                size = 0.013,
-                align = RenderText.ALIGN_LEFT,
-                color = {0.8, 0.8, 0.8, 1}
-            })
-
-            table.insert(self.ui.appTexts, {
-                text = tool.vehicleName or "",
-                x = content.x + content.width - padX,
-                y = yPos,
-                size = 0.013,
-                align = RenderText.ALIGN_RIGHT,
-                color = {0.6, 0.8, 1, 1}
-            })
-
-            yPos = yPos - 0.018
+    -- Detected tools
+    if info.detectedTools > 0 then
+        y = y - 0.010
+        self:drawSectionHeader("DETECTED TOOLS", y)
+        y = y - 0.022
+        for i = 1, math.min(3, #info.tools) do
+            local t = info.tools[i]
+            self:drawRow("• " .. (t.type or "?"), t.vehicleName or "", y, C.VALUE_COLOR, C.MUTED_COLOR)
+            y = y - 0.020
         end
     end
 
-    self:log("Digging app loaded: %d vehicles found", diggingInfo.diggingVehicles)
+    self:log("Digging app loaded: %d vehicles", info.diggingVehicles)
+end
+
+-- Auto-refresh every 2 s when active
+function FarmTabletUI:updateDiggingApp(dt)
+    if not self.isTabletOpen or self.tabletSystem.currentApp ~= "digging" then return end
+    self.diggingUpdateTime = (self.diggingUpdateTime or 0) + dt
+    if self.diggingUpdateTime > 2000 then
+        self.diggingUpdateTime = 0
+        self.ui.appTexts = {}
+        self:loadDiggingApp()
+    end
 end
 
 function FarmTabletUI:getDiggingInfo()
     local info = {
-        hasTerrainSystem = false,
-        currentPosition = nil,
+        hasTerrainSystem  = false,
+        currentPosition   = nil,
         currentTerrainHeight = nil,
-        groundType = nil,
-        
-        diggingVehicles = 0,
-        nearbyVehicles = 0,
-        detectedTools = 0,
-        
+        groundType        = nil,
+        diggingVehicles   = 0,
+        nearbyVehicles    = 0,
+        detectedTools     = 0,
         excavationVehicles = {},
-        tools = {}
+        tools             = {},
     }
-    
-    -- FS25 Terrain Check
-    if g_currentMission and g_currentMission.terrainRootNode then
-        info.hasTerrainSystem = true
-        
-        -- Get player position
-        if g_currentMission.player and g_currentMission.player.rootNode then
-            local player = g_currentMission.player
-            local x, y, z = getWorldTranslation(player.rootNode)
-            info.currentPosition = {x = x, z = z}
-            
-            -- Get terrain height
-            info.currentTerrainHeight = getTerrainHeightAtWorldPos(
-                g_currentMission.terrainRootNode,
-                x, 0, z
-            )
-            
-            -- FS25 ground type detection
-            info.groundType = self:getGroundTypeAtPosition(x, z)
-        end
+
+    if not (g_currentMission and g_currentMission.terrainRootNode) then
+        return info
     end
-    
-    -- Vehicle detection for FS25
-    if g_currentMission and g_currentMission.vehicles then
-        local playerX, playerY, playerZ = 0, 0, 0
-        if info.currentPosition then
-            playerX, playerZ = info.currentPosition.x, info.currentPosition.z
-        end
-        
-        for _, vehicle in pairs(g_currentMission.vehicles) do
-            if vehicle:isa(Vehicle) then
-                -- Get vehicle position
-                local vX, vY, vZ = getWorldTranslation(vehicle.rootNode)
-                local distance = MathUtil.vector2Length(vX - playerX, vZ - playerZ)
-                
-                -- Check if it's a digging-capable vehicle
-                local isExcavator = self:isFS25Excavator(vehicle)
-                
-                if isExcavator then
+    info.hasTerrainSystem = true
+
+    -- Player position
+    local player = g_currentMission.player
+    local px, py, pz = 0, 0, 0
+    if player and player.rootNode then
+        px, py, pz = getWorldTranslation(player.rootNode)
+        info.currentPosition    = { x = px, z = pz }
+        info.currentTerrainHeight = getTerrainHeightAtWorldPos(g_currentMission.terrainRootNode, px, 0, pz)
+        info.groundType = self:getGroundTypeAtPosition(px, pz)
+    end
+
+    -- Vehicles
+    if g_currentMission.vehicles then
+        for _, v in pairs(g_currentMission.vehicles) do
+            if v:isa(Vehicle) then
+                local vx, vy, vz = getWorldTranslation(v.rootNode)
+                local dist = MathUtil.vector2Length(vx - px, vz - pz)
+
+                if self:isFS25Excavator(v) then
                     info.diggingVehicles = info.diggingVehicles + 1
-                    
-                    if distance < 100 then  -- Within 100m
+                    if dist < 100 then
                         info.nearbyVehicles = info.nearbyVehicles + 1
-                        
-                        -- Add to excavation vehicles list
                         table.insert(info.excavationVehicles, {
-                            name = vehicle:getFullName() or vehicle.configFileName or "Unknown",
-                            isDigging = self:isFS25VehicleDigging(vehicle),
-                            distance = distance
+                            name      = v:getFullName() or "Unknown",
+                            isDigging = self:isFS25VehicleDigging(v),
+                            distance  = dist,
                         })
                     end
                 end
-                
-                -- Check for digging tools/attachments
-                local vehicleTools = self:getVehicleDiggingTools(vehicle)
-                if #vehicleTools > 0 then
-                    info.detectedTools = info.detectedTools + #vehicleTools
-                    for _, tool in ipairs(vehicleTools) do
-                        table.insert(info.tools, tool)
-                    end
+
+                local vtools = self:getVehicleDiggingTools(v)
+                for _, t in ipairs(vtools) do
+                    info.detectedTools = info.detectedTools + 1
+                    table.insert(info.tools, t)
                 end
             end
         end
-        
-        -- Sort excavation vehicles by distance
         table.sort(info.excavationVehicles, function(a, b)
             return (a.distance or 9999) < (b.distance or 9999)
         end)
     end
-    
+
     return info
 end
 
 function FarmTabletUI:isFS25Excavator(vehicle)
     if not vehicle then return false end
-    
-    -- Check config name for excavator types
-    local configName = vehicle.configFileName or ""
-    configName = configName:lower()
-    
-    local excavatorKeywords = {
-        "excavator",
-        "backhoe",
-        "digger",
-        "excavation",
-        "shovel",
-        "dragline",
-        "trencher"
-    }
-    
-    for _, keyword in ipairs(excavatorKeywords) do
-        if configName:find(keyword) then
-            return true
-        end
+    if vehicle.spec_digging or vehicle.spec_groundDeformation then return true end
+    local cfg = (vehicle.configFileName or ""):lower()
+    local typ = (vehicle.typeName or ""):lower()
+    local kw  = {"excavator","backhoe","digger","excavation","shovel","dragline","trencher"}
+    for _, k in ipairs(kw) do
+        if cfg:find(k) or typ:find(k) then return true end
     end
-    
-    -- Check vehicle type
-    local typeName = vehicle.typeName or ""
-    typeName = typeName:lower()
-    
-    for _, keyword in ipairs(excavatorKeywords) do
-        if typeName:find(keyword) then
-            return true
-        end
-    end
-    
-    -- Check for digging-specific components
-    if vehicle.spec_digging or vehicle.spec_groundDeformation then
-        return true
-    end
-    
     return false
 end
 
 function FarmTabletUI:isFS25VehicleDigging(vehicle)
     if not vehicle then return false end
-    
-    -- Check if vehicle has active digging components
     if vehicle.spec_digging then
-        local spec = vehicle.spec_digging
-        if spec.isDigging or spec.isActive then
-            return true
-        end
+        local s = vehicle.spec_digging
+        if s.isDigging or s.isActive then return true end
     end
-    
-    -- Check ground deformation
-    if vehicle.spec_groundDeformation then
-        local spec = vehicle.spec_groundDeformation
-        if spec.isActive then
-            return true
-        end
+    if vehicle.spec_groundDeformation and vehicle.spec_groundDeformation.isActive then
+        return true
     end
-    
-    -- Check for animation states that indicate digging
-    if vehicle.getIsWorkAreaActive then
-        return vehicle:getIsWorkAreaActive()
-    end
-    
+    if vehicle.getIsWorkAreaActive then return vehicle:getIsWorkAreaActive() end
     return false
 end
 
 function FarmTabletUI:getVehicleDiggingTools(vehicle)
     local tools = {}
-    
-    if not vehicle then return tools end
-    
-    -- Check vehicle attachments
-    if vehicle.getAttachedImplements then
-        local attached = vehicle:getAttachedImplements()
-        for _, impl in ipairs(attached) do
-            local object = impl.object
-            if object then
-                local toolType = self:getToolType(object)
-                if toolType ~= "UNKNOWN" then
-                    table.insert(tools, {
-                        type = toolType,
-                        vehicleName = vehicle:getFullName() or "Unknown",
-                        isAttached = true
-                    })
-                end
+    if not (vehicle and vehicle.getAttachedImplements) then return tools end
+    for _, impl in ipairs(vehicle:getAttachedImplements()) do
+        local obj = impl.object
+        if obj then
+            local tt = self:getToolType(obj)
+            if tt ~= "UNKNOWN" then
+                table.insert(tools, { type = tt, vehicleName = vehicle:getFullName() or "?" })
             end
         end
     end
-    
     return tools
 end
 
-function FarmTabletUI:getToolType(object)
-    if not object then return "UNKNOWN" end
-    
-    local configName = object.configFileName or ""
-    configName = configName:lower()
-    
-    if configName:find("bucket") then
-        return "Bucket"
-    elseif configName:find("shovel") then
-        return "Shovel"
-    elseif configName:find("blade") then
-        return "Blade"
-    elseif configName:find("ripper") then
-        return "Ripper"
-    elseif configName:find("auger") then
-        return "Auger"
-    elseif configName:find("trencher") then
-        return "Trencher"
+function FarmTabletUI:getToolType(obj)
+    if not obj then return "UNKNOWN" end
+    local cfg = (obj.configFileName or ""):lower()
+    local map = { bucket="Bucket", shovel="Shovel", blade="Blade",
+                  ripper="Ripper", auger="Auger", trencher="Trencher" }
+    for k, v in pairs(map) do
+        if cfg:find(k) then return v end
     end
-    
     return "UNKNOWN"
 end
 
 function FarmTabletUI:getGroundTypeAtPosition(x, z)
-    if not g_currentMission or not g_currentMission.terrainDetailHeightId then
-        return "UNKNOWN"
-    end
-    
-    -- This is a simplified version - FS25 has proper ground type detection
-    -- In reality, you'd use getDensityAtWorldPos or similar FS25 functions
-    
-    -- Check if it's a field
-    if g_fieldManager then
-        for _, field in pairs(g_fieldManager.fields) do
-            -- Simplified field check
+    if not g_currentMission then return "UNKNOWN" end
+
+    -- Check fields via fieldManager (correct FS25 API)
+    local fm = g_currentMission.fieldManager
+    if fm then
+        for _, field in pairs(fm:getFields()) do
             if field.boundingBox then
-                if x >= field.boundingBox.minX and x <= field.boundingBox.maxX and
-                   z >= field.boundingBox.minZ and z <= field.boundingBox.maxZ then
+                local bb = field.boundingBox
+                if x >= bb.minX and x <= bb.maxX and z >= bb.minZ and z <= bb.maxZ then
                     return "FIELD"
                 end
             end
         end
     end
-    
-    -- Check if on road (simplified)
-    if g_currentMission.roadNetwork then
-        -- Would need proper road network checks
-    end
-    
-    return "GROUND"
-end
 
-function FarmTabletUI:updateDiggingApp(dt)
-    if not self.isTabletOpen or self.tabletSystem.currentApp ~= "digging" then
-        return
-    end
-    
-    -- Refresh digging info every 2 seconds
-    self.diggingUpdateTime = (self.diggingUpdateTime or 0) + dt
-    if self.diggingUpdateTime > 2.0 then
-        self.diggingUpdateTime = 0
-        
-        -- Reload app content to update info
-        if self.ui.appTexts then
-            self.ui.appTexts = {}
-            self:loadDiggingApp()
-        end
-    end
+    return "GROUND"
 end

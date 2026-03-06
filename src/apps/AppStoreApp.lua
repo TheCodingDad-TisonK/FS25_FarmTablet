@@ -1,79 +1,36 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- App Store App
--- =========================================================
--- Author: TisonK
+-- FS25 Farm Tablet -- App Store App
 -- =========================================================
 
 function FarmTabletUI:loadAppStoreApp()
+    self.ui.appTexts = {}
     local content = self.ui.appContentArea
     if not content then return end
-    
+
+    local C    = self.UI_CONSTANTS
     local padX = self:px(15)
-    local padY = self:py(15)
-    local titleY = content.y + content.height - padY - 0.03
-    
-    -- Title
-    table.insert(self.ui.appTexts, {
-        text = "App Store",
-        x = content.x + padX,
-        y = titleY,
-        size = 0.020,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
+    local padY = self:py(12)
 
-    local subtitleY = titleY - 0.03
-    
-    table.insert(self.ui.appTexts, {
-        text = "Installed Apps:",
-        x = content.x + padX,
-        y = subtitleY,
-        size = 0.016,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
+    local titleY = content.y + content.height - padY - 0.028
+    self:drawText("App Store", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
-    local itemsStartY = subtitleY - 0.025
-    local lineHeight = 0.020
-    
-    for i, app in ipairs(self.tabletSystem.registeredApps) do
-        local yPos = itemsStartY - ((i - 1) * lineHeight)
-        
-        if yPos > content.y + padY then
-            local status = app.enabled and "✓" or "✗"
-            local statusColor = app.enabled and {0, 1, 0, 1} or {1, 0, 0, 1}
+    local apps = self.tabletSystem.registeredApps
+    self:drawText(tostring(#apps) .. " apps installed",
+        content.x + content.width - padX, titleY, 0.013, RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
 
-            -- Status icon
-            table.insert(self.ui.appTexts, {
-                text = status,
-                x = content.x + padX,
-                y = yPos,
-                size = 0.018,
-                align = RenderText.ALIGN_LEFT,
-                color = statusColor
-            })
+    local y = titleY - 0.030
+    self:drawSectionHeader("INSTALLED APPS", y)
+    y = y - 0.022
 
-            -- App name
-            table.insert(self.ui.appTexts, {
-                text = g_i18n:getText(app.name) or app.name,
-                x = content.x + padX + 0.02,
-                y = yPos,
-                size = 0.016,
-                align = RenderText.ALIGN_LEFT,
-                color = self.UI_CONSTANTS.TEXT_COLOR
-            })
+    for _, app in ipairs(apps) do
+        if y <= content.y + padY then break end
 
-            -- Version
-            table.insert(self.ui.appTexts, {
-                text = app.version,
-                x = content.x + content.width - padX,
-                y = yPos,
-                size = 0.014,
-                align = RenderText.ALIGN_RIGHT,
-                color = {0.7, 0.7, 0.7, 1}
-            })
-        end
+        local name  = g_i18n:getText(app.name) or app.name
+        local label = (app.navLabel and ("[" .. app.navLabel .. "]  ") or "") .. name
+        local statusColor = app.enabled and C.VALUE_COLOR or C.MUTED_COLOR
+        local statusText  = app.enabled and (app.version or "Built-in") or "Disabled"
+
+        self:drawRow(label, statusText, y, C.LABEL_COLOR, statusColor)
+        y = y - 0.021
     end
 end

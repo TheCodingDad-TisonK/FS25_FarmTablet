@@ -21,23 +21,36 @@ function SettingsUI.new(settings)
     return self
 end
 
+local function getTextSafe(key)
+    local text = g_i18n:getText(key)
+    if text == nil or text == "" then return key end
+    return text
+end
+
 function SettingsUI:inject()
-    if self.injected then 
-        return 
+    if self.injected then return end
+
+    local ok, err = pcall(function()
+        self:_doInject()
+    end)
+    if not ok then
+        Logging.error("ft: Settings injection failed: " .. tostring(err))
     end
-    
+end
+
+function SettingsUI:_doInject()
     local page = g_gui.screenControllers[InGameMenu].pageSettings
     if not page then
         Logging.error("ft: Settings page not found - cannot inject settings!")
-        return 
+        return
     end
-    
+
     local layout = page.generalSettingsLayout
     if not layout then
         Logging.error("ft: Settings layout not found!")
-        return 
+        return
     end
-    
+
     local section = UIHelper.createSection(layout, "ft_section")
     if not section then
         Logging.error("ft: Failed to create settings section!")
@@ -53,7 +66,7 @@ function SettingsUI:inject()
         function(val)
             self.settings.enabled = val
             self.settings:save()
-            print("Farm Tablet: " .. (val and "Enabled" or "Disabled"))
+            Logging.info("Farm Tablet: " .. (val and "Enabled" or "Disabled"))
         end
     )
     
@@ -66,7 +79,7 @@ function SettingsUI:inject()
         function(val)
             self.settings.debugMode = val
             self.settings:save()
-            print("Farm Tablet: Debug mode " .. (val and "enabled" or "disabled"))
+            Logging.info("Farm Tablet: Debug mode " .. (val and "enabled" or "disabled"))
         end
     )
     
@@ -87,7 +100,7 @@ function SettingsUI:inject()
         function(val)
             self.settings.startupApp = val
             self.settings:save()
-            print("Farm Tablet: Startup app set to " .. self.settings:getStartupAppName())
+            Logging.info("Farm Tablet: Startup app set to " .. self.settings:getStartupAppName())
         end
     )
     
@@ -100,7 +113,7 @@ function SettingsUI:inject()
         function(val)
             self.settings.showTabletNotifications = val
             self.settings:save()
-            print("Farm Tablet: Notifications " .. (val and "enabled" or "disabled"))
+            Logging.info("Farm Tablet: Notifications " .. (val and "enabled" or "disabled"))
         end
     )
     
@@ -113,7 +126,7 @@ function SettingsUI:inject()
         function(val)
             self.settings.soundEffects = val
             self.settings:save()
-            print("Farm Tablet: Sound effects " .. (val and "enabled" or "disabled"))
+            Logging.info("Farm Tablet: Sound effects " .. (val and "enabled" or "disabled"))
         end
     )
     
@@ -125,16 +138,7 @@ function SettingsUI:inject()
     
     self.injected = true
     layout:invalidateLayout()
-    
-    print("Farm Tablet: Settings UI injected successfully")
-end
-
-function getTextSafe(key)
-    local text = g_i18n:getText(key)
-    if text == nil or text == "" then
-        return key
-    end
-    return text
+    Logging.info("Farm Tablet: Settings UI injected successfully")
 end
 
 function SettingsUI:refreshUI()
@@ -170,12 +174,12 @@ function SettingsUI:refreshUI()
         self.soundOption:setState(self.settings.soundEffects and 2 or 1)
     end
     
-    print("Farm Tablet: UI refreshed")
+    Logging.info("Farm Tablet: UI refreshed")
 end
 
 function SettingsUI:ensureResetButton(settingsFrame)
     if not settingsFrame or not settingsFrame.menuButtonInfo then
-        print("ft: ensureResetButton - settingsFrame invalid")
+        Logging.warning("ft: ensureResetButton - settingsFrame invalid")
         return
     end
     
@@ -184,7 +188,6 @@ function SettingsUI:ensureResetButton(settingsFrame)
             inputAction = InputAction.MENU_EXTRA_1, -- X button
             text = g_i18n:getText("ft_reset") or "Reset Settings",
             callback = function()
-                print("ft: Reset button clicked!")
                 if g_FarmTablet and g_FarmTablet.settings then
                     g_FarmTablet.settings:resetToDefaults()
                     if g_FarmTablet.settingsUI then
@@ -197,13 +200,10 @@ function SettingsUI:ensureResetButton(settingsFrame)
     end
     
     for _, btn in ipairs(settingsFrame.menuButtonInfo) do
-        if btn == self._resetButton then
-            print("ft: Reset button already in menuButtonInfo")
-            return
-        end
+        if btn == self._resetButton then return end
     end
-    
+
     table.insert(settingsFrame.menuButtonInfo, self._resetButton)
     settingsFrame:setMenuButtonInfoDirty()
-    print("ft: Reset button added to footer! (X key)")
+    Logging.info("ft: Reset button added to footer")
 end
