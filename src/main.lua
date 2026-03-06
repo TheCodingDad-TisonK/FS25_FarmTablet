@@ -36,6 +36,9 @@ source(modDirectory .. "src/apps/DiggingApp.lua")
 source(modDirectory .. "src/apps/BucketTrackerApp.lua")
 source(modDirectory .. "src/apps/IncomeApp.lua")
 source(modDirectory .. "src/apps/TaxApp.lua")
+source(modDirectory .. "src/apps/NPCFavorApp.lua")
+source(modDirectory .. "src/apps/SeasonalCropStressApp.lua")
+source(modDirectory .. "src/apps/SoilFertilizerApp.lua")
 
 local farmTabletManager
 

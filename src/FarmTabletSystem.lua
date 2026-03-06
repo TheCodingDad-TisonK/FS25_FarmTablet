@@ -24,6 +24,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "financial_dashboard",
             name = "ft_app_dashboard",
+            navLabel = "DASH",
             icon = "dashboard_icon",
             developer = "FarmTablet",
             version = "Built-in",
@@ -32,6 +33,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "app_store",
             name = "ft_app_store",
+            navLabel = "APPS",
             icon = "store_icon",
             developer = "FarmTablet",
             version = "Built-in",
@@ -40,6 +42,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "settings",
             name = "ft_app_settings",
+            navLabel = "SET",
             icon = "settings_icon",
             developer = "FarmTablet",
             version = "Built-in",
@@ -48,6 +51,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "updates",
             name = "ft_app_updates",
+            navLabel = "UPD",
             icon = "updates_icon",
             developer = "FarmTablet",
             version = "Built-in",
@@ -64,6 +68,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "weather",
             name = "ft_app_weather",
+            navLabel = "WTH",
             icon = "weather_icon",
             developer = "FarmTablet",
             version = "Built-in",
@@ -72,6 +77,7 @@ function FarmTabletSystem.new(settings)
         {
             id = "digging",
             name = "ft_app_digging",
+            navLabel = "DIG",
             icon = "digging_app",
             developer = "FarmTablet",
             version = "Built-in",
@@ -80,15 +86,24 @@ function FarmTabletSystem.new(settings)
         {
             id = "bucket_tracker",
             name = "ft_app_bucket_tracker",
+            navLabel = "BCK",
             icon = "bucket_icon",
             developer = "FarmTablet",
             version = "Built-in",
             enabled = true
         }
     }
+
+    -- Maps settings.startupApp integer to string app ID
+    FarmTabletSystem.STARTUP_APP_IDS = {
+        [1] = "financial_dashboard",
+        [2] = "app_store",
+        [3] = "weather",
+        [4] = "digging",
+    }
     
-    -- Current state
-    self.currentApp = self.settings.startupApp or "financial_dashboard"
+    -- Current state — map int 1-4 to string app ID
+    self.currentApp = FarmTabletSystem.STARTUP_APP_IDS[self.settings.startupApp] or "financial_dashboard"
     self.isTabletOpen = false
     
     -- Live data cache
@@ -135,23 +150,23 @@ function FarmTabletSystem:log(msg, ...)
     end
 end
 
+function FarmTabletSystem:_appRegistered(id)
+    for _, app in ipairs(self.registeredApps) do
+        if app.id == id then return true end
+    end
+    return false
+end
+
 function FarmTabletSystem:autoRegisterModApps()
     self:log("Starting mod auto-registration")
     
     -- Check for Income Mod
     if g_IncomeManager or _G["Income"] or (g_modIsLoaded and g_modIsLoaded["FS25_IncomeMod"]) then
-        local incomeExists = false
-        for _, app in ipairs(self.registeredApps) do
-            if app.id == "income_mod" then
-                incomeExists = true
-                break
-            end
-        end
-        
-        if not incomeExists then
+        if not self:_appRegistered("income_mod") then
             table.insert(self.registeredApps, {
                 id = "income_mod",
                 name = "ft_app_income_mod",
+                navLabel = "INC",
                 icon = "income_icon",
                 developer = "TisonK",
                 version = "Integrated",
@@ -163,18 +178,11 @@ function FarmTabletSystem:autoRegisterModApps()
     
     -- Check for Tax Mod
     if g_TaxManager then
-        local taxExists = false
-        for _, app in ipairs(self.registeredApps) do
-            if app.id == "tax_mod" then
-                taxExists = true
-                break
-            end
-        end
-        
-        if not taxExists then
+        if not self:_appRegistered("tax_mod") then
             table.insert(self.registeredApps, {
                 id = "tax_mod",
                 name = "ft_app_tax_mod",
+                navLabel = "TAX",
                 icon = "tax_icon",
                 developer = "TisonK",
                 version = "Integrated",
@@ -184,6 +192,49 @@ function FarmTabletSystem:autoRegisterModApps()
         end
     end
     
+    -- Check for NPC Favor
+    local npcFavorPresent = g_currentMission and g_currentMission.npcFavorSystem ~= nil
+    if npcFavorPresent and not self:_appRegistered("npc_favor") then
+        table.insert(self.registeredApps, {
+            id = "npc_favor",
+            name = "ft_app_npc_favor",
+            navLabel = "NPC",
+            developer = "TisonK",
+            version = "Integrated",
+            enabled = true
+        })
+        self:log("NPC Favor app registered")
+    end
+
+    -- Check for Seasonal Crop Stress
+    local cropStressPresent = g_currentMission and g_currentMission.cropStressManager ~= nil
+    if cropStressPresent and not self:_appRegistered("crop_stress") then
+        table.insert(self.registeredApps, {
+            id = "crop_stress",
+            name = "ft_app_crop_stress",
+            navLabel = "CRPS",
+            developer = "TisonK",
+            version = "Integrated",
+            enabled = true
+        })
+        self:log("Seasonal Crop Stress app registered")
+    end
+
+    -- Check for Soil Fertilizer
+    local soilFertPresent = g_soilFertilizerManager ~= nil or
+        (g_currentMission and g_currentMission.soilFertilizerManager ~= nil)
+    if soilFertPresent and not self:_appRegistered("soil_fertilizer") then
+        table.insert(self.registeredApps, {
+            id = "soil_fertilizer",
+            name = "ft_app_soil_fertilizer",
+            navLabel = "SOIL",
+            developer = "TisonK",
+            version = "Integrated",
+            enabled = true
+        })
+        self:log("Soil Fertilizer app registered")
+    end
+
     self:log("Mod auto-registration complete")
     self:log("Total registered apps: %d", #self.registeredApps)
 end
@@ -359,13 +410,7 @@ function FarmTabletSystem:update(dt)
     end
 end
 
--- Bucket tracker functions (similar to FS22 version but adapted for FS25)
-function FarmTabletSystem:isBucketVehicle(vehicle)
-    -- Implementation similar to FS22 version
-    -- Check vehicle type and attachments
-    return false -- Placeholder
-end
-
+-- Bucket tracker functions
 function FarmTabletSystem:getCurrentBucketVehicle()
     if g_currentMission == nil or g_currentMission.controlledVehicle == nil then
         return nil
@@ -513,50 +558,51 @@ function FarmTabletSystem:trackBucketLoad()
     if not self.bucketTracker.isEnabled then
         return
     end
-    
-    -- Get current controlled vehicle
+
     local vehicle = self:getCurrentBucketVehicle()
-    
+
     if vehicle then
-        -- Check if vehicle changed
-        local vehicleChanged = false
         if self.bucketTracker.currentVehicle ~= vehicle then
             self.bucketTracker.currentVehicle = vehicle
-            vehicleChanged = true
+            self.bucketTracker.currentFillLevel = 0
+            self.bucketTracker.currentFillType = nil
         end
-        
-        -- Get current fill info
+
         local fillInfo = self:getBucketFillInfo(vehicle)
-        
-        -- Check if load level changed significantly
         local oldFillLevel = self.bucketTracker.currentFillLevel or 0
-        local fillChange = math.abs(fillInfo.totalFillLevel - oldFillLevel)
-        
-        if fillChange > 10 then -- Only track significant changes (10 liters)
-            -- Store old fill info
-            if oldFillLevel > 0 then
-                table.insert(self.bucketTracker.bucketHistory, {
-                    time = g_currentMission.time or 0,
-                    fillLevel = oldFillLevel,
-                    fillType = self.bucketTracker.currentFillType,
-                    weight = self:estimateBucketWeight({
-                        totalFillLevel = oldFillLevel,
-                        currentFillType = self.bucketTracker.currentFillType
-                    })
-                })
+        local newFillLevel = fillInfo.totalFillLevel
+
+        -- Detect a dump: bucket had a meaningful amount and is now near-empty
+        local dumpThreshold = math.max(50, (fillInfo.totalCapacity or 0) * 0.10)
+        if oldFillLevel >= dumpThreshold and newFillLevel < dumpThreshold and oldFillLevel > 0 then
+            self.bucketTracker.totalLoads = self.bucketTracker.totalLoads + 1
+            if self.bucketTracker.startTime == 0 then
+                self.bucketTracker.startTime = g_currentMission.time or 0
             end
-            
-            -- Update tracker
-            if fillInfo.totalFillLevel > 0 then
-                self.bucketTracker.totalLoads = self.bucketTracker.totalLoads + 1
-                self.bucketTracker.totalWeight = self.bucketTracker.totalWeight + 
-                    self:estimateBucketWeight(fillInfo)
-            end
-            
-            self.bucketTracker.currentFillLevel = fillInfo.totalFillLevel
-            self.bucketTracker.currentFillType = fillInfo.currentFillType
+            local weight = self:estimateBucketWeight({
+                totalFillLevel = oldFillLevel,
+                currentFillType = self.bucketTracker.currentFillType
+            })
+            self.bucketTracker.totalWeight = self.bucketTracker.totalWeight + weight
             self.bucketTracker.lastLoadTime = g_currentMission.time or 0
+
+            table.insert(self.bucketTracker.bucketHistory, {
+                number = self.bucketTracker.totalLoads,
+                volume = math.floor(oldFillLevel),
+                fillType = self.bucketTracker.currentFillType,
+                fillTypeName = fillInfo.fillTypeName,
+                weight = weight,
+                time = self.bucketTracker.lastLoadTime
+            })
+            -- Keep history capped at 20 entries
+            if #self.bucketTracker.bucketHistory > 20 then
+                table.remove(self.bucketTracker.bucketHistory, 1)
+            end
         end
+
+        -- Update tracker state
+        self.bucketTracker.currentFillLevel = newFillLevel
+        self.bucketTracker.currentFillType = fillInfo.currentFillType
     else
         -- No bucket vehicle, reset current
         if self.bucketTracker.currentVehicle ~= nil then

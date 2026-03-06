@@ -26,7 +26,9 @@ function FarmTabletUI.new(settings, tabletSystem)
     -- UI elements
     self.ui = {
         overlays = {},
+        appOverlays = {},
         texts = {},
+        appTexts = {},
         appButtons = {},
         contentOverlays = {}
     }
@@ -37,14 +39,31 @@ function FarmTabletUI.new(settings, tabletSystem)
         HEIGHT = 600,
         NAV_BAR_HEIGHT = 40,
         PADDING = 20,
-        BACKGROUND_COLOR = {0.1, 0.1, 0.1, 0.95},
-        NAV_BAR_COLOR = {0.2, 0.2, 0.2, 0.98},
-        APP_BUTTON_SIZE = 40,
-        BUTTON_HOVER_COLOR = {0.3, 0.6, 0.3, 0.8},
-        BUTTON_NORMAL_COLOR = {0.25, 0.25, 0.25, 0.9},
-        TEXT_COLOR = {1, 1, 1, 1},
-        BORDER_COLOR = {0.4, 0.7, 0.4, 1},
-        CONTENT_BG_COLOR = {0.15, 0.15, 0.15, 0.7}
+        -- Background & structure
+        BACKGROUND_COLOR  = {0.08, 0.08, 0.10, 0.96},
+        NAV_BAR_COLOR     = {0.12, 0.13, 0.16, 0.98},
+        CONTENT_BG_COLOR  = {0.10, 0.10, 0.13, 0.78},
+        BORDER_COLOR      = {0.30, 0.58, 0.32, 1},
+        CLOSE_BTN_COLOR   = {0.70, 0.18, 0.18, 0.92},
+        -- Nav buttons
+        BUTTON_HOVER_COLOR  = {0.22, 0.52, 0.26, 0.95},
+        BUTTON_NORMAL_COLOR = {0.18, 0.18, 0.22, 0.90},
+        -- Text
+        TEXT_COLOR    = {0.92, 0.92, 0.92, 1},
+        LABEL_COLOR   = {0.70, 0.72, 0.76, 1},
+        VALUE_COLOR   = {0.38, 0.88, 0.44, 1},
+        SECTION_COLOR = {0.50, 0.78, 0.52, 1},
+        TITLE_COLOR   = {1.00, 1.00, 1.00, 1},
+        -- Semantic
+        POSITIVE_COLOR = {0.28, 0.88, 0.38, 1},
+        NEGATIVE_COLOR = {0.90, 0.28, 0.28, 1},
+        WARNING_COLOR  = {0.95, 0.68, 0.18, 1},
+        MUTED_COLOR    = {0.58, 0.58, 0.62, 1},
+        -- Action buttons
+        BTN_GREEN = {0.22, 0.58, 0.26, 0.92},
+        BTN_RED   = {0.68, 0.20, 0.20, 0.92},
+        BTN_BLUE  = {0.18, 0.42, 0.72, 0.92},
+        BTN_GRAY  = {0.30, 0.30, 0.35, 0.92},
     }
     
     return self
@@ -128,10 +147,11 @@ end
 function FarmTabletUI:createTabletUI()
     self.ui = {}
     self.ui.overlays = {}
+    self.ui.appOverlays = {}
     self.ui.texts = {}
+    self.ui.appTexts = {}
     self.ui.appButtons = {}
     self.ui.contentOverlays = {}
-    self.ui.appTexts = {}
 
     -- Calculate screen position
     local tabletWidth, tabletHeight = getNormalizedScreenValues(800, 600)
@@ -224,7 +244,7 @@ function FarmTabletUI:createTabletElements()
         closeBtnY,
         closeSize,
         closeSize,
-        {0.8, 0.2, 0.2, 0.9}
+        self.UI_CONSTANTS.CLOSE_BTN_COLOR
     )
     closeButton:setVisible(true)
 
@@ -239,7 +259,7 @@ function FarmTabletUI:createTabletElements()
 
     -- Title text
     table.insert(self.ui.texts, {
-        text = "Farm Tablet v1.1.0.0",
+        text = "Farm Tablet v1.1.0.1",
         x = navBarX + navPadX,
         y = navBarY + navHeight / 2 - 0.004,
         size = 0.014,
@@ -334,10 +354,9 @@ function FarmTabletUI:loadDefaultApp()
         "Welcome to Farm Tablet v1.1.0.1",
         "Central interface for farm management",
         "",
-        "Select an app from the navigation bar",
+        "Select an app from the navigation bar above.",
         "",
-        "TABLET DOES NOT WORK CORRECTLY AT THIS MOMENT",
-        "This will be fixed (hopefully) in the upcoming updates!"
+        "Type  'tablet'  in console for commands.",
     }
     
     for i, line in ipairs(lines) do
@@ -379,6 +398,12 @@ function FarmTabletUI:loadCurrentApp()
         self:loadIncomeApp()
     elseif appId == "tax_mod" then
         self:loadTaxApp()
+    elseif appId == "npc_favor" then
+        self:loadNPCFavorApp()
+    elseif appId == "crop_stress" then
+        self:loadCropStressApp()
+    elseif appId == "soil_fertilizer" then
+        self:loadSoilFertilizerApp()
     else
         self:loadDefaultApp()
     end
@@ -388,66 +413,50 @@ function FarmTabletUI:createAppNavigationButtons()
     local navBar = self.ui.navBar
     if navBar == nil then return end
 
-    local navX = navBar.x
-    local navY = navBar.y
-    local navH = navBar.height
-    local navW = navBar.width
-
     self.ui.appButtons = {}
 
-    local btnSize = self:px(26)
-    local spacing = self:px(6)
-    local startY = navY - btnSize - self:py(10)
-    local leftPadding = self:px(15)
-    local rightPadding = self:px(120)
-    local startX = navX + leftPadding
-    local maxX = navX + navW - rightPadding
+    local btnW    = self:px(44)
+    local btnH    = self:py(22)
+    local spacing = self:px(4)
+    local startY  = navBar.y - btnH - self:py(8)
+    local startX  = navBar.x + self:px(15)
+    local maxX    = navBar.x + navBar.width - self:px(70)
 
-    local enabledApps = {}
+    local isActive = self.tabletSystem.currentApp
+
     for _, app in ipairs(self.tabletSystem.registeredApps) do
-        if app.enabled then
-            table.insert(enabledApps, app)
-        end
-    end
+        if not app.enabled then goto continue end
 
-    for i, app in ipairs(enabledApps) do
-        local x = startX + (i - 1) * (btnSize + spacing)
+        local x = startX + (#self.ui.appButtons) * (btnW + spacing)
+        if x + btnW > maxX then break end
 
-        if x + btnSize > maxX then
-            break
-        end
-
+        local isSelected = (app.id == isActive)
         local overlay = self:createBlankOverlay(
-            x,
-            startY,
-            btnSize,
-            btnSize,
-            app.id == self.tabletSystem.currentApp and
-                self.UI_CONSTANTS.BUTTON_HOVER_COLOR or
-                self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
+            x, startY, btnW, btnH,
+            isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
+                       or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
         )
         overlay:setVisible(true)
         table.insert(self.ui.overlays, overlay)
 
         table.insert(self.ui.appButtons, {
             overlay = overlay,
-            x = x,
-            y = startY,
-            width = btnSize,
-            height = btnSize,
+            x = x, y = startY, width = btnW, height = btnH,
             appId = app.id
         })
 
-        -- App button letter
-        local appName = g_i18n:getText(app.name) or app.name
+        local label = app.navLabel or string.sub(app.id, 1, 4):upper()
         table.insert(self.ui.texts, {
-            text = string.sub(appName, 1, 1),
-            x = x + btnSize / 2,
-            y = startY + btnSize / 2 - 0.005,
-            size = 0.011,
+            text  = label,
+            x     = x + btnW / 2,
+            y     = startY + btnH / 2 - 0.004,
+            size  = 0.009,
             align = RenderText.ALIGN_CENTER,
-            color = self.UI_CONSTANTS.TEXT_COLOR
+            color = isSelected and self.UI_CONSTANTS.TITLE_COLOR
+                               or  self.UI_CONSTANTS.MUTED_COLOR
         })
+
+        ::continue::
     end
 end
 
@@ -475,15 +484,34 @@ function FarmTabletUI:switchApp(appId)
     end
 
     if self.isTabletOpen then
+        -- Clean up app-specific overlays from the previous app
+        if self.ui.appOverlays then
+            for _, overlay in ipairs(self.ui.appOverlays) do
+                if overlay ~= nil then overlay:delete() end
+            end
+        end
+        self.ui.appOverlays = {}
+        self.ui.resetBucketButton = nil
+        self.ui.enableIncomeButton = nil
+        self.ui.disableIncomeButton = nil
+        self.ui.enableTaxButton = nil
+        self.ui.disableTaxButton = nil
+        self.ui.settingsToggleButtons = nil
+
         -- Update button colors
         for _, buttonInfo in ipairs(self.ui.appButtons) do
+            local isSelected = (buttonInfo.appId == appId)
             buttonInfo.overlay:setColor(unpack(
-                buttonInfo.appId == appId and
-                self.UI_CONSTANTS.BUTTON_HOVER_COLOR or
-                self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
+                isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
+                           or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
             ))
         end
-        
+        -- Update nav label colors
+        for i, buttonInfo in ipairs(self.ui.appButtons) do
+            local labelIdx = #self.ui.overlays - #self.ui.appButtons + i
+            -- labels are in self.ui.texts, update by matching position
+        end
+
         -- Reload content
         self.ui.appTexts = {}
         self:loadCurrentApp()
@@ -492,7 +520,89 @@ function FarmTabletUI:switchApp(appId)
     return true
 end
 
+-- =========================================================
+-- Drawing Helpers
+-- =========================================================
+
+-- Create an app-specific overlay that is automatically cleaned up on app switch.
+function FarmTabletUI:createAppOverlay(x, y, w, h, color, texturePath)
+    local overlay = self:createBlankOverlay(x, y, w, h, color, texturePath)
+    overlay:setVisible(true)
+    if not self.ui.appOverlays then self.ui.appOverlays = {} end
+    table.insert(self.ui.appOverlays, overlay)
+    return overlay
+end
+
+-- Insert a label + right-aligned value row into appTexts.
+function FarmTabletUI:drawRow(label, value, y, labelColor, valueColor)
+    local content = self.ui.appContentArea
+    if not content then return end
+    local padX = self:px(15)
+    table.insert(self.ui.appTexts, {
+        text  = label,
+        x     = content.x + padX,
+        y     = y,
+        size  = 0.015,
+        align = RenderText.ALIGN_LEFT,
+        color = labelColor or self.UI_CONSTANTS.LABEL_COLOR,
+    })
+    if value ~= nil then
+        table.insert(self.ui.appTexts, {
+            text  = tostring(value),
+            x     = content.x + content.width - padX,
+            y     = y,
+            size  = 0.015,
+            align = RenderText.ALIGN_RIGHT,
+            color = valueColor or self.UI_CONSTANTS.VALUE_COLOR,
+        })
+    end
+end
+
+-- Insert a section header (left-aligned, accent color).
+function FarmTabletUI:drawSectionHeader(text, y)
+    local content = self.ui.appContentArea
+    if not content then return end
+    table.insert(self.ui.appTexts, {
+        text  = text,
+        x     = content.x + self:px(15),
+        y     = y,
+        size  = 0.013,
+        align = RenderText.ALIGN_LEFT,
+        color = self.UI_CONSTANTS.SECTION_COLOR,
+    })
+end
+
+-- Insert a single left-aligned text entry.
+function FarmTabletUI:drawText(text, x, y, size, align, color)
+    table.insert(self.ui.appTexts, {
+        text  = text,
+        x     = x,
+        y     = y,
+        size  = size  or 0.015,
+        align = align or RenderText.ALIGN_LEFT,
+        color = color or self.UI_CONSTANTS.TEXT_COLOR,
+    })
+end
+
+-- Create a small action button and return its hitbox descriptor.
+-- Uses createAppOverlay so it is cleaned up on app switch.
+function FarmTabletUI:drawButton(label, x, y, w, h, color)
+    local overlay = self:createAppOverlay(x, y, w, h, color or self.UI_CONSTANTS.BTN_GRAY)
+    table.insert(self.ui.appTexts, {
+        text  = label,
+        x     = x + w / 2,
+        y     = y + h / 2 - 0.004,
+        size  = 0.012,
+        align = RenderText.ALIGN_CENTER,
+        color = self.UI_CONSTANTS.TITLE_COLOR,
+    })
+    return { overlay = overlay, x = x, y = y, width = w, height = h }
+end
+
+-- =========================================================
 -- Utility functions
+-- =========================================================
+
 function FarmTabletUI:px(x)
     return x * (self.ui.scaleX or 1)
 end
@@ -524,26 +634,38 @@ function FarmTabletUI:log(msg)
 end
 
 function FarmTabletUI:destroyTabletUI()
-    if self.ui.overlays then
-        for _, overlay in ipairs(self.ui.overlays) do
-            if overlay ~= nil then
-                overlay:delete()
-            end
+    -- Delete app-specific overlays first
+    if self.ui.appOverlays then
+        for _, overlay in ipairs(self.ui.appOverlays) do
+            if overlay ~= nil then overlay:delete() end
         end
     end
-    
+    -- Delete chrome overlays
+    if self.ui.overlays then
+        for _, overlay in ipairs(self.ui.overlays) do
+            if overlay ~= nil then overlay:delete() end
+        end
+    end
+
     self.ui = {
         background = nil,
         backgroundX = 0,
         backgroundY = 0,
         overlays = {},
+        appOverlays = {},
         appButtons = {},
         contentOverlays = {},
         texts = {},
         appTexts = {},
         navBar = nil,
         appContentArea = nil,
-        closeButton = nil
+        closeButton = nil,
+        resetBucketButton = nil,
+        enableIncomeButton = nil,
+        disableIncomeButton = nil,
+        enableTaxButton = nil,
+        disableTaxButton = nil,
+        settingsToggleButtons = nil,
     }
 end
 
@@ -646,7 +768,11 @@ function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
     --     if self:handleWorkshopMouseEvent(posX, posY) then
     --         return true
     --     end
-    if appId == "bucket_tracker" then
+    if appId == "settings" then
+        if self:handleSettingsAppMouseEvent(posX, posY) then
+            return true
+        end
+    elseif appId == "bucket_tracker" then
         if self:handleBucketTrackerMouseEvent(posX, posY) then
             return true
         end

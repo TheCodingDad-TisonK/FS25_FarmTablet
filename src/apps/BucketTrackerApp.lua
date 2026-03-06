@@ -1,284 +1,121 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Bucket Tracker App - Track loader/excavator bucket loads
--- =========================================================
--- Author: TisonK
+-- FS25 Farm Tablet -- Bucket Load Tracker App
 -- =========================================================
 
 function FarmTabletUI:loadBucketTrackerApp()
+    self.ui.appTexts = {}
     local content = self.ui.appContentArea
-    if not content then
-        self:log("No content area in bucket tracker app")
-        return
-    end
+    if not content then return end
 
-    local padX = self:px(15)
-    local padY = self:py(15)
-    local titleY = content.y + content.height - padY - 0.03
+    local C       = self.UI_CONSTANTS
+    local padX    = self:px(15)
+    local padY    = self:py(12)
+    local sys     = self.tabletSystem
+    local tracker = sys.bucketTracker
 
-    -- Title
-    table.insert(self.ui.appTexts, {
-        text = "Bucket Load Tracker",
-        x = content.x + padX,
-        y = titleY,
-        size = 0.022,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
+    local titleY = content.y + content.height - padY - 0.028
+    self:drawText("Bucket Load Tracker", content.x + padX, titleY, 0.019,
+        RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
-    local tracker = self.tabletSystem.bucketTracker
-    local vehicle = self.tabletSystem:getCurrentBucketVehicle()
-    local yPos = titleY - 0.035
-    
-    -- Current Vehicle Status
+    local y = titleY - 0.030
+
+    -- Current vehicle / bucket
+    local vehicle = sys:getCurrentBucketVehicle()
+    self:drawSectionHeader("CURRENT VEHICLE", y)
+    y = y - 0.022
+
     if vehicle then
-        local vehicleName = vehicle.getName and vehicle:getName() or "Unknown"
-        table.insert(self.ui.appTexts, {
-            text = "Vehicle: " .. vehicleName,
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.4, 0.8, 0.4, 1}
-        })
-        
-        -- Current load info
-        local fillInfo = self.tabletSystem:getBucketFillInfo(vehicle)
-        yPos = yPos - 0.024
-        
-        if fillInfo.totalFillLevel > 0 then
-            table.insert(self.ui.appTexts, {
-                text = "Current Load:",
-                x = content.x + padX,
-                y = yPos,
-                size = 0.015,
-                align = RenderText.ALIGN_LEFT,
-                color = self.UI_CONSTANTS.TEXT_COLOR
-            })
-            
-            table.insert(self.ui.appTexts, {
-                text = fillInfo.fillTypeName,
-                x = content.x + content.width - padX,
-                y = yPos,
-                size = 0.015,
-                align = RenderText.ALIGN_RIGHT,
-                color = {0.8, 0.8, 0.8, 1}
-            })
-            
-            yPos = yPos - 0.020
-            table.insert(self.ui.appTexts, {
-                text = string.format("Volume: %d / %d L", 
-                    math.floor(fillInfo.totalFillLevel), 
-                    math.floor(fillInfo.totalCapacity)),
-                x = content.x + padX,
-                y = yPos,
-                size = 0.014,
-                align = RenderText.ALIGN_LEFT,
-                color = self.UI_CONSTANTS.TEXT_COLOR
-            })
-            
-            yPos = yPos - 0.020
-            table.insert(self.ui.appTexts, {
-                text = string.format("Fill: %.0f%%", fillInfo.fillPercentage),
-                x = content.x + padX,
-                y = yPos,
-                size = 0.014,
-                align = RenderText.ALIGN_LEFT,
-                color = fillInfo.fillPercentage > 80 and {0, 1, 0, 1} or 
-                       fillInfo.fillPercentage > 50 and {1, 1, 0, 1} or {1, 0.5, 0, 1}
-            })
-            
-            yPos = yPos - 0.020
-            local weight = self.tabletSystem:estimateBucketWeight(fillInfo)
-            table.insert(self.ui.appTexts, {
-                text = string.format("Weight: %d kg", weight),
-                x = content.x + padX,
-                y = yPos,
-                size = 0.014,
-                align = RenderText.ALIGN_LEFT,
-                color = {0.6, 0.8, 1, 1}
-            })
-            
-            yPos = yPos - 0.010
+        local vname = (vehicle.getFullName and vehicle:getFullName()) or "Unknown"
+        if #vname > 24 then vname = vname:sub(1, 21) .. "..." end
+        self:drawRow("Vehicle", vname, y, C.LABEL_COLOR, C.VALUE_COLOR)
+        y = y - 0.022
+
+        local fi = sys:getBucketFillInfo(vehicle)
+        if fi.totalFillLevel > 0 then
+            local pct = fi.fillPercentage
+            local pctColor = pct > 80 and C.POSITIVE_COLOR or
+                             pct > 40 and C.WARNING_COLOR  or C.NEGATIVE_COLOR
+            self:drawRow("Fill Type", fi.fillTypeName, y, C.LABEL_COLOR, C.VALUE_COLOR)
+            y = y - 0.022
+            self:drawRow("Volume",
+                string.format("%d / %d L", math.floor(fi.totalFillLevel), math.floor(fi.totalCapacity)),
+                y, C.LABEL_COLOR, C.VALUE_COLOR)
+            y = y - 0.022
+            self:drawRow("Fill %", string.format("%.0f%%", pct), y, C.LABEL_COLOR, pctColor)
+            y = y - 0.022
+            local wt = sys:estimateBucketWeight(fi)
+            self:drawRow("Est. Weight", string.format("%d kg", wt), y, C.LABEL_COLOR, C.VALUE_COLOR)
+            y = y - 0.022
         else
-            table.insert(self.ui.appTexts, {
-                text = "Bucket: EMPTY",
-                x = content.x + padX,
-                y = yPos,
-                size = 0.015,
-                align = RenderText.ALIGN_LEFT,
-                color = {1, 0.5, 0, 1}
-            })
-            yPos = yPos - 0.024
+            self:drawText("Bucket empty.", content.x + padX, y, 0.014,
+                RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+            y = y - 0.022
         end
     else
-        table.insert(self.ui.appTexts, {
-            text = "No bucket vehicle detected",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {1, 0.5, 0, 1}
-        })
-        table.insert(self.ui.appTexts, {
-            text = "Drive a loader or excavator",
-            x = content.x + padX,
-            y = yPos - 0.024,
-            size = 0.014,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.8, 0.8, 0.8, 1}
-        })
-        yPos = yPos - 0.048
+        self:drawText("No bucket vehicle detected.", content.x + padX, y, 0.014,
+            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+        y = y - 0.020
+        self:drawText("Drive a loader or excavator.", content.x + padX, y, 0.013,
+            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+        y = y - 0.022
     end
-    
-    -- Session Statistics
-    yPos = yPos - 0.020
-    table.insert(self.ui.appTexts, {
-        text = "Session Statistics:",
-        x = content.x + padX,
-        y = yPos,
-        size = 0.016,
-        align = RenderText.ALIGN_LEFT,
-        color = {0.6, 0.9, 0.6, 1}
-    })
-    
-    yPos = yPos - 0.024
-    table.insert(self.ui.appTexts, {
-        text = "Total Loads: " .. tracker.totalLoads,
-        x = content.x + padX,
-        y = yPos,
-        size = 0.015,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
-    
-    yPos = yPos - 0.020
-    table.insert(self.ui.appTexts, {
-        text = "Total Weight: " .. string.format("%d kg", tracker.totalWeight),
-        x = content.x + padX,
-        y = yPos,
-        size = 0.015,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
-    
+
+    -- Session stats
+    y = y - 0.010
+    self:drawSectionHeader("SESSION", y)
+    y = y - 0.022
+
+    self:drawRow("Total Loads",  tostring(tracker.totalLoads),                     y, C.LABEL_COLOR, C.VALUE_COLOR)
+    y = y - 0.022
+    self:drawRow("Total Weight", string.format("%d kg", tracker.totalWeight),       y, C.LABEL_COLOR, C.VALUE_COLOR)
+    y = y - 0.022
+
     if tracker.startTime > 0 then
-        local currentTime = g_currentMission.time or 0
-        local duration = currentTime - tracker.startTime
-        
-        yPos = yPos - 0.020
-        table.insert(self.ui.appTexts, {
-            text = "Session Time: " .. self:formatTime(duration / 1000),
-            x = content.x + padX,
-            y = yPos,
-            size = 0.015,
-            align = RenderText.ALIGN_LEFT,
-            color = self.UI_CONSTANTS.TEXT_COLOR
-        })
-        
+        local elapsed = ((g_currentMission.time or 0) - tracker.startTime) / 1000
+        self:drawRow("Duration", self:formatTime(elapsed), y, C.LABEL_COLOR, C.VALUE_COLOR)
+        y = y - 0.022
         if tracker.totalLoads > 0 then
-            local avgWeight = math.floor(tracker.totalWeight / tracker.totalLoads)
-            yPos = yPos - 0.020
-            table.insert(self.ui.appTexts, {
-                text = "Avg. Load: " .. string.format("%d kg", avgWeight),
-                x = content.x + padX,
-                y = yPos,
-                size = 0.015,
-                align = RenderText.ALIGN_LEFT,
-                color = self.UI_CONSTANTS.TEXT_COLOR
-            })
+            local avg = math.floor(tracker.totalWeight / tracker.totalLoads)
+            self:drawRow("Avg Load", string.format("%d kg", avg), y, C.LABEL_COLOR, C.VALUE_COLOR)
+            y = y - 0.022
         end
     end
-    
-    -- Recent Loads History
+
+    -- Recent history
     if #tracker.bucketHistory > 0 then
-        yPos = yPos - 0.030
-        table.insert(self.ui.appTexts, {
-            text = "Recent Loads:",
-            x = content.x + padX,
-            y = yPos,
-            size = 0.016,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.3, 0.6, 0.8, 1}
-        })
-        
-        yPos = yPos - 0.022
-        local startIdx = math.max(1, #tracker.bucketHistory - 4)
-        for i = startIdx, #tracker.bucketHistory do
+        y = y - 0.010
+        self:drawSectionHeader("RECENT LOADS", y)
+        y = y - 0.022
+        local start = math.max(1, #tracker.bucketHistory - 4)
+        for i = #tracker.bucketHistory, start, -1 do
             local load = tracker.bucketHistory[i]
-            if load and yPos > content.y + padY then
-                local loadText = string.format("#%d: %dL %s", 
-                    load.number, load.volume, load.fillType)
-                
-                table.insert(self.ui.appTexts, {
-                    text = loadText,
-                    x = content.x + padX + 0.01,
-                    y = yPos,
-                    size = 0.013,
-                    align = RenderText.ALIGN_LEFT,
-                    color = {0.8, 0.8, 0.8, 1}
-                })
-                
-                table.insert(self.ui.appTexts, {
-                    text = string.format("%d kg", load.weight),
-                    x = content.x + content.width - padX,
-                    y = yPos,
-                    size = 0.013,
-                    align = RenderText.ALIGN_RIGHT,
-                    color = {0.6, 0.8, 1, 1}
-                })
-                
-                yPos = yPos - 0.018
+            if load and y > content.y + padY then
+                local ft = load.fillTypeName or (load.fillType and tostring(load.fillType)) or "?"
+                self:drawRow(
+                    string.format("#%d  %s", load.number, ft),
+                    string.format("%dL  %dkg", load.volume, load.weight),
+                    y, C.LABEL_COLOR, C.MUTED_COLOR
+                )
+                y = y - 0.020
             end
         end
     end
-    
-    -- Reset Button
-    local buttonWidth = self:px(180)
-    local buttonHeight = self:py(35)
-    local buttonX = content.x + content.width - padX - buttonWidth
-    local buttonY = content.y + padY + buttonHeight/2
-    
-    local resetButton = self:createBlankOverlay(
-        buttonX,
-        buttonY,
-        buttonWidth,
-        buttonHeight,
-        {0.8, 0.3, 0.3, 0.9}
-    )
-    resetButton:setVisible(true)
-    table.insert(self.ui.overlays, resetButton)
-    
-    self.ui.resetBucketButton = {
-        overlay = resetButton,
-        x = buttonX,
-        y = buttonY,
-        width = buttonWidth,
-        height = buttonHeight
-    }
-    
-    -- Reset button text
-    table.insert(self.ui.appTexts, {
-        text = "Reset Session",
-        x = buttonX + buttonWidth/2,
-        y = buttonY + buttonHeight/2 - 0.004,
-        size = 0.012,
-        align = RenderText.ALIGN_CENTER,
-        color = {1, 1, 1, 1}
-    })
-    
-    self:log("Bucket tracker app loaded")
+
+    -- Reset button — use createAppOverlay so it's cleaned on switch
+    local btnW = self:px(140)
+    local btnH = self:py(26)
+    local btnX = content.x + content.width - padX - btnW
+    local btnY = content.y + padY
+
+    self.ui.resetBucketButton = self:drawButton("Reset Session", btnX, btnY, btnW, btnH, C.BTN_RED)
 end
 
 function FarmTabletUI:formatTime(seconds)
-    local hours = math.floor(seconds / 3600)
-    local minutes = math.floor((seconds % 3600) / 60)
-    local secs = math.floor(seconds % 60)
-    
-    if hours > 0 then
-        return string.format("%02d:%02d:%02d", hours, minutes, secs)
-    else
-        return string.format("%02d:%02d", minutes, secs)
+    local h = math.floor(seconds / 3600)
+    local m = math.floor((seconds % 3600) / 60)
+    local s = math.floor(seconds % 60)
+    if h > 0 then
+        return string.format("%02d:%02d:%02d", h, m, s)
     end
+    return string.format("%02d:%02d", m, s)
 end

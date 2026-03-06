@@ -22,22 +22,29 @@ function SettingsUI.new(settings)
 end
 
 function SettingsUI:inject()
-    if self.injected then 
-        return 
+    if self.injected then return end
+
+    local ok, err = pcall(function()
+        self:_doInject()
+    end)
+    if not ok then
+        Logging.error("ft: Settings injection failed: " .. tostring(err))
     end
-    
+end
+
+function SettingsUI:_doInject()
     local page = g_gui.screenControllers[InGameMenu].pageSettings
     if not page then
         Logging.error("ft: Settings page not found - cannot inject settings!")
-        return 
+        return
     end
-    
+
     local layout = page.generalSettingsLayout
     if not layout then
         Logging.error("ft: Settings layout not found!")
-        return 
+        return
     end
-    
+
     local section = UIHelper.createSection(layout, "ft_section")
     if not section then
         Logging.error("ft: Failed to create settings section!")
@@ -125,15 +132,12 @@ function SettingsUI:inject()
     
     self.injected = true
     layout:invalidateLayout()
-    
-    print("Farm Tablet: Settings UI injected successfully")
+    Logging.info("Farm Tablet: Settings UI injected successfully")
 end
 
-function getTextSafe(key)
+local function getTextSafe(key)
     local text = g_i18n:getText(key)
-    if text == nil or text == "" then
-        return key
-    end
+    if text == nil or text == "" then return key end
     return text
 end
 

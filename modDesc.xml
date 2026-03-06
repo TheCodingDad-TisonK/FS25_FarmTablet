@@ -426,5 +426,44 @@
             <uk>Мод податків</uk>
             <ru>Мод налогов</ru>
         </text>
+
+        <text name="ft_app_npc_favor">
+            <en>NPC Favor</en>
+            <de>NPC-Gunst</de>
+            <fr>Faveurs NPC</fr>
+            <pl>Przysługi NPC</pl>
+            <es>Favor NPC</es>
+            <it>Favore NPC</it>
+            <cz>Přízeň NPC</cz>
+            <br>Favor NPC</br>
+            <uk>Прихильність NPC</uk>
+            <ru>Расположение НПС</ru>
+        </text>
+
+        <text name="ft_app_crop_stress">
+            <en>Crop Stress</en>
+            <de>Pflanzenstress</de>
+            <fr>Stress des cultures</fr>
+            <pl>Stres upraw</pl>
+            <es>Estrés de cultivos</es>
+            <it>Stress colture</it>
+            <cz>Stres plodin</cz>
+            <br>Estresse de culturas</br>
+            <uk>Стрес рослин</uk>
+            <ru>Стресс растений</ru>
+        </text>
+
+        <text name="ft_app_soil_fertilizer">
+            <en>Soil Fertilizer</en>
+            <de>Bodendünger</de>
+            <fr>Fertilisation du sol</fr>
+            <pl>Nawożenie gleby</pl>
+            <es>Fertilizante de suelo</es>
+            <it>Fertilizzante suolo</it>
+            <cz>Hnojení půdy</cz>
+            <br>Fertilizante do solo</br>
+            <uk>Добрива ґрунту</uk>
+            <ru>Удобрение почвы</ru>
+        </text>
     </l10n>
 </modDesc>

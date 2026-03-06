@@ -1,54 +1,56 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
+-- FS25 Farm Tablet -- Updates / Changelog App
 -- =========================================================
--- Updates App
--- =========================================================
--- Author: TisonK
--- =========================================================
+
+local CHANGELOG = {
+    { version = "1.1.0.1", notes = {
+        "Workshop app temporarily disabled (WIP)",
+        "Bug fixes and stability improvements",
+    }},
+    { version = "1.1.0.0", notes = {
+        "Initial FS25 release",
+        "Dashboard, Weather, Digging, Bucket Tracker apps",
+        "Pause menu settings integration",
+        "Income Mod and Tax Mod integration",
+    }},
+}
 
 function FarmTabletUI:loadUpdatesApp()
+    self.ui.appTexts = {}
     local content = self.ui.appContentArea
     if not content then return end
-    
+
+    local C    = self.UI_CONSTANTS
     local padX = self:px(15)
-    local padY = self:py(15)
-    local titleY = content.y + content.height - padY - 0.03
-    
-    -- Title
-    table.insert(self.ui.appTexts, {
-        text = "Updates",
-        x = content.x + padX,
-        y = titleY,
-        size = 0.020,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
+    local padY = self:py(12)
 
-    local updates = {
-        "Version 1.1.0.1 == [Workshop app temporarily disabled]",
-        "version 1.1.0.0 == [Release for FS25]",
-        "END OF LIST >> To see lower version updates, please look at changelog on KingMods",
-    }
+    local titleY = content.y + content.height - padY - 0.028
+    self:drawText("Updates & Changelog", content.x + padX, titleY, 0.019,
+        RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
-    local itemsStartY = titleY - 0.035
-    local lineHeight = 0.022
-    
-    for i, updateText in ipairs(updates) do
-        local yPos = itemsStartY - ((i - 1) * lineHeight)
-        
-        if yPos > content.y + padY then
-            local color = updateText:find("Version") and {0.4, 0.8, 0.4, 1} or 
-                         updateText:find("-") and {0.8, 0.8, 0.8, 1} or 
-                         self.UI_CONSTANTS.TEXT_COLOR
-            
-            table.insert(self.ui.appTexts, {
-                text = updateText,
-                x = content.x + padX,
-                y = yPos,
-                size = 0.016,
-                align = RenderText.ALIGN_LEFT,
-                color = color
-            })
+    local y = titleY - 0.032
+
+    for _, entry in ipairs(CHANGELOG) do
+        if y <= content.y + padY then break end
+
+        -- Version header
+        self:drawText("v" .. entry.version, content.x + padX, y, 0.015,
+            RenderText.ALIGN_LEFT, C.SECTION_COLOR)
+        y = y - 0.022
+
+        for _, note in ipairs(entry.notes) do
+            if y <= content.y + padY then break end
+            self:drawText("• " .. note, content.x + padX + self:px(8), y, 0.013,
+                RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+            y = y - 0.019
         end
+
+        y = y - 0.012
+    end
+
+    -- Footer
+    if y > content.y + padY then
+        self:drawText("Full changelog on KingMods.", content.x + padX, content.y + padY + 0.010,
+            0.012, RenderText.ALIGN_LEFT, C.MUTED_COLOR)
     end
 end
