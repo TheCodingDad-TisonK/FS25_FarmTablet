@@ -1,37 +1,55 @@
-# Farm Tablet — FS25 Mod (converted)
+<div align="center">
 
-**Farm Tablet** is a script mod for *Farming Simulator 25* that adds a **compact in-game tablet interface** showing useful information and tools for your farm. It’s a work-in-progress project that aims to grow into an all-in-one farm management tablet with apps and real data displays.  
-Original mod page: https://www.kingmods.net/en/fs25/mods/73757/farm-tablet
+# 📱 FS25 Farm Tablet
+### *In-Game Farm Management Dashboard*
 
----
+[![Downloads](https://img.shields.io/github/downloads/TheCodingDad-TisonK/FS25_FarmTablet/total?style=for-the-badge&logo=github&color=4caf50&logoColor=white)](https://github.com/TheCodingDad-TisonK/FS25_FarmTablet/releases)
+[![Release](https://img.shields.io/github/v/release/TheCodingDad-TisonK/FS25_FarmTablet?style=for-the-badge&logo=tag&color=76c442&logoColor=white)](https://github.com/TheCodingDad-TisonK/FS25_FarmTablet/releases/latest)
+[![License](https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-lightgrey?style=for-the-badge&logo=creativecommons&logoColor=white)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
-## 📌 Overview
+<br>
 
-This mod introduces a tablet UI element into FS25 that you can toggle in-game to view and interact with various stats and functions. It’s currently in **active development**, meaning features are being refined, visual icons are being added, and more apps are planned.
+**All your farm data in one place, without leaving the game.**
 
----
+An in-game tablet interface that consolidates financial stats, weather, field activity, and integrations with sibling mods into a single overlay. Built-in apps for the financial dashboard, weather, digging tracker, and bucket load counter. Optional apps auto-register when compatible mods are detected.
 
-## 🧠 Features
+`Singleplayer` • `Mod integrations` • `Console commands`
 
-- 📱 **In-game Tablet UI** — A tablet display that opens with a key bind (`T` by default).
-- 🗺️ **Dashboard and Apps** — Contains apps like weather and other utilities (still expanding).
-- 🔌 **Integrates with Other Mods** — Works with **Income Mod** and **Tax Mod** for enhanced data views.
-- 🛠️ **Planned Improvements** — UI refinement, icons, sound effects, more apps, and better interaction.
-- 🛠️ **Tablet Settings** -- Can be changed in the pause menu or via the console.
+</div>
 
 ---
 
-## ⚖️ License
+## Built-in Apps
 
-All rights reserved. Unauthorized redistribution, copying, or claiming this mod as your own is **strictly prohibited**.  
-Original author: **TisonK** 
+| App | Description |
+|-----|-------------|
+| Financial Dashboard | Balance, income, expenses, loans, fields, vehicles |
+| Weather | Current conditions and forecast |
+| Digging | Excavation and terrain work tracking |
+| Bucket Tracker | Load counts and weight estimates for loader vehicles |
+| App Store | Browse and manage available apps |
+| Settings | Tablet configuration |
+
+## Mod Integration Apps
+
+These apps appear automatically when the corresponding mod is installed:
+
+| App | Requires |
+|-----|---------|
+| Income Mod | FS25_IncomeMod |
+| Tax Mod | FS25_TaxMod |
 
 ---
 
-## 📬 Support
+## Installation
 
-Report bugs or request help in the comments section of the original mod page.
+Drop the `FS25_FarmTablet.zip` into your mods folder:
+```
+%USERPROFILE%\Documents\My Games\FarmingSimulator2025\mods\
+```
 
 ---
 
-*Enjoy your farming experience!* 🌾
+## License
+
+[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) — All rights reserved. No redistribution or modification without permission.

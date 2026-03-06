@@ -1,5 +1,5 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.0)
+-- FS25 Farm Tablet Mod (version 1.1.0.1)
 -- =========================================================
 -- Central tablet interface for farm management mods
 -- =========================================================
@@ -53,14 +53,14 @@ function FarmTabletSystem.new(settings)
             version = "Built-in",
             enabled = true
         },
-        {
-            id = "workshop",
-            name = "ft_app_workshop",
-            icon = "workshop_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
+        -- {
+        --     id = "workshop",
+        --     name = "ft_app_workshop",
+        --     icon = "workshop_icon",
+        --     developer = "FarmTablet",
+        --     version = "Built-in",
+        --     enabled = true
+        -- },
         {
             id = "weather",
             name = "ft_app_weather",
@@ -162,7 +162,7 @@ function FarmTabletSystem:autoRegisterModApps()
     end
     
     -- Check for Tax Mod
-    if g_TaxManager or _G["TaxMod"] or (g_modIsLoaded and g_modIsLoaded["FS25_TaxMod"]) then
+    if g_TaxManager then
         local taxExists = false
         for _, app in ipairs(self.registeredApps) do
             if app.id == "tax_mod" then
@@ -507,6 +507,64 @@ function FarmTabletSystem:resetBucketTracker()
     }
     
     self:log("Bucket tracker reset")
+end
+
+function FarmTabletSystem:trackBucketLoad()
+    if not self.bucketTracker.isEnabled then
+        return
+    end
+    
+    -- Get current controlled vehicle
+    local vehicle = self:getCurrentBucketVehicle()
+    
+    if vehicle then
+        -- Check if vehicle changed
+        local vehicleChanged = false
+        if self.bucketTracker.currentVehicle ~= vehicle then
+            self.bucketTracker.currentVehicle = vehicle
+            vehicleChanged = true
+        end
+        
+        -- Get current fill info
+        local fillInfo = self:getBucketFillInfo(vehicle)
+        
+        -- Check if load level changed significantly
+        local oldFillLevel = self.bucketTracker.currentFillLevel or 0
+        local fillChange = math.abs(fillInfo.totalFillLevel - oldFillLevel)
+        
+        if fillChange > 10 then -- Only track significant changes (10 liters)
+            -- Store old fill info
+            if oldFillLevel > 0 then
+                table.insert(self.bucketTracker.bucketHistory, {
+                    time = g_currentMission.time or 0,
+                    fillLevel = oldFillLevel,
+                    fillType = self.bucketTracker.currentFillType,
+                    weight = self:estimateBucketWeight({
+                        totalFillLevel = oldFillLevel,
+                        currentFillType = self.bucketTracker.currentFillType
+                    })
+                })
+            end
+            
+            -- Update tracker
+            if fillInfo.totalFillLevel > 0 then
+                self.bucketTracker.totalLoads = self.bucketTracker.totalLoads + 1
+                self.bucketTracker.totalWeight = self.bucketTracker.totalWeight + 
+                    self:estimateBucketWeight(fillInfo)
+            end
+            
+            self.bucketTracker.currentFillLevel = fillInfo.totalFillLevel
+            self.bucketTracker.currentFillType = fillInfo.currentFillType
+            self.bucketTracker.lastLoadTime = g_currentMission.time or 0
+        end
+    else
+        -- No bucket vehicle, reset current
+        if self.bucketTracker.currentVehicle ~= nil then
+            self.bucketTracker.currentVehicle = nil
+            self.bucketTracker.currentFillLevel = 0
+            self.bucketTracker.currentFillType = nil
+        end
+    end
 end
 
 function FarmTabletSystem:saveState()

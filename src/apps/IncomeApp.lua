@@ -25,7 +25,7 @@ function FarmTabletUI:loadIncomeApp()
     })
     
     -- Check if Income Mod is loaded
-    local incomeInstance = g_IncomeManager or _G["FS25_IncomeMod"]
+    local incomeInstance = g_IncomeManager
     
     if not incomeInstance then
         table.insert(self.ui.appTexts, {

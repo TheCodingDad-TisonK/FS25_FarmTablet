@@ -1,5 +1,5 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.0)
+-- FS25 Farm Tablet Mod (version 1.1.0.1)
 -- =========================================================
 -- Central tablet interface for farm management mods
 -- =========================================================
@@ -118,7 +118,7 @@ function InputHandler:unregisterKeyBinding()
     self.keyConstant = nil
     self.tabletManager:log("Input handler cleaned up")
 end-- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.0)
+-- FS25 Farm Tablet Mod (version 1.1.0.1)
 -- =========================================================
 -- Central tablet interface for farm management mods
 -- =========================================================

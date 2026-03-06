@@ -25,7 +25,7 @@ function FarmTabletUI:loadTaxApp()
     })
     
     -- Check if Tax Mod is loaded
-    local taxInstance = g_TaxManager or _G["FS25_TaxMod"]
+    local taxInstance = g_TaxManager
     
     if not taxInstance then
         table.insert(self.ui.appTexts, {

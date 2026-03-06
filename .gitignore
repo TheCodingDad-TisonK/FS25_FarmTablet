@@ -1,0 +1,17 @@
+# Claude Code session data
+.claude/
+
+# Build output
+*.zip
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Giants Editor temp files
+*.i3d.shapes.bak
+*.gdm
+
+# Lua IDE files
+.luarc.json
