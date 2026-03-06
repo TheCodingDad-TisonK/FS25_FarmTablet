@@ -14,6 +14,14 @@
 FarmTabletSystem = {}
 local FarmTabletSystem_mt = Class(FarmTabletSystem)
 
+-- Maps settings.startupApp integer (1-4) to app id string
+FarmTabletSystem.STARTUP_APP_IDS = {
+    [1] = "financial_dashboard",
+    [2] = "app_store",
+    [3] = "weather",
+    [4] = "digging",
+}
+
 function FarmTabletSystem.new(settings)
     local self = setmetatable({}, FarmTabletSystem_mt)
     self.settings = settings
@@ -94,15 +102,6 @@ function FarmTabletSystem.new(settings)
         }
     }
 
-    -- Maps settings.startupApp integer to string app ID
-    FarmTabletSystem.STARTUP_APP_IDS = {
-        [1] = "financial_dashboard",
-        [2] = "app_store",
-        [3] = "weather",
-        [4] = "digging",
-    }
-    
-    -- Current state — map int 1-4 to string app ID
     self.currentApp = FarmTabletSystem.STARTUP_APP_IDS[self.settings.startupApp] or "financial_dashboard"
     self.isTabletOpen = false
     
@@ -249,12 +248,7 @@ function FarmTabletSystem:getPlayerFarmId()
                 return player.farmId
             end
         end
-        
-        if g_currentMission:getFarmId() ~= nil then
-            return g_currentMission:getFarmId()
-        end
     end
-    
     return 1
 end
 

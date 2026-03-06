@@ -21,8 +21,7 @@ function FarmTabletUI.new(settings, tabletSystem)
     
     -- UI state
     self.isTabletOpen = false
-    self.currentApp = "financial_dashboard"
-    
+
     -- UI elements
     self.ui = {
         overlays = {},
@@ -425,38 +424,36 @@ function FarmTabletUI:createAppNavigationButtons()
     local isActive = self.tabletSystem.currentApp
 
     for _, app in ipairs(self.tabletSystem.registeredApps) do
-        if not app.enabled then goto continue end
+        if app.enabled then
+            local x = startX + (#self.ui.appButtons) * (btnW + spacing)
+            if x + btnW > maxX then break end
 
-        local x = startX + (#self.ui.appButtons) * (btnW + spacing)
-        if x + btnW > maxX then break end
+            local isSelected = (app.id == isActive)
+            local overlay = self:createBlankOverlay(
+                x, startY, btnW, btnH,
+                isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
+                           or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
+            )
+            overlay:setVisible(true)
+            table.insert(self.ui.overlays, overlay)
 
-        local isSelected = (app.id == isActive)
-        local overlay = self:createBlankOverlay(
-            x, startY, btnW, btnH,
-            isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
-                       or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
-        )
-        overlay:setVisible(true)
-        table.insert(self.ui.overlays, overlay)
+            table.insert(self.ui.appButtons, {
+                overlay = overlay,
+                x = x, y = startY, width = btnW, height = btnH,
+                appId = app.id
+            })
 
-        table.insert(self.ui.appButtons, {
-            overlay = overlay,
-            x = x, y = startY, width = btnW, height = btnH,
-            appId = app.id
-        })
-
-        local label = app.navLabel or string.sub(app.id, 1, 4):upper()
-        table.insert(self.ui.texts, {
-            text  = label,
-            x     = x + btnW / 2,
-            y     = startY + btnH / 2 - 0.004,
-            size  = 0.009,
-            align = RenderText.ALIGN_CENTER,
-            color = isSelected and self.UI_CONSTANTS.TITLE_COLOR
-                               or  self.UI_CONSTANTS.MUTED_COLOR
-        })
-
-        ::continue::
+            local label = app.navLabel or string.sub(app.id, 1, 4):upper()
+            table.insert(self.ui.texts, {
+                text  = label,
+                x     = x + btnW / 2,
+                y     = startY + btnH / 2 - 0.004,
+                size  = 0.009,
+                align = RenderText.ALIGN_CENTER,
+                color = isSelected and self.UI_CONSTANTS.TITLE_COLOR
+                                   or  self.UI_CONSTANTS.MUTED_COLOR
+            })
+        end
     end
 end
 
@@ -475,8 +472,7 @@ function FarmTabletUI:switchApp(appId)
     end
 
     self.tabletSystem.currentApp = appId
-    self.currentApp = appId
-    
+
     self:log("Switched to app: " .. appId)
 
     if self.settings.soundEffects and g_soundManager then
@@ -506,12 +502,6 @@ function FarmTabletUI:switchApp(appId)
                            or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
             ))
         end
-        -- Update nav label colors
-        for i, buttonInfo in ipairs(self.ui.appButtons) do
-            local labelIdx = #self.ui.overlays - #self.ui.appButtons + i
-            -- labels are in self.ui.texts, update by matching position
-        end
-
         -- Reload content
         self.ui.appTexts = {}
         self:loadCurrentApp()
@@ -694,8 +684,15 @@ function FarmTabletUI:draw()
         return
     end
 
-    -- Render overlays
+    -- Render chrome overlays (nav bar, background, buttons)
     for _, overlay in ipairs(self.ui.overlays or {}) do
+        if overlay ~= nil and overlay.render then
+            overlay:render()
+        end
+    end
+
+    -- Render app-specific overlays (action buttons, etc.)
+    for _, overlay in ipairs(self.ui.appOverlays or {}) do
         if overlay ~= nil and overlay.render then
             overlay:render()
         end

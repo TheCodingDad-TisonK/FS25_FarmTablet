@@ -4,8 +4,12 @@
 
 local CHANGELOG = {
     { version = "1.1.0.1", notes = {
+        "NPC Favor, Seasonal Crop Stress, Soil Fertilizer integrations",
+        "Interactive in-tablet Settings app with toggle buttons",
+        "Drawing helper system: drawRow, drawButton, drawSectionHeader",
+        "Fixed app-specific overlay leak on app switch",
+        "Fixed startup app mapping (now correctly resolves app ID)",
         "Workshop app temporarily disabled (WIP)",
-        "Bug fixes and stability improvements",
     }},
     { version = "1.1.0.0", notes = {
         "Initial FS25 release",
