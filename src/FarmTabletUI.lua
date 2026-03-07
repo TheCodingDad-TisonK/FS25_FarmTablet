@@ -258,7 +258,7 @@ function FarmTabletUI:createTabletElements()
 
     -- Title text
     table.insert(self.ui.texts, {
-        text = "Farm Tablet v1.1.0.6",
+        text = "Farm Tablet v1.1.1.0",
         x = navBarX + navPadX,
         y = navBarY + navHeight / 2 - 0.004,
         size = 0.014,
@@ -357,7 +357,7 @@ function FarmTabletUI:loadDefaultApp()
     local lineHeight = 0.022
     
     local lines = {
-        "Welcome to Farm Tablet v1.1.0.1",
+        "Welcome to Farm Tablet v1.1.1.0",
         "Central interface for farm management",
         "",
         "Select an app from the navigation bar above.",
