@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>1.1.0.6</version>
+    <version>1.1.0.8</version>
     <modName>FS25_FarmTablet</modName>
     <title>
         <en>Farm Tablet</en>
@@ -34,6 +34,105 @@
     <extraSourceFiles>
         <sourceFile filename="src/main.lua" />
     </extraSourceFiles>
+
+    <helpLines>
+        <helpLine>
+            <en>Press T to open or close the Farm Tablet (key is configurable in the pause menu settings).</en>
+            <de>Drücke T, um das Farm-Tablet zu öffnen oder zu schließen (Taste in den Pausemenü-Einstellungen änderbar).</de>
+            <fr>Appuyez sur T pour ouvrir ou fermer la tablette de ferme (touche configurable dans les paramètres).</fr>
+            <pl>Naciśnij T, aby otworzyć lub zamknąć tablet farmowy (klawisz można zmienić w ustawieniach menu pauzy).</pl>
+            <es>Pulsa T para abrir o cerrar la tablet agrícola (tecla configurable en los ajustes del menú de pausa).</es>
+            <it>Premi T per aprire o chiudere il tablet agricolo (tasto configurabile nelle impostazioni del menu di pausa).</it>
+            <cz>Stiskněte T pro otevření nebo zavření farmářského tabletu (klávesu lze změnit v nastavení nabídky pauzy).</cz>
+            <br>Pressione T para abrir ou fechar o tablet agrícola (tecla configurável nas configurações do menu de pausa).</br>
+            <uk>Натисніть T, щоб відкрити або закрити фермерський планшет (клавіша налаштовується в меню паузи).</uk>
+            <ru>Нажмите T, чтобы открыть или закрыть фермерский планшет (клавиша настраивается в меню паузы).</ru>
+        </helpLine>
+        <helpLine>
+            <en>Dashboard: Monitor your farm balance, income, expenses and daily profit at a glance.</en>
+            <de>Dashboard: Überwache Kontostand, Einnahmen, Ausgaben und Tagesgewinn auf einen Blick.</de>
+            <fr>Tableau de bord : surveillez le solde, les revenus, les dépenses et le bénéfice journalier en un coup d'œil.</fr>
+            <pl>Pulpit: Monitoruj saldo farmy, przychody, wydatki i dzienny zysk na jednym ekranie.</pl>
+            <es>Panel: Controla tu saldo, ingresos, gastos y ganancias diarias de un vistazo.</es>
+            <it>Cruscotto: monitora saldo, entrate, uscite e profitto giornaliero in un colpo d'occhio.</it>
+            <cz>Řídicí panel: Sledujte zůstatek farmy, příjmy, výdaje a denní zisk na jednom místě.</cz>
+            <br>Painel: Monitore saldo, receitas, despesas e lucro diário em um único lugar.</br>
+            <uk>Панель: Відстежуйте баланс ферми, доходи, витрати та щоденний прибуток.</uk>
+            <ru>Панель: Отслеживайте баланс фермы, доходы, расходы и ежедневную прибыль.</ru>
+        </helpLine>
+        <helpLine>
+            <en>Workshop: Walk near a vehicle and inspect its fuel level, wear condition and operating hours.</en>
+            <de>Werkstatt: Gehe zu einem Fahrzeug und prüfe Kraftstoffstand, Verschleiß und Betriebsstunden.</de>
+            <fr>Atelier : approchez-vous d'un véhicule pour voir son niveau de carburant, son usure et ses heures de fonctionnement.</fr>
+            <pl>Warsztat: Podejdź do pojazdu i sprawdź poziom paliwa, zużycie i godziny pracy.</pl>
+            <es>Taller: Acércate a un vehículo e inspecciona su combustible, desgaste y horas de operación.</es>
+            <it>Officina: avvicinati a un veicolo per controllare carburante, usura e ore operative.</it>
+            <cz>Dílna: Přiblížte se k vozidlu a zkontrolujte palivo, opotřebení a provozní hodiny.</cz>
+            <br>Oficina: Aproxime-se de um veículo para inspecionar combustível, desgaste e horas de operação.</br>
+            <uk>Майстерня: Підійдіть до транспортного засобу та перевірте рівень палива, знос і години роботи.</uk>
+            <ru>Мастерская: Подойдите к технике и проверьте уровень топлива, износ и часы работы.</ru>
+        </helpLine>
+        <helpLine>
+            <en>Field Manager: See all owned fields with their crop type and current growth stage at a glance.</en>
+            <de>Feldmanager: Alle eigenen Felder mit Fruchtart und aktuellem Wachstumsstadium auf einen Blick.</de>
+            <fr>Gestionnaire de champs : visualisez tous vos champs avec leur culture et leur stade de croissance.</fr>
+            <pl>Menedżer pól: Wszystkie własne pola z rodzajem uprawy i stanem wzrostu na jednym ekranie.</pl>
+            <es>Gestor de campos: Ve todos tus campos con el tipo de cultivo y el estado de crecimiento de un vistazo.</es>
+            <it>Gestione campi: vedi tutti i campi di proprietà con coltura e stadio di crescita in un colpo d'occhio.</it>
+            <cz>Správce polí: Přehled všech vlastních polí s typem plodiny a aktuálním stádiem růstu.</cz>
+            <br>Gerenciador de campos: Veja todos os campos próprios com tipo de cultura e estágio de crescimento.</br>
+            <uk>Менеджер полів: Перегляньте всі власні поля з типом культури та поточною стадією росту.</uk>
+            <ru>Менеджер полей: Все ваши поля с типом культуры и текущей стадией роста на одном экране.</ru>
+        </helpLine>
+        <helpLine>
+            <en>Animals: Monitor all animal pens — food, water and cleanliness levels shown with progress bars.</en>
+            <de>Tiere: Alle Tiergehege überwachen – Futter, Wasser und Sauberkeit mit Balkenanzeige.</de>
+            <fr>Animaux : surveillez tous les enclos — nourriture, eau et propreté affichés avec des barres de progression.</fr>
+            <pl>Zwierzęta: Monitoruj wszystkie zagrody – poziomy pożywienia, wody i czystości z paskami postępu.</pl>
+            <es>Animales: Supervisa todos los establos — alimentación, agua y limpieza mostrados con barras de progreso.</es>
+            <it>Animali: monitora tutti i recinti — cibo, acqua e pulizia con barre di avanzamento.</it>
+            <cz>Zvířata: Sledujte všechny výběhy — krmivo, voda a čistota zobrazené s ukazateli průběhu.</cz>
+            <br>Animais: Monitore todos os currais — ração, água e limpeza exibidos com barras de progresso.</br>
+            <uk>Тварини: Відстежуйте всі загони — корм, вода та чистота з індикаторами прогресу.</uk>
+            <ru>Животные: Мониторинг всех загонов — корм, вода и чистота с индикаторами прогресса.</ru>
+        </helpLine>
+        <helpLine>
+            <en>App Store: Browse available apps. Companion mod apps (Income, Tax, NPC Favor, etc.) appear automatically when those mods are loaded.</en>
+            <de>App Store: Verfügbare Apps durchsuchen. Companion-Mod-Apps erscheinen automatisch, wenn die Mods geladen sind.</de>
+            <fr>Boutique d'apps : parcourez les apps disponibles. Les apps des mods compagnons apparaissent automatiquement si ces mods sont chargés.</fr>
+            <pl>Sklep z aplikacjami: Przeglądaj dostępne aplikacje. Aplikacje modów towarzyszących pojawiają się automatycznie po załadowaniu modów.</pl>
+            <es>Tienda de apps: Explora las apps disponibles. Las apps de mods complementarios aparecen automáticamente al cargar esos mods.</es>
+            <it>Negozio app: sfoglia le app disponibili. Le app dei mod companion appaiono automaticamente quando i mod sono caricati.</it>
+            <cz>Obchod s aplikacemi: Procházejte dostupné aplikace. Aplikace doplňkových modů se zobrazují automaticky při načtení modů.</cz>
+            <br>Loja de aplicativos: Navegue pelas apps disponíveis. Apps de mods complementares aparecem automaticamente quando esses mods estão carregados.</br>
+            <uk>Магазин додатків: Переглядайте доступні додатки. Додатки супутніх модів з'являються автоматично при їх завантаженні.</uk>
+            <ru>Магазин приложений: Просматривайте доступные приложения. Приложения модов-компаньонов появляются автоматически при загрузке этих модов.</ru>
+        </helpLine>
+        <helpLine>
+            <en>Weather: View today's forecast, temperature, wind and upcoming conditions to plan your work ahead.</en>
+            <de>Wetter: Tagesvorhersage, Temperatur, Wind und kommende Bedingungen einsehen, um die Arbeit zu planen.</de>
+            <fr>Météo : consultez les prévisions, la température, le vent et les conditions à venir pour planifier votre travail.</fr>
+            <pl>Pogoda: Sprawdź dzisiejszą prognozę, temperaturę, wiatr i nadchodzące warunki, by planować pracę z wyprzedzeniem.</pl>
+            <es>Clima: Consulta el pronóstico de hoy, temperatura, viento y condiciones próximas para planificar tu trabajo.</es>
+            <it>Meteo: visualizza le previsioni, temperatura, vento e condizioni future per pianificare il lavoro.</it>
+            <cz>Počasí: Zobrazte dnešní předpověď, teplotu, vítr a nadcházející podmínky pro plánování práce.</cz>
+            <br>Tempo: Veja a previsão de hoje, temperatura, vento e condições futuras para planejar seu trabalho.</br>
+            <uk>Погода: Переглядайте прогноз погоди, температуру, вітер та умови наступних днів.</uk>
+            <ru>Погода: Просматривайте прогноз, температуру, ветер и предстоящие условия для планирования работ.</ru>
+        </helpLine>
+        <helpLine>
+            <en>Settings for the Farm Tablet can be changed in the pause menu under Settings, or via console commands — type 'tablet' in the developer console for a full list.</en>
+            <de>Einstellungen für das Farm-Tablet können im Pausemenü unter Einstellungen oder per Konsolenbefehlen geändert werden — gib 'tablet' in der Entwicklerkonsole ein.</de>
+            <fr>Les paramètres de la tablette peuvent être modifiés dans le menu pause sous Paramètres, ou via les commandes console — tapez 'tablet' dans la console développeur.</fr>
+            <pl>Ustawienia tabletu można zmienić w menu pauzy pod Ustawieniami lub przez komendy konsoli — wpisz 'tablet' w konsoli dewelopera.</pl>
+            <es>Los ajustes de la tablet se pueden cambiar en el menú de pausa bajo Ajustes, o mediante comandos de consola — escribe 'tablet' en la consola de desarrollo.</es>
+            <it>Le impostazioni del tablet possono essere modificate nel menu pausa sotto Impostazioni o tramite comandi console — digita 'tablet' nella console di sviluppo.</it>
+            <cz>Nastavení tabletu lze změnit v nabídce pauzy pod Nastavení nebo pomocí příkazů konzole — zadejte 'tablet' do konzole vývojáře.</cz>
+            <br>As configurações do tablet podem ser alteradas no menu de pausa em Configurações ou por comandos do console — digite 'tablet' no console do desenvolvedor.</br>
+            <uk>Налаштування планшета можна змінити в меню паузи або через команди консолі — введіть 'tablet' у консолі розробника.</uk>
+            <ru>Настройки планшета можно изменить в меню паузы или через команды консоли — введите 'tablet' в консоли разработчика.</ru>
+        </helpLine>
+    </helpLines>
 
     <l10n>
         <text name="ft_section">
@@ -362,6 +461,32 @@
             <ru>Мастерская</ru>
         </text>
         
+        <text name="ft_app_field_status">
+            <en>Field Manager</en>
+            <de>Feldmanager</de>
+            <fr>Gestionnaire de champs</fr>
+            <pl>Menedżer pól</pl>
+            <es>Gestor de campos</es>
+            <it>Gestione campi</it>
+            <cz>Správce polí</cz>
+            <br>Gerenciador de campos</br>
+            <uk>Менеджер полів</uk>
+            <ru>Менеджер полей</ru>
+        </text>
+
+        <text name="ft_app_animals">
+            <en>Animals</en>
+            <de>Tiere</de>
+            <fr>Animaux</fr>
+            <pl>Zwierzęta</pl>
+            <es>Animales</es>
+            <it>Animali</it>
+            <cz>Zvířata</cz>
+            <br>Animais</br>
+            <uk>Тварини</uk>
+            <ru>Животные</ru>
+        </text>
+
         <text name="ft_app_weather">
             <en>Weather</en>
             <de>Wetter</de>

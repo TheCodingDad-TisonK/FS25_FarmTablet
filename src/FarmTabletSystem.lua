@@ -65,14 +65,33 @@ function FarmTabletSystem.new(settings)
             version = "Built-in",
             enabled = true
         },
-        -- {
-        --     id = "workshop",
-        --     name = "ft_app_workshop",
-        --     icon = "workshop_icon",
-        --     developer = "FarmTablet",
-        --     version = "Built-in",
-        --     enabled = true
-        -- },
+        {
+            id = "workshop",
+            name = "ft_app_workshop",
+            navLabel = "WRK",
+            icon = "workshop_icon",
+            developer = "FarmTablet",
+            version = "Built-in",
+            enabled = true
+        },
+        {
+            id = "field_status",
+            name = "ft_app_field_status",
+            navLabel = "FLD",
+            icon = "field_icon",
+            developer = "FarmTablet",
+            version = "Built-in",
+            enabled = true
+        },
+        {
+            id = "animals",
+            name = "ft_app_animals",
+            navLabel = "ANI",
+            icon = "animals_icon",
+            developer = "FarmTablet",
+            version = "Built-in",
+            enabled = true
+        },
         {
             id = "weather",
             name = "ft_app_weather",
@@ -104,6 +123,7 @@ function FarmTabletSystem.new(settings)
 
     self.currentApp = FarmTabletSystem.STARTUP_APP_IDS[self.settings.startupApp] or "financial_dashboard"
     self.isTabletOpen = false
+    self.workshopSelectedVehicle = nil
     
     -- Live data cache
     self.liveCache = {

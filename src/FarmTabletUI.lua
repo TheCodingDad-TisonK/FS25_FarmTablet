@@ -394,8 +394,12 @@ function FarmTabletUI:loadCurrentApp()
         self:loadUpdatesApp()
     elseif appId == "weather" then
         self:loadWeatherApp()
-    -- elseif appId == "workshop" then
-    --     self:loadWorkshopApp()
+    elseif appId == "workshop" then
+        self:loadWorkshopApp()
+    elseif appId == "field_status" then
+        self:loadFieldStatusApp()
+    elseif appId == "animals" then
+        self:loadAnimalHusbandryApp()
     elseif appId == "digging" then
         self:loadDiggingApp()
     elseif appId == "bucket_tracker" then
@@ -712,6 +716,8 @@ function FarmTabletUI:destroyTabletUI()
         enableTaxButton = nil,
         disableTaxButton = nil,
         settingsToggleButtons = nil,
+        workshopVehicleButtons = {},
+        workshopOpenButton = nil,
     }
 end
 
@@ -817,11 +823,11 @@ function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
     -- Check for app-specific buttons (NO conversion needed)
     local appId = self.tabletSystem.currentApp
     
-    -- if appId == "workshop" then
-    --     if self:handleWorkshopMouseEvent(posX, posY) then
-    --         return true
-    --     end
-    if appId == "settings" then
+    if appId == "workshop" then
+        if self:handleWorkshopMouseEvent(posX, posY) then
+            return true
+        end
+    elseif appId == "settings" then
         if self:handleSettingsAppMouseEvent(posX, posY) then
             return true
         end
@@ -841,19 +847,6 @@ function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
     
     return false
 end
-
--- -- Workshop app mouse events
--- function FarmTabletUI:handleWorkshopMouseEvent(posX, posY)
---     if self.ui.workshopButton then
---         local b = self.ui.workshopButton
---         if posX >= b.x and posX <= b.x + b.width and
---            posY >= b.y and posY <= b.y + b.height then
---             self:openWorkshopForNearestVehicle(15)
---             return true
---         end
---     end
---     return false
--- end
 
 -- Bucket tracker app mouse events
 function FarmTabletUI:handleBucketTrackerMouseEvent(posX, posY)

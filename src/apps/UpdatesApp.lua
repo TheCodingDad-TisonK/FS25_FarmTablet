@@ -3,6 +3,15 @@
 -- =========================================================
 
 local CHANGELOG = {
+    { version = "1.1.0.8", notes = {
+        "Added in-game help section in the pause menu (F1 / Help tab)",
+        "Help covers all built-in apps, open key, App Store and console commands",
+    }},
+    { version = "1.1.0.7", notes = {
+        "New app: Workshop — detect nearby vehicles, view diagnostics, open workshop",
+        "New app: Field Manager — all owned fields with crop type and growth state",
+        "New app: Animals — animal pen food, water, cleanliness with progress bars",
+    }},
     { version = "1.1.0.6", notes = {
         "Scale-aware layout helpers: titleH, lineH, smallLineH, sectionGap",
         "Section headers now render with a left accent bar for visual hierarchy",
