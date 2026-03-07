@@ -163,55 +163,27 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
     local result = {}
     if not (g_currentMission and g_currentMission.vehicles) then return result end
 
-    local farmId = self.tabletSystem:getPlayerFarmId()
-    local px, pz = 0, 0
-    -- g_localPlayer is the correct FS25 reference for the local player character
-    pcall(function()
-        local player = g_localPlayer
-        if player and player.rootNode then
-            local x, _, z = getWorldTranslation(player.rootNode)
-            px, pz = x, z
-        end
-    end)
-    -- Fallback to g_currentMission.player if g_localPlayer unavailable
-    if px == 0 and pz == 0 then
-        pcall(function()
-            local player = g_currentMission and g_currentMission.player
-            if player and player.rootNode then
-                local x, _, z = getWorldTranslation(player.rootNode)
-                px, pz = x, z
-            end
-        end)
+    -- Get player position — same approach as DiggingApp (confirmed working)
+    local px, py, pz = 0, 0, 0
+    local player = g_currentMission.player
+    if player and player.rootNode then
+        px, py, pz = getWorldTranslation(player.rootNode)
     end
 
     for _, v in pairs(g_currentMission.vehicles) do
-        -- Use v:isa(Vehicle) like DiggingApp — filters out non-vehicle entries safely
+        -- Same vehicle check pattern as DiggingApp
         local isVehicle = false
         pcall(function() isVehicle = v:isa(Vehicle) end)
+
         if isVehicle and v.spec_motorized and v.rootNode then
-            local ok, vx, vz = false, 0, 0
-            pcall(function()
-                local x, _, z = getWorldTranslation(v.rootNode)
-                vx, vz = x, z
-                ok = true
-            end)
-            if ok then
-                local dist = MathUtil.vector2Length(vx - px, vz - pz)
-                if dist <= radius then
-                    -- Include own farm vehicles and any unowned vehicle
-                    local ownerId = nil
-                    pcall(function()
-                        ownerId = (v.getOwnerFarmId and v:getOwnerFarmId()) or v.ownerFarmId or v.farmId
-                    end)
-                    if ownerId == nil or ownerId == 0 or ownerId == farmId then
-                        local name = ""
-                        pcall(function()
-                            name = (v.getFullName and v:getFullName()) or v.configFileName or "Vehicle"
-                        end)
-                        if name == "" then name = "Vehicle" end
-                        table.insert(result, { vehicle = v, name = name, distance = dist })
-                    end
-                end
+            local vx, vy, vz = getWorldTranslation(v.rootNode)
+            local dist = MathUtil.vector2Length(vx - px, vz - pz)
+
+            if dist <= radius then
+                -- No ownership filter: player is 20 m away, that's close enough
+                local name = (v.getFullName and v:getFullName())
+                          or v.configFileName or "Vehicle"
+                table.insert(result, { vehicle = v, name = name, distance = dist })
             end
         end
     end

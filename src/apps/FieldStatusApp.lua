@@ -106,34 +106,8 @@ function FarmTabletUI:getOwnedFields(farmId)
     local ok, allFields = pcall(function() return fieldManager:getFields() end)
     if not ok or not allFields then return fields end
 
-    -- Build a set of owned farmland IDs from g_farmlandManager
-    local ownedFarmlandIds = {}
-    pcall(function()
-        local fm = g_farmlandManager
-        if fm and fm.farmlands then
-            for _, farmland in pairs(fm.farmlands) do
-                if farmland.ownerId == farmId then
-                    ownedFarmlandIds[farmland.id] = true
-                end
-            end
-        end
-    end)
-
     for _, field in pairs(allFields) do
-        local owned = false
-        -- Method 1: field has farmlandId property -> look up in owned set
-        if field.farmlandId and ownedFarmlandIds[field.farmlandId] then
-            owned = true
-        end
-        -- Method 2: field.farmland.ownerId (older API)
-        if not owned and field.farmland and field.farmland.ownerId == farmId then
-            owned = true
-        end
-        -- Method 3: field directly stores ownerFarmId
-        if not owned and field.ownerFarmId == farmId then
-            owned = true
-        end
-        if owned then
+        if self:isFieldOwnedBy(field, farmId) then
             table.insert(fields, field)
         end
     end
@@ -142,6 +116,37 @@ function FarmTabletUI:getOwnedFields(farmId)
         return (a.fieldId or 0) < (b.fieldId or 0)
     end)
     return fields
+end
+
+-- Checks field ownership using FS25 APIs, with multiple fallbacks.
+function FarmTabletUI:isFieldOwnedBy(field, farmId)
+    -- Method 1: bounding box center -> getFarmlandIdAtWorldPos (confirmed FS25 API)
+    if field.boundingBox and g_farmlandManager then
+        local ok, owned = pcall(function()
+            local bb = field.boundingBox
+            local cx = (bb.minX + bb.maxX) / 2
+            local cz = (bb.minZ + bb.maxZ) / 2
+            local farmlandId = g_farmlandManager:getFarmlandIdAtWorldPos(cx, cz)
+            if farmlandId and farmlandId > 0 then
+                local farmland = g_farmlandManager:getFarmlandById(farmlandId)
+                return farmland ~= nil and farmland.ownerId == farmId
+            end
+            return false
+        end)
+        if ok and owned then return true end
+    end
+
+    -- Method 2: field.farmland direct reference
+    if field.farmland and field.farmland.ownerId == farmId then
+        return true
+    end
+
+    -- Method 3: direct ownerFarmId on field
+    if field.ownerFarmId == farmId then
+        return true
+    end
+
+    return false
 end
 
 -- Returns cropName, stateStr, stateColor, phase ("ready"|"growing"|"empty")
