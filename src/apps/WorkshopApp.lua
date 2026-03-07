@@ -163,55 +163,37 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
     local result = {}
     if not (g_currentMission and g_currentMission.vehicles) then return result end
 
-    local farmId = self.tabletSystem:getPlayerFarmId()
-    local px, pz = 0, 0
-    -- g_localPlayer is the correct FS25 reference for the local player character
-    pcall(function()
-        local player = g_localPlayer
-        if player and player.rootNode then
-            local x, _, z = getWorldTranslation(player.rootNode)
-            px, pz = x, z
-        end
-    end)
-    -- Fallback to g_currentMission.player if g_localPlayer unavailable
-    if px == 0 and pz == 0 then
-        pcall(function()
-            local player = g_currentMission and g_currentMission.player
-            if player and player.rootNode then
-                local x, _, z = getWorldTranslation(player.rootNode)
-                px, pz = x, z
+    -- Player position: g_localPlayer is the reliable reference for the local client.
+    -- g_currentMission.player can be nil or lack a rootNode when the tablet is open.
+    local px, py, pz = 0, 0, 0
+    if g_localPlayer then
+        if type(g_localPlayer.getIsInVehicle) == "function" and g_localPlayer:getIsInVehicle() then
+            local cv = g_localPlayer:getCurrentVehicle()
+            if cv and cv.rootNode then
+                pcall(function() px, py, pz = getWorldTranslation(cv.rootNode) end)
             end
-        end)
+        end
+        if px == 0 and py == 0 and pz == 0 and g_localPlayer.rootNode then
+            pcall(function() px, py, pz = getWorldTranslation(g_localPlayer.rootNode) end)
+        end
+    end
+    if px == 0 and py == 0 and pz == 0 then
+        local player = g_currentMission and g_currentMission.player
+        if player and player.rootNode then
+            pcall(function() px, py, pz = getWorldTranslation(player.rootNode) end)
+        end
     end
 
     for _, v in pairs(g_currentMission.vehicles) do
-        -- Use v:isa(Vehicle) like DiggingApp — filters out non-vehicle entries safely
-        local isVehicle = false
-        pcall(function() isVehicle = v:isa(Vehicle) end)
-        if isVehicle and v.spec_motorized and v.rootNode then
-            local ok, vx, vz = false, 0, 0
-            pcall(function()
-                local x, _, z = getWorldTranslation(v.rootNode)
-                vx, vz = x, z
-                ok = true
-            end)
-            if ok then
-                local dist = MathUtil.vector2Length(vx - px, vz - pz)
-                if dist <= radius then
-                    -- Include own farm vehicles and any unowned vehicle
-                    local ownerId = nil
-                    pcall(function()
-                        ownerId = (v.getOwnerFarmId and v:getOwnerFarmId()) or v.ownerFarmId or v.farmId
-                    end)
-                    if ownerId == nil or ownerId == 0 or ownerId == farmId then
-                        local name = ""
-                        pcall(function()
-                            name = (v.getFullName and v:getFullName()) or v.configFileName or "Vehicle"
-                        end)
-                        if name == "" then name = "Vehicle" end
-                        table.insert(result, { vehicle = v, name = name, distance = dist })
-                    end
-                end
+        -- Mirror DiggingApp exactly: direct isa check, no pcall, no spec pre-filter
+        if v:isa(Vehicle) and v.rootNode then
+            local vx, vy, vz = getWorldTranslation(v.rootNode)
+            local dist = MathUtil.vector2Length(vx - px, vz - pz)
+
+            if dist <= radius then
+                local name = (v.getFullName and v:getFullName())
+                          or v.configFileName or "Vehicle"
+                table.insert(result, { vehicle = v, name = name, distance = dist })
             end
         end
     end

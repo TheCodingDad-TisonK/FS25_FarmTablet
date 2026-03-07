@@ -40,9 +40,9 @@ function FarmTabletUI:loadFieldStatusApp()
     local countReady, countGrowing, countEmpty = 0, 0, 0
     for _, field in ipairs(fields) do
         local _, _, _, phase = self:getFieldCropInfo(field)
-        if phase == "ready"   then countReady   = countReady   + 1
-        elseif phase == "growing" then countGrowing = countGrowing + 1
-        else                        countEmpty   = countEmpty   + 1
+        if phase == "ready"        then countReady   = countReady   + 1
+        elseif phase == "growing"  then countGrowing = countGrowing + 1
+        else                            countEmpty   = countEmpty   + 1
         end
     end
 
@@ -66,8 +66,8 @@ function FarmTabletUI:loadFieldStatusApp()
     y = y - 0.005
 
     -- Column headers
-    self:drawText("#",     content.x + padX,              y, 0.011, RenderText.ALIGN_LEFT,  C.MUTED_COLOR)
-    self:drawText("CROP",  content.x + padX + self:px(30), y, 0.011, RenderText.ALIGN_LEFT,  C.MUTED_COLOR)
+    self:drawText("#",     content.x + padX,               y, 0.011, RenderText.ALIGN_LEFT,  C.MUTED_COLOR)
+    self:drawText("CROP",  content.x + padX + self:px(30),  y, 0.011, RenderText.ALIGN_LEFT,  C.MUTED_COLOR)
     self:drawText("STATE", content.x + content.width - padX, y, 0.011, RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
     y = y - 0.019
 
@@ -77,7 +77,8 @@ function FarmTabletUI:loadFieldStatusApp()
         if y <= content.y + padY then break end
 
         local cropName, stateStr, stateColor = self:getFieldCropInfo(field)
-        local fid = tostring(field.fieldId or "?")
+        -- Use farmland.id as display ID (same as CropStress/SoilFertilizer)
+        local fid = tostring((field.farmland and field.farmland.id) or field.fieldId or "?")
 
         self:drawText(fid,
             content.x + padX, y, 0.013, RenderText.ALIGN_LEFT, C.VALUE_COLOR)
@@ -97,49 +98,28 @@ function FarmTabletUI:loadFieldStatusApp()
     end
 end
 
--- Returns all fields owned by farmId, sorted by field ID.
+-- Returns all fields owned by farmId, sorted by farmland ID.
+-- Uses field.farmland.ownerId — confirmed valid in FS25 by CropStress/SoilFertilizer apps.
 function FarmTabletUI:getOwnedFields(farmId)
     local fields = {}
     local fieldManager = g_currentMission and g_currentMission.fieldManager
     if not fieldManager then return fields end
 
-    local ok, allFields = pcall(function() return fieldManager:getFields() end)
-    if not ok or not allFields then return fields end
-
-    -- Build a set of owned farmland IDs from g_farmlandManager
-    local ownedFarmlandIds = {}
-    pcall(function()
-        local fm = g_farmlandManager
-        if fm and fm.farmlands then
-            for _, farmland in pairs(fm.farmlands) do
-                if farmland.ownerId == farmId then
-                    ownedFarmlandIds[farmland.id] = true
-                end
-            end
-        end
-    end)
+    local allFields = fieldManager:getFields()
+    if not allFields then return fields end
 
     for _, field in pairs(allFields) do
-        local owned = false
-        -- Method 1: field has farmlandId property -> look up in owned set
-        if field.farmlandId and ownedFarmlandIds[field.farmlandId] then
-            owned = true
-        end
-        -- Method 2: field.farmland.ownerId (older API)
-        if not owned and field.farmland and field.farmland.ownerId == farmId then
-            owned = true
-        end
-        -- Method 3: field directly stores ownerFarmId
-        if not owned and field.ownerFarmId == farmId then
-            owned = true
-        end
-        if owned then
+        -- field.farmland is the Farmland object (confirmed by SeasonalCropStress + SoilFertilizer)
+        -- farmland.ownerId is the owning farm's ID
+        if field.farmland and field.farmland.ownerId == farmId then
             table.insert(fields, field)
         end
     end
 
     table.sort(fields, function(a, b)
-        return (a.fieldId or 0) < (b.fieldId or 0)
+        local idA = (a.farmland and a.farmland.id) or a.fieldId or 0
+        local idB = (b.farmland and b.farmland.id) or b.fieldId or 0
+        return idA < idB
     end)
     return fields
 end
@@ -147,15 +127,15 @@ end
 -- Returns cropName, stateStr, stateColor, phase ("ready"|"growing"|"empty")
 -- for a single field object.
 function FarmTabletUI:getFieldCropInfo(field)
-    local C         = self.UI_CONSTANTS
-    local cropName  = "Empty"
-    local stateStr  = "–"
+    local C          = self.UI_CONSTANTS
+    local cropName   = "Empty"
+    local stateStr   = "-"
     local stateColor = C.MUTED_COLOR
-    local phase     = "empty"
+    local phase      = "empty"
 
+    -- fruitType: 0 or nil means no crop planted
     local fruitType = field.fruitType
     if not fruitType or fruitType == 0 then
-        -- Empty — check if soil is prepared
         local groundType = field.maxGroundType or 0
         if groundType > 0 then
             stateStr   = "Prepared"
@@ -164,7 +144,7 @@ function FarmTabletUI:getFieldCropInfo(field)
         return cropName, stateStr, stateColor, phase
     end
 
-    -- Resolve crop name
+    -- Resolve crop name from fruitType index
     if g_fruitTypeManager then
         pcall(function()
             local ft = g_fruitTypeManager:getFruitTypeByIndex(fruitType)
@@ -184,8 +164,38 @@ function FarmTabletUI:getFieldCropInfo(field)
         end)
     end
 
-    -- Growth / harvest state
-    local growth = field.maxFieldStatus
+    -- Growth state
+    -- NOTE: In FS25 field.maxFieldStatus can be a table (per-cell data).
+    -- Confirmed from NPC Favor log: "growth=table: 0x..."
+    -- We extract a scalar from it, or fall back to maxGrowthState.
+    local growth = nil
+    pcall(function()
+        local raw = field.maxFieldStatus
+        if type(raw) == "number" then
+            growth = raw
+        elseif type(raw) == "table" then
+            -- Try common scalar properties first
+            if type(raw.value) == "number" then
+                growth = raw.value
+            elseif type(raw.percentage) == "number" then
+                growth = raw.percentage
+            else
+                -- Compute max from numeric table values
+                local maxV = 0
+                for _, v in pairs(raw) do
+                    if type(v) == "number" and v > maxV then maxV = v end
+                end
+                if maxV > 0 then growth = maxV end
+            end
+        end
+        -- FS25 alternative property
+        if growth == nil and type(field.maxGrowthState) == "number" then
+            -- maxGrowthState is typically an integer stage (0-7)
+            -- normalise against typical max stage of 7
+            growth = field.maxGrowthState / 7.0
+        end
+    end)
+
     if growth ~= nil then
         if growth >= 0.95 then
             stateStr   = "Ready!"
