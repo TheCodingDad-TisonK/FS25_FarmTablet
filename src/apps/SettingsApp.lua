@@ -13,13 +13,14 @@ function FarmTabletUI:loadSettingsApp()
     local padY = self:py(12)
     local s    = self.settings
 
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Settings", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
-    local version = "v1.1.0.1"
+    local version = "v1.1.0.6"
     self:drawText(version, content.x + content.width - padX, titleY, 0.012,
         RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
 
+    self:drawDivider(titleY - self:py(4))
     local y = titleY - 0.032
     self:drawSectionHeader("TABLET", y)
     y = y - 0.024

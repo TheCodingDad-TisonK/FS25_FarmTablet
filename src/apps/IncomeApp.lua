@@ -11,8 +11,9 @@ function FarmTabletUI:loadIncomeApp()
     local padX = self:px(15)
     local padY = self:py(12)
 
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Income Mod", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
+    self:drawDivider(titleY - self:py(4))
 
     local inst = g_IncomeManager or _G["Income"]
 

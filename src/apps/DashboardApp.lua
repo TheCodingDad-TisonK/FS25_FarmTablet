@@ -18,7 +18,7 @@ function FarmTabletUI:loadDashboardApp()
     local farmId = sys:getPlayerFarmId()
 
     -- Title
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Farm Dashboard", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
 
     -- Farm name (if available)
@@ -29,7 +29,7 @@ function FarmTabletUI:loadDashboardApp()
             RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
     end
 
-    -- Divider
+    self:drawDivider(titleY - self:py(4))
     local y = titleY - 0.028
 
     -- === Finance ===
