@@ -100,24 +100,33 @@ end
 -- Returns table of pen data for all animal placeables owned by farmId.
 function FarmTabletUI:getAnimalPens(farmId)
     local result = {}
-    local ps = g_currentMission and g_currentMission.placeableSystem
-    if not ps then return result end
+    if not g_currentMission then return result end
 
-    local ok, placeables = pcall(function() return ps:getPlaceables() end)
-    if not ok or not placeables then return result end
+    -- FS25: placeables live in g_currentMission.placeableSystem
+    -- Try getPlaceables() first, fallback to direct .placeables table
+    local placeables = nil
+    pcall(function()
+        local ps = g_currentMission.placeableSystem
+        if ps then
+            if ps.getPlaceables then
+                placeables = ps:getPlaceables()
+            elseif ps.placeables then
+                placeables = ps.placeables
+            end
+        end
+    end)
+    if not placeables then return result end
 
     for _, placeable in pairs(placeables) do
-        -- Ownership check
-        local ownerId = nil
-        pcall(function()
-            if placeable.getOwnerFarmId then
-                ownerId = placeable:getOwnerFarmId()
-            elseif placeable.ownerFarmId then
-                ownerId = placeable.ownerFarmId
-            elseif placeable.farmId then
-                ownerId = placeable.farmId
-            end
-        end)
+        -- Ownership: FS25 uses .ownerFarmId as a direct property
+        local ownerId = placeable.ownerFarmId or placeable.farmId
+        if ownerId == nil then
+            pcall(function()
+                if placeable.getOwnerFarmId then
+                    ownerId = placeable:getOwnerFarmId()
+                end
+            end)
+        end
 
         if ownerId == farmId then
             local aSpec = placeable.spec_husbandryAnimals

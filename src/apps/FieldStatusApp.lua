@@ -106,8 +106,34 @@ function FarmTabletUI:getOwnedFields(farmId)
     local ok, allFields = pcall(function() return fieldManager:getFields() end)
     if not ok or not allFields then return fields end
 
+    -- Build a set of owned farmland IDs from g_farmlandManager
+    local ownedFarmlandIds = {}
+    pcall(function()
+        local fm = g_farmlandManager
+        if fm and fm.farmlands then
+            for _, farmland in pairs(fm.farmlands) do
+                if farmland.ownerId == farmId then
+                    ownedFarmlandIds[farmland.id] = true
+                end
+            end
+        end
+    end)
+
     for _, field in pairs(allFields) do
-        if field.farmland and field.farmland.ownerId == farmId then
+        local owned = false
+        -- Method 1: field has farmlandId property -> look up in owned set
+        if field.farmlandId and ownedFarmlandIds[field.farmlandId] then
+            owned = true
+        end
+        -- Method 2: field.farmland.ownerId (older API)
+        if not owned and field.farmland and field.farmland.ownerId == farmId then
+            owned = true
+        end
+        -- Method 3: field directly stores ownerFarmId
+        if not owned and field.ownerFarmId == farmId then
+            owned = true
+        end
+        if owned then
             table.insert(fields, field)
         end
     end

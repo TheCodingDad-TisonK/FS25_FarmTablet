@@ -153,7 +153,7 @@ function FarmTabletUI:createTabletUI()
     self.ui.contentOverlays = {}
 
     -- Calculate screen position
-    local tabletWidth, tabletHeight = getNormalizedScreenValues(800, 600)
+    local tabletWidth, tabletHeight = getNormalizedScreenValues(800, 680)
     
     self.ui.backgroundX = 0.5 - tabletWidth / 2
     self.ui.backgroundY = 0.5 - tabletHeight / 2

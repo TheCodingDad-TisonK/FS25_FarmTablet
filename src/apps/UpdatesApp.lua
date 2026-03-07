@@ -3,6 +3,12 @@
 -- =========================================================
 
 local CHANGELOG = {
+    { version = "1.1.1.0", notes = {
+        "Fixed Workshop vehicle detection: now uses correct FS25 vehicle API",
+        "Fixed Field Manager: now uses g_farmlandManager for ownership checks",
+        "Fixed Animals: fixed placeable ownership and placeables access for FS25",
+        "Tablet height increased from 600 to 680px — less text overflow",
+    }},
     { version = "1.1.0.9", notes = {
         "Fixed Animals app crash (Lua 5.1 goto not supported in FS25)",
         "Fixed Workshop app not detecting vehicles (wrong player position reference)",
