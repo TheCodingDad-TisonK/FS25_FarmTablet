@@ -13,9 +13,10 @@ function FarmTabletUI:loadBucketTrackerApp()
     local sys     = self.tabletSystem
     local tracker = sys.bucketTracker
 
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Bucket Load Tracker", content.x + padX, titleY, 0.019,
         RenderText.ALIGN_LEFT, C.TITLE_COLOR)
+    self:drawDivider(titleY - self:py(4))
 
     local y = titleY - 0.030
 
@@ -43,6 +44,7 @@ function FarmTabletUI:loadBucketTrackerApp()
             y = y - 0.022
             self:drawRow("Fill %", string.format("%.0f%%", pct), y, C.LABEL_COLOR, pctColor)
             y = y - 0.022
+            y = self:drawProgressBar(pct, 100, y, pctColor)
             local wt = sys:estimateBucketWeight(fi)
             self:drawRow("Est. Weight", string.format("%d kg", wt), y, C.LABEL_COLOR, C.VALUE_COLOR)
             y = y - 0.022

@@ -258,7 +258,7 @@ function FarmTabletUI:createTabletElements()
 
     -- Title text
     table.insert(self.ui.texts, {
-        text = "Farm Tablet v1.1.0.1",
+        text = "Farm Tablet v1.1.0.6",
         x = navBarX + navPadX,
         y = navBarY + navHeight / 2 - 0.004,
         size = 0.014,
@@ -309,7 +309,13 @@ function FarmTabletUI:createAppContentArea()
     )
     bg:setVisible(true)
 
+    -- Thin accent line along the top edge of the content area
+    local lineH = math.max(self:py(2), 0.002)
+    local topLine = self:createBlankOverlay(x, y + h - lineH, w, lineH, {0.30, 0.58, 0.32, 0.55})
+    topLine:setVisible(true)
+
     table.insert(self.ui.overlays, bg)
+    table.insert(self.ui.overlays, topLine)
     table.insert(self.ui.contentOverlays, bg)
 
     self.ui.appContentArea = {
@@ -334,8 +340,8 @@ function FarmTabletUI:loadDefaultApp()
     
     local padX = self:px(15)
     local padY = self:py(15)
-    local titleY = content.y + content.height - padY - 0.03
-    
+    local titleY = content.y + content.height - padY - self:titleH()
+
     -- Title
     table.insert(self.ui.appTexts, {
         text = "Farm Tablet",
@@ -345,7 +351,8 @@ function FarmTabletUI:loadDefaultApp()
         align = RenderText.ALIGN_LEFT,
         color = {0.4, 0.8, 0.4, 1}
     })
-    
+    self:drawDivider(titleY - self:py(4))
+
     local startY = titleY - 0.035
     local lineHeight = 0.022
     
@@ -548,10 +555,18 @@ function FarmTabletUI:drawRow(label, value, y, labelColor, valueColor)
     end
 end
 
--- Insert a section header (left-aligned, accent color).
+-- Insert a section header (left-aligned, accent color) with a left accent bar.
 function FarmTabletUI:drawSectionHeader(text, y)
     local content = self.ui.appContentArea
     if not content then return end
+    -- Small vertical accent bar, vertically centered on the text line
+    self:createAppOverlay(
+        content.x + self:px(8),
+        y - self:py(2),
+        self:px(3),
+        self:py(13),
+        {0.38, 0.88, 0.44, 0.90}
+    )
     table.insert(self.ui.appTexts, {
         text  = text,
         x     = content.x + self:px(15),
@@ -560,6 +575,38 @@ function FarmTabletUI:drawSectionHeader(text, y)
         align = RenderText.ALIGN_LEFT,
         color = self.UI_CONSTANTS.SECTION_COLOR,
     })
+end
+
+-- Draw a thin horizontal rule across the full width of the content area.
+function FarmTabletUI:drawDivider(y, alpha)
+    local content = self.ui.appContentArea
+    if not content then return end
+    self:createAppOverlay(
+        content.x + self:px(8),
+        y,
+        content.width - self:px(16),
+        math.max(self:py(1), 0.0008),
+        {0.30, 0.60, 0.32, alpha or 0.35}
+    )
+end
+
+-- Draw a proportional fill bar. Returns the Y coordinate just below the bar.
+function FarmTabletUI:drawProgressBar(value, max, y, barColor)
+    local content = self.ui.appContentArea
+    if not content then return y end
+    local padX = self:px(15)
+    local barW  = content.width - padX * 2
+    local barH  = math.max(self:py(5), 0.006)
+    local bgX   = content.x + padX
+    -- Background track
+    self:createAppOverlay(bgX, y, barW, barH, {0.16, 0.16, 0.20, 0.95})
+    -- Fill
+    local ratio = (max and max > 0) and math.min(value / max, 1) or 0
+    if ratio > 0 then
+        self:createAppOverlay(bgX, y, barW * ratio, barH,
+            barColor or self.UI_CONSTANTS.VALUE_COLOR)
+    end
+    return y - barH - self:py(3)
 end
 
 -- Insert a single left-aligned text entry.
@@ -600,6 +647,15 @@ end
 function FarmTabletUI:py(y)
     return y * (self.ui.scaleY or 1)
 end
+
+-- Layout helpers — scale-aware equivalents of common hardcoded offsets.
+-- Calibrated so that at the 1080p reference resolution these equal the
+-- existing hardcoded values, keeping layouts pixel-identical there while
+-- scaling correctly at other resolutions.
+function FarmTabletUI:titleH()     return self:py(19)  end  -- app title baseline offset  (~0.028)
+function FarmTabletUI:lineH()      return self:py(15)  end  -- standard row height        (~0.022)
+function FarmTabletUI:smallLineH() return self:py(13)  end  -- compact row height         (~0.019)
+function FarmTabletUI:sectionGap() return self:py(22)  end  -- inter-section spacing      (~0.032)
 
 function FarmTabletUI:createBlankOverlay(x, y, width, height, color, texturePath)
     local overlay

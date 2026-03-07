@@ -3,7 +3,15 @@
 -- =========================================================
 
 local CHANGELOG = {
-    { version = "1.1.0.1", notes = {
+    { version = "1.1.0.6", notes = {
+        "Scale-aware layout helpers: titleH, lineH, smallLineH, sectionGap",
+        "Section headers now render with a left accent bar for visual hierarchy",
+        "New drawDivider — title underline rendered across all apps",
+        "New drawProgressBar — fill level bar in Bucket Tracker app",
+        "Content area top accent line for card-style visual framing",
+        "Fixed hardcoded version strings in Settings and Updates apps",
+    }},
+    { version = "1.1.0.5", notes = {
         "NPC Favor, Seasonal Crop Stress, Soil Fertilizer integrations",
         "Interactive in-tablet Settings app with toggle buttons",
         "Drawing helper system: drawRow, drawButton, drawSectionHeader",
@@ -28,9 +36,10 @@ function FarmTabletUI:loadUpdatesApp()
     local padX = self:px(15)
     local padY = self:py(12)
 
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Updates & Changelog", content.x + padX, titleY, 0.019,
         RenderText.ALIGN_LEFT, C.TITLE_COLOR)
+    self:drawDivider(titleY - self:py(4))
 
     local y = titleY - 0.032
 

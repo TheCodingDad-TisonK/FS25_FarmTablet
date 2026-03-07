@@ -11,8 +11,9 @@ function FarmTabletUI:loadWeatherApp()
     local padX = self:px(15)
     local padY = self:py(12)
 
-    local titleY = content.y + content.height - padY - 0.028
+    local titleY = content.y + content.height - padY - self:titleH()
     self:drawText("Weather", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
+    self:drawDivider(titleY - self:py(4))
 
     local w = self:getWeatherInfo()
     if not w then
