@@ -288,7 +288,7 @@ function FarmTabletUI:createAppContentArea()
     local headerHeight = self:py(40)
     local y = self.ui.backgroundY + pad + headerHeight
     
-    local appButtonsHeight = self:py(40)
+    local appButtonsHeight = self:py(66)  -- two rows of nav buttons
     local navBarHeight = self:py(35)
     local bottomPadding = self:py(20)
     
@@ -428,20 +428,30 @@ function FarmTabletUI:createAppNavigationButtons()
     local btnW    = self:px(44)
     local btnH    = self:py(22)
     local spacing = self:px(4)
-    local startY  = navBar.y - btnH - self:py(8)
+    local rowGap  = self:py(4)
     local startX  = navBar.x + self:px(15)
     local maxX    = navBar.x + navBar.width - self:px(70)
+    local row1Y   = navBar.y - btnH - self:py(8)
+    local row2Y   = row1Y - btnH - rowGap
+
+    -- Calculate max buttons per row
+    local maxPerRow = math.max(1, math.floor((maxX - startX) / (btnW + spacing)))
 
     local isActive = self.tabletSystem.currentApp
+    local btnIdx   = 0
 
     for _, app in ipairs(self.tabletSystem.registeredApps) do
         if app.enabled then
-            local x = startX + (#self.ui.appButtons) * (btnW + spacing)
-            if x + btnW > maxX then break end
+            local col  = btnIdx % maxPerRow
+            local row  = math.floor(btnIdx / maxPerRow)
+            if row >= 2 then break end  -- max two rows
+
+            local x = startX + col * (btnW + spacing)
+            local y = (row == 0) and row1Y or row2Y
 
             local isSelected = (app.id == isActive)
             local overlay = self:createBlankOverlay(
-                x, startY, btnW, btnH,
+                x, y, btnW, btnH,
                 isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
                            or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
             )
@@ -450,7 +460,7 @@ function FarmTabletUI:createAppNavigationButtons()
 
             table.insert(self.ui.appButtons, {
                 overlay = overlay,
-                x = x, y = startY, width = btnW, height = btnH,
+                x = x, y = y, width = btnW, height = btnH,
                 appId = app.id
             })
 
@@ -458,12 +468,14 @@ function FarmTabletUI:createAppNavigationButtons()
             table.insert(self.ui.texts, {
                 text  = label,
                 x     = x + btnW / 2,
-                y     = startY + btnH / 2 - 0.004,
+                y     = y + btnH / 2 - 0.004,
                 size  = 0.009,
                 align = RenderText.ALIGN_CENTER,
                 color = isSelected and self.UI_CONSTANTS.TITLE_COLOR
                                    or  self.UI_CONSTANTS.MUTED_COLOR
             })
+
+            btnIdx = btnIdx + 1
         end
     end
 end

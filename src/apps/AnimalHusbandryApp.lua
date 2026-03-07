@@ -118,18 +118,16 @@ function FarmTabletUI:getAnimalPens(farmId)
                 ownerId = placeable.farmId
             end
         end)
-        if ownerId ~= farmId then goto continue end
 
-        -- Must have animal spec
-        local aSpec = placeable.spec_husbandryAnimals
-        if not aSpec then goto continue end
-
-        local pen = self:extractPenData(placeable, aSpec)
-        if pen then
-            table.insert(result, pen)
+        if ownerId == farmId then
+            local aSpec = placeable.spec_husbandryAnimals
+            if aSpec then
+                local pen = self:extractPenData(placeable, aSpec)
+                if pen then
+                    table.insert(result, pen)
+                end
+            end
         end
-
-        ::continue::
     end
 
     table.sort(result, function(a, b) return a.typeName < b.typeName end)

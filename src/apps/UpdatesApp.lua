@@ -3,6 +3,12 @@
 -- =========================================================
 
 local CHANGELOG = {
+    { version = "1.1.0.9", notes = {
+        "Fixed Animals app crash (Lua 5.1 goto not supported in FS25)",
+        "Fixed Workshop app not detecting vehicles (wrong player position reference)",
+        "Fixed bullet character warning in Updates app (unsupported font glyph)",
+        "Nav bar now uses two rows, supporting up to 16 apps",
+    }},
     { version = "1.1.0.8", notes = {
         "Added in-game help section in the pause menu (F1 / Help tab)",
         "Help covers all built-in apps, open key, App Store and console commands",
@@ -62,7 +68,7 @@ function FarmTabletUI:loadUpdatesApp()
 
         for _, note in ipairs(entry.notes) do
             if y <= content.y + padY then break end
-            self:drawText("• " .. note, content.x + padX + self:px(8), y, 0.013,
+            self:drawText("-" .. note, content.x + padX + self:px(8), y, 0.013,
                 RenderText.ALIGN_LEFT, C.MUTED_COLOR)
             y = y - 0.019
         end
