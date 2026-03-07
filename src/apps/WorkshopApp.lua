@@ -165,10 +165,23 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
 
     local farmId = self.tabletSystem:getPlayerFarmId()
     local px, pz = 0, 0
-    local player = g_currentMission.player
-    if player and player.rootNode then
-        local x, y, z = getWorldTranslation(player.rootNode)
-        px, pz = x, z
+    -- g_localPlayer is the correct FS25 reference for the local player character
+    pcall(function()
+        local player = g_localPlayer
+        if player and player.rootNode then
+            local x, _, z = getWorldTranslation(player.rootNode)
+            px, pz = x, z
+        end
+    end)
+    -- Fallback to g_currentMission.player if g_localPlayer unavailable
+    if px == 0 and pz == 0 then
+        pcall(function()
+            local player = g_currentMission and g_currentMission.player
+            if player and player.rootNode then
+                local x, _, z = getWorldTranslation(player.rootNode)
+                px, pz = x, z
+            end
+        end)
     end
 
     for _, v in pairs(g_currentMission.vehicles) do
