@@ -171,16 +171,12 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
     end
 
     for _, v in pairs(g_currentMission.vehicles) do
-        -- Same vehicle check pattern as DiggingApp
-        local isVehicle = false
-        pcall(function() isVehicle = v:isa(Vehicle) end)
-
-        if isVehicle and v.spec_motorized and v.rootNode then
+        -- Mirror DiggingApp exactly: direct isa check, no pcall, no spec pre-filter
+        if v:isa(Vehicle) and v.rootNode then
             local vx, vy, vz = getWorldTranslation(v.rootNode)
             local dist = MathUtil.vector2Length(vx - px, vz - pz)
 
             if dist <= radius then
-                -- No ownership filter: player is 20 m away, that's close enough
                 local name = (v.getFullName and v:getFullName())
                           or v.configFileName or "Vehicle"
                 table.insert(result, { vehicle = v, name = name, distance = dist })
