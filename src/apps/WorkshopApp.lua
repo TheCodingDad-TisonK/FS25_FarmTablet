@@ -163,11 +163,25 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
     local result = {}
     if not (g_currentMission and g_currentMission.vehicles) then return result end
 
-    -- Get player position — same approach as DiggingApp (confirmed working)
+    -- Player position: g_localPlayer is the reliable reference for the local client.
+    -- g_currentMission.player can be nil or lack a rootNode when the tablet is open.
     local px, py, pz = 0, 0, 0
-    local player = g_currentMission.player
-    if player and player.rootNode then
-        px, py, pz = getWorldTranslation(player.rootNode)
+    if g_localPlayer then
+        if type(g_localPlayer.getIsInVehicle) == "function" and g_localPlayer:getIsInVehicle() then
+            local cv = g_localPlayer:getCurrentVehicle()
+            if cv and cv.rootNode then
+                pcall(function() px, py, pz = getWorldTranslation(cv.rootNode) end)
+            end
+        end
+        if px == 0 and py == 0 and pz == 0 and g_localPlayer.rootNode then
+            pcall(function() px, py, pz = getWorldTranslation(g_localPlayer.rootNode) end)
+        end
+    end
+    if px == 0 and py == 0 and pz == 0 then
+        local player = g_currentMission and g_currentMission.player
+        if player and player.rootNode then
+            pcall(function() px, py, pz = getWorldTranslation(player.rootNode) end)
+        end
     end
 
     for _, v in pairs(g_currentMission.vehicles) do

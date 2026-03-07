@@ -179,8 +179,8 @@ end
 function FarmTabletSystem:autoRegisterModApps()
     self:log("Starting mod auto-registration")
     
-    -- Check for Income Mod
-    if g_IncomeManager or _G["Income"] or (g_modIsLoaded and g_modIsLoaded["FS25_IncomeMod"]) then
+    -- Check for Income Mod (g_IncomeManager is per-mod env scoped; use g_currentMission attachment)
+    if g_currentMission and g_currentMission.incomeManager then
         if not self:_appRegistered("income_mod") then
             table.insert(self.registeredApps, {
                 id = "income_mod",
