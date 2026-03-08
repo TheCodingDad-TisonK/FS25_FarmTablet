@@ -3,7 +3,7 @@
 -- =========================================================
 
 local CHANGELOG = {
-    { version = "1.1.1.0", notes = {
+    { version = "1.1.1.1", notes = {
         "Fixed Workshop vehicle detection: now uses correct FS25 vehicle API",
         "Fixed Field Manager: now uses g_farmlandManager for ownership checks",
         "Fixed Animals: fixed placeable ownership and placeables access for FS25",

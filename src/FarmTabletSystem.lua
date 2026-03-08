@@ -195,8 +195,8 @@ function FarmTabletSystem:autoRegisterModApps()
         end
     end
     
-    -- Check for Tax Mod
-    if g_TaxManager then
+    -- Check for Tax Mod (g_TaxManager is per-mod env scoped; use g_currentMission attachment)
+    if g_currentMission and g_currentMission.taxManager then
         if not self:_appRegistered("tax_mod") then
             table.insert(self.registeredApps, {
                 id = "tax_mod",
