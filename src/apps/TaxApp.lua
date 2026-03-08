@@ -19,7 +19,7 @@ function FarmTabletUI:loadTaxApp()
     self:drawText("Tax Mod", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
     self:drawDivider(titleY - self:py(4))
 
-    local inst = g_TaxManager
+    local inst = g_currentMission and g_currentMission.taxManager
 
     if not inst then
         local y = titleY - 0.040

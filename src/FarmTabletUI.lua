@@ -83,6 +83,10 @@ function FarmTabletUI:openTablet()
     self.tabletSystem.isTabletOpen = true
     
     self:log("Opening farm tablet")
+    -- Re-check mod integrations every open. FS25 loads mods alphabetically, so
+    -- FS25_FarmTablet initializes before FS25_TaxMod (and others). By the time
+    -- the player first opens the tablet, all mods are loaded and their globals exist.
+    self.tabletSystem:autoRegisterModApps()
     self:createTabletUI()
 
     if g_currentMission ~= nil then
@@ -258,7 +262,7 @@ function FarmTabletUI:createTabletElements()
 
     -- Title text
     table.insert(self.ui.texts, {
-        text = "Farm Tablet v1.1.1.0",
+        text = "Farm Tablet v1.1.1.1",
         x = navBarX + navPadX,
         y = navBarY + navHeight / 2 - 0.004,
         size = 0.014,
@@ -357,7 +361,7 @@ function FarmTabletUI:loadDefaultApp()
     local lineHeight = 0.022
     
     local lines = {
-        "Welcome to Farm Tablet v1.1.1.0",
+        "Welcome to Farm Tablet v1.1.1.1",
         "Central interface for farm management",
         "",
         "Select an app from the navigation bar above.",
@@ -883,7 +887,7 @@ function FarmTabletUI:handleIncomeModMouseEvent(posX, posY)
         local b = self.ui.enableIncomeButton
         if posX >= b.x and posX <= b.x + b.width and
            posY >= b.y and posY <= b.y + b.height then
-            local incomeInstance = g_IncomeManager or _G["Income"]
+            local incomeInstance = g_currentMission and g_currentMission.incomeManager
             if incomeInstance and incomeInstance.settings then
                 incomeInstance.settings.enabled = true
                 if incomeInstance.settings.save then
@@ -900,7 +904,7 @@ function FarmTabletUI:handleIncomeModMouseEvent(posX, posY)
         local b = self.ui.disableIncomeButton
         if posX >= b.x and posX <= b.x + b.width and
            posY >= b.y and posY <= b.y + b.height then
-            local incomeInstance = g_IncomeManager or _G["Income"]
+            local incomeInstance = g_currentMission and g_currentMission.incomeManager
             if incomeInstance and incomeInstance.settings then
                 incomeInstance.settings.enabled = false
                 if incomeInstance.settings.save then
@@ -922,11 +926,11 @@ function FarmTabletUI:handleTaxModMouseEvent(posX, posY)
         local b = self.ui.enableTaxButton
         if posX >= b.x and posX <= b.x + b.width and
            posY >= b.y and posY <= b.y + b.height then
-            local taxInstance = g_TaxManager or _G["TaxMod"]
+            local taxInstance = g_currentMission and g_currentMission.taxManager
             if taxInstance and taxInstance.settings then
                 taxInstance.settings.enabled = true
-                if taxInstance.settings.save then
-                    taxInstance.settings:save()
+                if taxInstance.saveSettings then
+                    taxInstance:saveSettings()
                 end
                 self:switchApp("tax_mod") -- Refresh
             end
@@ -939,11 +943,11 @@ function FarmTabletUI:handleTaxModMouseEvent(posX, posY)
         local b = self.ui.disableTaxButton
         if posX >= b.x and posX <= b.x + b.width and
            posY >= b.y and posY <= b.y + b.height then
-            local taxInstance = g_TaxManager or _G["TaxMod"]
+            local taxInstance = g_currentMission and g_currentMission.taxManager
             if taxInstance and taxInstance.settings then
                 taxInstance.settings.enabled = false
-                if taxInstance.settings.save then
-                    taxInstance.settings:save()
+                if taxInstance.saveSettings then
+                    taxInstance:saveSettings()
                 end
                 self:switchApp("tax_mod") -- Refresh
             end

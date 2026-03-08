@@ -202,17 +202,44 @@ function FarmTabletUI:getWorkshopNearbyVehicles(radius)
     return result
 end
 
--- Closes the tablet, then attempts to open the in-game menu.
+-- Opens the FS25 WorkshopScreen for the selected vehicle,
+-- mirroring exactly how FS25_MobileWorkshop does it.
 function FarmTabletUI:openVehicleWorkshop()
-    self:closeTablet()
-    pcall(function()
-        if g_currentMission and g_currentMission.inGameMenu
-                and g_currentMission.inGameMenu.openMenu then
-            g_currentMission.inGameMenu:openMenu()
-        elseif g_gui and g_gui.showGui then
-            g_gui:showGui("InGameMenu")
+    local vehicle = self.tabletSystem.workshopSelectedVehicle
+    if not vehicle then return end
+
+    if not (g_workshopScreen and g_gui) then return end
+
+    -- Gather the root vehicle's full train (vehicle + all attached implements/trailers)
+    local vehicles = {}
+    local root = vehicle.rootVehicle or vehicle
+    if root.getChildVehicles then
+        local farmId = g_currentMission and g_currentMission:getFarmId()
+        for _, subVehicle in ipairs(root:getChildVehicles()) do
+            if subVehicle.getShowInVehiclesOverview and subVehicle:getShowInVehiclesOverview()
+            and subVehicle.getOwnerFarmId and subVehicle:getOwnerFarmId() == farmId then
+                table.insert(vehicles, subVehicle)
+            end
         end
-    end)
+        table.sort(vehicles, function(a, b) return a.rootNode < b.rootNode end)
+    end
+    if #vehicles == 0 then
+        table.insert(vehicles, vehicle)
+    end
+
+    self:closeTablet()
+
+    g_workshopScreen:setSellingPoint(nil, false, false, true) -- isMobileWorkshop = true
+    g_workshopScreen:setVehicles(vehicles)
+    if g_workshopScreen.list then
+        for i, v in ipairs(vehicles) do
+            if v == vehicle then
+                g_workshopScreen.list:setSelectedIndex(i)
+                break
+            end
+        end
+    end
+    g_gui:showGui("WorkshopScreen")
 end
 
 -- Mouse event handler for the Workshop app.
