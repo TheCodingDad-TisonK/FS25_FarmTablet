@@ -4,7 +4,9 @@
 
 MOD_NAME="FS25_FarmTablet"
 SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
+WIN_SRC_DIR="$(cygpath -w "$SRC_DIR" 2>/dev/null || echo "$SRC_DIR")"
 MODS_DIR="/c/Users/tison/Documents/My Games/FarmingSimulator2025/mods"
+WIN_MODS_DIR="$(cygpath -w "$MODS_DIR" 2>/dev/null || echo "$MODS_DIR")"
 ZIP_NAME="${MOD_NAME}.zip"
 
 echo "============================================"
@@ -14,8 +16,8 @@ echo "============================================"
 py -c "
 import zipfile, os, sys
 
-src = r'${SRC_DIR}'
-out = r'${SRC_DIR}/${ZIP_NAME}'
+src = r'${WIN_SRC_DIR}'
+out = r'${WIN_SRC_DIR}/${ZIP_NAME}'
 
 with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
     for f in ['modDesc.xml', 'icon.dds']:
