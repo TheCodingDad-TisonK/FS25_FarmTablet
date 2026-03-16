@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>1.1.2.1</version>
+    <version>2.0.0</version>
     <modName>FS25_FarmTablet</modName>
     <title>
         <en>Farm Tablet</en>
@@ -17,134 +17,48 @@
         <cn>农场平板</cn>
     </title>
     <description>
-        <en>Central tablet interface for farm management with modular apps system.</en>
-        <de>Zentrale Tablet-Oberfläche zur Farmverwaltung mit modularem App-System.</de>
-        <fr>Interface tablette centrale pour la gestion de ferme avec système d'applications modulaire.</fr>
-        <pl>Centralny interfejs tabletu do zarządzania farmą z modułowym systemem aplikacji.</pl>
-        <es>Interfaz central de tablet para gestión agrícola con sistema modular de aplicaciones.</es>
-        <it>Interfaccia tablet centrale per la gestione aziendale con sistema modulare di app.</it>
-        <cz>Centrální tabletové rozhraní pro správu farmy s modulárním systémem aplikací.</cz>
-        <br>Interface central de tablet para gestão agrícola com sistema modular de aplicativos.</br>
-        <uk>Центральний планшетний інтерфейс для управління фермою з модульною системою додатків.</uk>
-        <ru>Центральный планшетный интерфейс для управления фермой с модульной системой приложений.</ru>
-        <cn>具有模块化应用系统的农场管理中央平板界面。</cn>
+        <en>Farm Tablet v2 — Complete overhaul. Central tablet interface for farm management with sidebar navigation, rich data visualisation and modular app system.</en>
+        <de>Farm Tablet v2 – Komplette Überarbeitung. Zentrale Tablet-Oberfläche mit Sidebar-Navigation, reichhaltiger Datenvisualisierung und modularem App-System.</de>
+        <fr>Farm Tablet v2 — Refonte complète. Interface tablette centrale avec navigation latérale, visualisation de données avancée et système d'applications modulaire.</fr>
     </description>
     <iconFilename>icon.dds</iconFilename>
-    
+
     <multiplayer supported="true"/>
-    
+
     <extraSourceFiles>
         <sourceFile filename="src/main.lua" />
     </extraSourceFiles>
 
     <helpLines>
         <helpLine>
-            <en>Press T to open or close the Farm Tablet (key is configurable in the pause menu settings).</en>
-            <de>Drücke T, um das Farm-Tablet zu öffnen oder zu schließen (Taste in den Pausemenü-Einstellungen änderbar).</de>
-            <fr>Appuyez sur T pour ouvrir ou fermer la tablette de ferme (touche configurable dans les paramètres).</fr>
-            <pl>Naciśnij T, aby otworzyć lub zamknąć tablet farmowy (klawisz można zmienić w ustawieniach menu pauzy).</pl>
-            <es>Pulsa T para abrir o cerrar la tablet agrícola (tecla configurable en los ajustes del menú de pausa).</es>
-            <it>Premi T per aprire o chiudere il tablet agricolo (tasto configurabile nelle impostazioni del menu di pausa).</it>
-            <cz>Stiskněte T pro otevření nebo zavření farmářského tabletu (klávesu lze změnit v nastavení nabídky pauzy).</cz>
-            <br>Pressione T para abrir ou fechar o tablet agrícola (tecla configurável nas configurações do menu de pausa).</br>
-            <uk>Натисніть T, щоб відкрити або закрити фермерський планшет (клавіша налаштовується в меню паузи).</uk>
-            <ru>Нажмите T, чтобы открыть или закрыть фермерский планшет (клавиша настраивается в меню паузы).</ru>
-            <cn>按 T 键打开或关闭农场平板（按键可在暂停菜单设置中配置）。</cn>
+            <en>Press T (configurable) to open/close the Farm Tablet. All apps are accessible from the sidebar icon panel on the left.</en>
+            <de>Drücke T (einstellbar), um das Farm-Tablet zu öffnen/schließen. Alle Apps sind über die Seitenleiste links erreichbar.</de>
         </helpLine>
         <helpLine>
-            <en>Dashboard: Monitor your farm balance, income, expenses and daily profit at a glance.</en>
-            <de>Dashboard: Überwache Kontostand, Einnahmen, Ausgaben und Tagesgewinn auf einen Blick.</de>
-            <fr>Tableau de bord : surveillez le solde, les revenus, les dépenses et le bénéfice journalier en un coup d'œil.</fr>
-            <pl>Pulpit: Monitoruj saldo farmy, przychody, wydatki i dzienny zysk na jednym ekranie.</pl>
-            <es>Panel: Controla tu saldo, ingresos, gastos y ganancias diarias de un vistazo.</es>
-            <it>Cruscotto: monitora saldo, entrate, uscite e profitto giornaliero in un colpo d'occhio.</it>
-            <cz>Řídicí panel: Sledujte zůstatek farmy, příjmy, výdaje a denní zisk na jednom místě.</cz>
-            <br>Painel: Monitore saldo, receitas, despesas e lucro diário em um único lugar.</br>
-            <uk>Панель: Відстежуйте баланс ферми, доходи, витрати та щоденний прибуток.</uk>
-            <ru>Панель: Отслеживайте баланс фермы, доходы, расходы и ежедневную прибыль.</ru>
-            <cn>仪表盘：一目了然地监控农场余额、收入、支出和每日利润。</cn>
+            <en>Dashboard: Farm balance hero card, finance summary, field and vehicle counts, season/time and live weather snapshot.</en>
         </helpLine>
         <helpLine>
-            <en>Workshop: Walk near a vehicle and inspect its fuel level, wear condition and operating hours.</en>
-            <de>Werkstatt: Gehe zu einem Fahrzeug und prüfe Kraftstoffstand, Verschleiß und Betriebsstunden.</de>
-            <fr>Atelier : approchez-vous d'un véhicule pour voir son niveau de carburant, son usure et ses heures de fonctionnement.</fr>
-            <pl>Warsztat: Podejdź do pojazdu i sprawdź poziom paliwa, zużycie i godziny pracy.</pl>
-            <es>Taller: Acércate a un vehículo e inspecciona su combustible, desgaste y horas de operación.</es>
-            <it>Officina: avvicinati a un veicolo per controllare carburante, usura e ore operative.</it>
-            <cz>Dílna: Přiblížte se k vozidlu a zkontrolujte palivo, opotřebení a provozní hodiny.</cz>
-            <br>Oficina: Aproxime-se de um veículo para inspecionar combustível, desgaste e horas de operação.</br>
-            <uk>Майстерня: Підійдіть до транспортного засобу та перевірте рівень палива, знос і години роботи.</uk>
-            <ru>Мастерская: Подойдите к технике и проверьте уровень топлива, износ и часы работы.</ru>
-            <cn>维修站：靠近车辆检查其燃油量、磨损状况和运行小时数。</cn>
+            <en>Workshop: Walk within 25m of any vehicle to inspect fuel, wear and operating hours. Click SELECT to pin a vehicle for detailed diagnostics.</en>
         </helpLine>
         <helpLine>
-            <en>Field Manager: See all owned fields with their crop type and current growth stage at a glance.</en>
-            <de>Feldmanager: Alle eigenen Felder mit Fruchtart und aktuellem Wachstumsstadium auf einen Blick.</de>
-            <fr>Gestionnaire de champs : visualisez tous vos champs avec leur culture et leur stade de croissance.</fr>
-            <pl>Menedżer pól: Wszystkie własne pola z rodzajem uprawy i stanem wzrostu na jednym ekranie.</pl>
-            <es>Gestor de campos: Ve todos tus campos con el tipo de cultivo y el estado de crecimiento de un vistazo.</es>
-            <it>Gestione campi: vedi tutti i campi di proprietà con coltura e stadio di crescita in un colpo d'occhio.</it>
-            <cz>Správce polí: Přehled všech vlastních polí s typem plodiny a aktuálním stádiem růstu.</cz>
-            <br>Gerenciador de campos: Veja todos os campos próprios com tipo de cultura e estágio de crescimento.</br>
-            <uk>Менеджер полів: Перегляньте всі власні поля з типом культури та поточною стадією росту.</uk>
-            <ru>Менеджер полей: Все ваши поля с типом культуры и текущей стадией роста на одном экране.</ru>
-            <cn>农田管理：一目了然地查看所有自有田地的作物类型和当前生长阶段。</cn>
+            <en>Field Manager: All owned fields with crop type, growth phase badges and color-coded state indicators.</en>
         </helpLine>
         <helpLine>
-            <en>Animals: Monitor all animal pens — food, water and cleanliness levels shown with progress bars.</en>
-            <de>Tiere: Alle Tiergehege überwachen – Futter, Wasser und Sauberkeit mit Balkenanzeige.</de>
-            <fr>Animaux : surveillez tous les enclos — nourriture, eau et propreté affichés avec des barres de progression.</fr>
-            <pl>Zwierzęta: Monitoruj wszystkie zagrody – poziomy pożywienia, wody i czystości z paskami postępu.</pl>
-            <es>Animales: Supervisa todos los establos — alimentación, agua y limpieza mostrados con barras de progreso.</es>
-            <it>Animali: monitora tutti i recinti — cibo, acqua e pulizia con barre di avanzamento.</it>
-            <cz>Zvířata: Sledujte všechny výběhy — krmivo, voda a čistota zobrazené s ukazateli průběhu.</cz>
-            <br>Animais: Monitore todos os currais — ração, água e limpeza exibidos com barras de progresso.</br>
-            <uk>Тварини: Відстежуйте всі загони — корм, вода та чистота з індикаторами прогресу.</uk>
-            <ru>Животные: Мониторинг всех загонов — корм, вода и чистота с индикаторами прогресса.</ru>
-            <cn>动物：监控所有动物围栏——进度条显示饲料、饮水和清洁度。</cn>
+            <en>Animals: Per-pen food, water and cleanliness progress bars with traffic-light color coding.</en>
         </helpLine>
         <helpLine>
-            <en>App Store: Browse available apps. Companion mod apps (Income, Tax, NPC Favor, etc.) appear automatically when those mods are loaded.</en>
-            <de>App Store: Verfügbare Apps durchsuchen. Companion-Mod-Apps erscheinen automatisch, wenn die Mods geladen sind.</de>
-            <fr>Boutique d'apps : parcourez les apps disponibles. Les apps des mods compagnons apparaissent automatiquement si ces mods sont chargés.</fr>
-            <pl>Sklep z aplikacjami: Przeglądaj dostępne aplikacje. Aplikacje modów towarzyszących pojawiają się automatycznie po załadowaniu modów.</pl>
-            <es>Tienda de apps: Explora las apps disponibles. Las apps de mods complementarios aparecen automáticamente al cargar esos mods.</es>
-            <it>Negozio app: sfoglia le app disponibili. Le app dei mod companion appaiono automaticamente quando i mod sono caricati.</it>
-            <cz>Obchod s aplikacemi: Procházejte dostupné aplikace. Aplikace doplňkových modů se zobrazují automaticky při načtení modů.</cz>
-            <br>Loja de aplicativos: Navegue pelas apps disponíveis. Apps de mods complementares aparecem automaticamente quando esses mods estão carregados.</br>
-            <uk>Магазин додатків: Переглядайте доступні додатки. Додатки супутніх модів з'являються автоматично при їх завантаженні.</uk>
-            <ru>Магазин приложений: Просматривайте доступные приложения. Приложения модов-компаньонов появляются автоматически при загрузке этих модов.</ru>
-            <cn>应用商店：浏览可用应用。伴侣模组的应用（收入、税务、NPC好感等）在加载对应模组时自动出现。</cn>
+            <en>Bucket Tracker: Automatically detects and counts loader/excavator dumps. Shows load history with material type and estimated weight.</en>
         </helpLine>
         <helpLine>
-            <en>Weather: View today's forecast, temperature, wind and upcoming conditions to plan your work ahead.</en>
-            <de>Wetter: Tagesvorhersage, Temperatur, Wind und kommende Bedingungen einsehen, um die Arbeit zu planen.</de>
-            <fr>Météo : consultez les prévisions, la température, le vent et les conditions à venir pour planifier votre travail.</fr>
-            <pl>Pogoda: Sprawdź dzisiejszą prognozę, temperaturę, wiatr i nadchodzące warunki, by planować pracę z wyprzedzeniem.</pl>
-            <es>Clima: Consulta el pronóstico de hoy, temperatura, viento y condiciones próximas para planificar tu trabajo.</es>
-            <it>Meteo: visualizza le previsioni, temperatura, vento e condizioni future per pianificare il lavoro.</it>
-            <cz>Počasí: Zobrazte dnešní předpověď, teplotu, vítr a nadcházející podmínky pro plánování práce.</cz>
-            <br>Tempo: Veja a previsão de hoje, temperatura, vento e condições futuras para planejar seu trabalho.</br>
-            <uk>Погода: Переглядайте прогноз погоди, температуру, вітер та умови наступних днів.</uk>
-            <ru>Погода: Просматривайте прогноз, температуру, ветер и предстоящие условия для планирования работ.</ru>
-            <cn>天气：查看今日预报、温度、风况和未来天气状况，提前规划农事工作。</cn>
+            <en>App Store: Browse all installed apps. Companion mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer) appear automatically when those mods are loaded.</en>
         </helpLine>
         <helpLine>
-            <en>Settings for the Farm Tablet can be changed in the pause menu under Settings, or via console commands — type 'tablet' in the developer console for a full list.</en>
-            <de>Einstellungen für das Farm-Tablet können im Pausemenü unter Einstellungen oder per Konsolenbefehlen geändert werden — gib 'tablet' in der Entwicklerkonsole ein.</de>
-            <fr>Les paramètres de la tablette peuvent être modifiés dans le menu pause sous Paramètres, ou via les commandes console — tapez 'tablet' dans la console développeur.</fr>
-            <pl>Ustawienia tabletu można zmienić w menu pauzy pod Ustawieniami lub przez komendy konsoli — wpisz 'tablet' w konsoli dewelopera.</pl>
-            <es>Los ajustes de la tablet se pueden cambiar en el menú de pausa bajo Ajustes, o mediante comandos de consola — escribe 'tablet' en la consola de desarrollo.</es>
-            <it>Le impostazioni del tablet possono essere modificate nel menu pausa sotto Impostazioni o tramite comandi console — digita 'tablet' nella console di sviluppo.</it>
-            <cz>Nastavení tabletu lze změnit v nabídce pauzy pod Nastavení nebo pomocí příkazů konzole — zadejte 'tablet' do konzole vývojáře.</cz>
-            <br>As configurações do tablet podem ser alteradas no menu de pausa em Configurações ou por comandos do console — digite 'tablet' no console do desenvolvedor.</br>
-            <uk>Налаштування планшета можна змінити в меню паузи або через команди консолі — введіть 'tablet' у консолі розробника.</uk>
-            <ru>Настройки планшета можно изменить в меню паузы или через команды консоли — введите 'tablet' в консоли разработчика.</ru>
-            <cn>农场平板的设置可在暂停菜单"设置"中修改，或通过控制台命令修改——在开发者控制台输入"tablet"查看完整列表。</cn>
+            <en>Type  tablet  in the developer console for a list of all available console commands.</en>
         </helpLine>
     </helpLines>
 
     <l10n>
+        <!-- Section header -->
         <text name="ft_section">
             <en>Farm Tablet</en>
             <de>Farm-Tablet</de>
@@ -159,481 +73,58 @@
             <cn>农场平板</cn>
         </text>
 
+        <!-- Notification strings -->
         <text name="ft_welcome_title">
-            <en>Tablet loaded successfully</en>
-            <de>Tablet erfolgreich geladen</de>
-            <fr>Tablette chargée avec succès</fr>
-            <pl>Tablet został pomyślnie załadowany</pl>
-            <es>Tablet cargado correctamente</es>
-            <it>Tablet caricato con successo</it>
-            <cz>Tablet úspěšně načten</cz>
-            <br>Tablet carregado com sucesso</br>
-            <uk>Планшет успішно завантажено</uk>
-            <ru>Планшет успешно загружен</ru>
-            <cn>平板加载成功</cn>
+            <en>Farm Tablet v2</en>
+            <de>Farm Tablet v2</de>
+            <fr>Tablette de Ferme v2</fr>
+            <pl>Tablet Farmowy v2</pl>
+            <es>Tablet Agrícola v2</es>
+            <ru>Фермерский планшет v2</ru>
         </text>
-
         <text name="ft_welcome_message">
-            <en>Press "T" to open/close</en>
-            <de>Drücke "T" zum Öffnen/Schließen</de>
-            <fr>Appuyez sur "T" pour ouvrir/fermer</fr>
-            <pl>Naciśnij "T", aby otworzyć/zamknąć</pl>
-            <es>Presiona "T" para abrir/cerrar</es>
-            <it>Premi "T" per aprire/chiudere</it>
-            <cz>Stiskněte "T" pro otevření/zavření</cz>
-            <br>Pressione "T" para abrir/fechar</br>
-            <uk>Натисніть "T", щоб відкрити/закрити</uk>
-            <ru>Нажмите "T", чтобы открыть/закрыть</ru>
-            <cn>按"T"键打开/关闭</cn>
-        </text>
-        
-        <text name="ft_enabled_short">
-            <en>Enable Tablet</en>
-            <de>Tablet aktivieren</de>
-            <fr>Activer la tablette</fr>
-            <pl>Włącz tablet</pl>
-            <es>Activar tablet</es>
-            <it>Attiva tablet</it>
-            <cz>Povolit tablet</cz>
-            <br>Ativar tablet</br>
-            <uk>Увімкнути планшет</uk>
-            <ru>Включить планшет</ru>
-            <cn>启用平板</cn>
+            <en>Press %s to open</en>
+            <de>Drücke %s zum Öffnen</de>
+            <fr>Appuyez sur %s pour ouvrir</fr>
+            <pl>Naciśnij %s, aby otworzyć</pl>
+            <es>Pulsa %s para abrir</es>
+            <ru>Нажмите %s, чтобы открыть</ru>
         </text>
 
-        <text name="ft_enabled_long">
-            <en>Enable or disable the farm tablet system</en>
-            <de>Farm-Tablet-System aktivieren oder deaktivieren</de>
-            <fr>Activer ou désactiver le système de tablette de ferme</fr>
-            <pl>Włącz lub wyłącz system tabletu farmowego</pl>
-            <es>Activar o desactivar el sistema de tablet agrícola</es>
-            <it>Attiva o disattiva il sistema tablet agricolo</it>
-            <cz>Povolit nebo zakázat systém farmářského tabletu</cz>
-            <br>Ativar ou desativar o sistema de tablet agrícola</br>
-            <uk>Увімкнути або вимкнути систему фермерського планшета</uk>
-            <ru>Включить или выключить систему фермерского планшета</ru>
-            <cn>启用或禁用农场平板系统</cn>
-        </text>
-        
-        <text name="ft_keybind_short">
-            <en>Open Key</en>
-            <de>Öffnen-Taste</de>
-            <fr>Touche d'ouverture</fr>
-            <pl>Klawisz otwarcia</pl>
-            <es>Tecla abrir</es>
-            <it>Tasto apertura</it>
-            <cz>Klávesa otevření</cz>
-            <br>Tecla abrir</br>
-            <uk>Клавіша відкриття</uk>
-            <ru>Клавиша открытия</ru>
-            <cn>打开键</cn>
-        </text>
+        <!-- Settings labels -->
+        <text name="ft_enabled_short"><en>Enable Tablet</en></text>
+        <text name="ft_enabled_long"><en>Enable or disable the farm tablet system</en></text>
+        <text name="ft_keybind_short"><en>Open Key</en></text>
+        <text name="ft_keybind_long"><en>Key to open/close the farm tablet</en></text>
+        <text name="ft_notifications_short"><en>Notifications</en></text>
+        <text name="ft_notifications_long"><en>Show tablet notifications on game load</en></text>
+        <text name="ft_startupapp_short"><en>Startup App</en></text>
+        <text name="ft_startupapp_long"><en>Default app when opening the tablet</en></text>
+        <text name="ft_startupapp_1"><en>Dashboard</en></text>
+        <text name="ft_startupapp_2"><en>App Store</en></text>
+        <text name="ft_startupapp_3"><en>Weather</en></text>
+        <text name="ft_startupapp_4"><en>Digging</en></text>
+        <text name="ft_soundeffects_short"><en>Sound Effects</en></text>
+        <text name="ft_soundeffects_long"><en>Play sound effects for tablet interactions</en></text>
+        <text name="ft_debug_short"><en>Debug Mode</en></text>
+        <text name="ft_debug_long"><en>Enable debug logging in console</en></text>
+        <text name="ft_reset"><en>Reset Tablet Settings</en></text>
 
-        <text name="ft_keybind_long">
-            <en>Key to open/close the farm tablet</en>
-            <de>Taste zum Öffnen/Schließen des Farm-Tablets</de>
-            <fr>Touche pour ouvrir/fermer la tablette de ferme</fr>
-            <pl>Klawisz do otwierania/zamykania tabletu farmowego</pl>
-            <es>Tecla para abrir/cerrar la tablet agrícola</es>
-            <it>Tasto per aprire/chiudere il tablet agricolo</it>
-            <cz>Klávesa pro otevření/zavření farmářského tabletu</cz>
-            <br>Tecla para abrir/fechar o tablet agrícola</br>
-            <uk>Клавіша для відкриття/закриття фермерського планшета</uk>
-            <ru>Клавиша для открытия/закрытия фермерского планшета</ru>
-            <cn>打开/关闭农场平板的按键</cn>
-        </text>
-        
-        <text name="ft_notifications_short">
-            <en>Notifications</en>
-            <de>Benachrichtigungen</de>
-            <fr>Notifications</fr>
-            <pl>Powiadomienia</pl>
-            <es>Notificaciones</es>
-            <it>Notifiche</it>
-            <cz>Upozornění</cz>
-            <br>Notificações</br>
-            <uk>Сповіщення</uk>
-            <ru>Уведомления</ru>
-            <cn>通知</cn>
-        </text>
-
-        <text name="ft_notifications_long">
-            <en>Show tablet notifications</en>
-            <de>Tablet-Benachrichtigungen anzeigen</de>
-            <fr>Afficher les notifications de la tablette</fr>
-            <pl>Pokazuj powiadomienia tabletu</pl>
-            <es>Mostrar notificaciones de tablet</es>
-            <it>Mostra notifiche tablet</it>
-            <cz>Zobrazit upozornění tabletu</cz>
-            <br>Mostrar notificações do tablet</br>
-            <uk>Показувати сповіщення планшета</uk>
-            <ru>Показывать уведомления планшета</ru>
-            <cn>显示平板通知</cn>
-        </text>
-        
-        <text name="ft_startupapp_short">
-            <en>Startup App</en>
-            <de>Start-App</de>
-            <fr>App de démarrage</fr>
-            <pl>Aplikacja startowa</pl>
-            <es>App inicio</es>
-            <it>App avvio</it>
-            <cz>Spouštěcí aplikace</cz>
-            <br>Aplicativo inicial</br>
-            <uk>Стартова програма</uk>
-            <ru>Стартовое приложение</ru>
-            <cn>启动应用</cn>
-        </text>
-
-        <text name="ft_startupapp_long">
-            <en>Default app when opening the tablet</en>
-            <de>Standard-App beim Öffnen des Tablets</de>
-            <fr>Application par défaut à l'ouverture de la tablette</fr>
-            <pl>Domyślna aplikacja przy otwieraniu tabletu</pl>
-            <es>Aplicación predeterminada al abrir la tablet</es>
-            <it>Applicazione predefinita all'apertura del tablet</it>
-            <cz>Výchozí aplikace při otevření tabletu</cz>
-            <br>Aplicativo padrão ao abrir o tablet</br>
-            <uk>Програма за замовчуванням при відкритті планшета</uk>
-            <ru>Приложение по умолчанию при открытии планшета</ru>
-            <cn>打开平板时的默认应用</cn>
-        </text>
-        
-        <text name="ft_startupapp_1">
-            <en>Dashboard</en>
-            <de>Dashboard</de>
-            <fr>Tableau de bord</fr>
-            <pl>Pulpit</pl>
-            <es>Panel</es>
-            <it>Cruscotto</it>
-            <cz>Řídicí panel</cz>
-            <br>Painel</br>
-            <uk>Панель</uk>
-            <ru>Панель</ru>
-            <cn>仪表盘</cn>
-        </text>
-
-        <text name="ft_startupapp_2">
-            <en>App Store</en>
-            <de>App Store</de>
-            <fr>Boutique d'apps</fr>
-            <pl>Sklep z aplikacjami</pl>
-            <es>Tienda de apps</es>
-            <it>Negozio app</it>
-            <cz>Obchod s aplikacemi</cz>
-            <br>Loja de aplicativos</br>
-            <uk>Магазин додатків</uk>
-            <ru>Магазин приложений</ru>
-            <cn>应用商店</cn>
-        </text>
-
-        <text name="ft_startupapp_3">
-            <en>Weather</en>
-            <de>Wetter</de>
-            <fr>Météo</fr>
-            <pl>Pogoda</pl>
-            <es>Clima</es>
-            <it>Meteo</it>
-            <cz>Počasí</cz>
-            <br>Tempo</br>
-            <uk>Погода</uk>
-            <ru>Погода</ru>
-            <cn>天气</cn>
-        </text>
-
-        <text name="ft_startupapp_4">
-            <en>Digging</en>
-            <de>Graben</de>
-            <fr>Excavation</fr>
-            <pl>Kopanie</pl>
-            <es>Excavación</es>
-            <it>Scavo</it>
-            <cz>Kopání</cz>
-            <br>Escavação</br>
-            <uk>Копання</uk>
-            <ru>Копание</ru>
-            <cn>挖掘</cn>
-        </text>
-        
-        <text name="ft_soundeffects_short">
-            <en>Sound Effects</en>
-            <de>Soundeffekte</de>
-            <fr>Effets sonores</fr>
-            <pl>Efekty dźwiękowe</pl>
-            <es>Efectos de sonido</es>
-            <it>Effetti sonori</it>
-            <cz>Zvukové efekty</cz>
-            <br>Efeitos sonoros</br>
-            <uk>Звукові ефекти</uk>
-            <ru>Звуковые эффекты</ru>
-            <cn>音效</cn>
-        </text>
-
-        <text name="ft_soundeffects_long">
-            <en>Play sound effects for tablet interactions</en>
-            <de>Soundeffekte für Tablet-Interaktionen abspielen</de>
-            <fr>Jouer des effets sonores pour les interactions avec la tablette</fr>
-            <pl>Odtwarzaj efekty dźwiękowe dla interakcji z tabletem</pl>
-            <es>Reproducir efectos de sonido para interacciones con la tablet</es>
-            <it>Riprodurre effetti sonori per interazioni con il tablet</it>
-            <cz>Přehrávat zvukové efekty pro interakce s tabletem</cz>
-            <br>Reproduzir efeitos sonoros para interações com o tablet</br>
-            <uk>Відтворювати звукові ефекти для взаємодії з планшетом</uk>
-            <ru>Воспроизводить звуковые эффекты для взаимодействия с планшетом</ru>
-            <cn>播放平板操作音效</cn>
-        </text>
-        
-        <text name="ft_debug_short">
-            <en>Debug Mode</en>
-            <de>Debug-Modus</de>
-            <fr>Mode debug</fr>
-            <pl>Tryb debug</pl>
-            <es>Modo debug</es>
-            <it>Modalità debug</it>
-            <cz>Režim ladění</cz>
-            <br>Modo debug</br>
-            <uk>Режим налагодження</uk>
-            <ru>Режим отладки</ru>
-            <cn>调试模式</cn>
-        </text>
-
-        <text name="ft_debug_long">
-            <en>Enable debug logging in console</en>
-            <de>Debug-Protokollierung in der Konsole aktivieren</de>
-            <fr>Activer la journalisation de débogage dans la console</fr>
-            <pl>Włącz rejestrowanie debug w konsoli</pl>
-            <es>Activar registro de depuración en la consola</es>
-            <it>Attiva registrazione debug nella console</it>
-            <cz>Povolit ladění v konzoli</cz>
-            <br>Ativar registro de depuração no console</br>
-            <uk>Увімкнути налагодження в консолі</uk>
-            <ru>Включить отладку в консоли</ru>
-            <cn>在控制台启用调试日志</cn>
-        </text>
-        
-        <text name="ft_reset">
-            <en>Reset Tablet Settings</en>
-            <de>Tablet-Einstellungen zurücksetzen</de>
-            <fr>Réinitialiser paramètres tablette</fr>
-            <pl>Resetuj ustawienia tabletu</pl>
-            <es>Restablecer config. tablet</es>
-            <it>Ripristina impostazioni tablet</it>
-            <cz>Resetovat nastavení tabletu</cz>
-            <br>Restaurar configurações do tablet</br>
-            <uk>Скинути налаштування планшета</uk>
-            <ru>Сбросить настройки планшета</ru>
-            <cn>重置平板设置</cn>
-        </text>
-        
-        <!-- App names -->
-        <text name="ft_app_dashboard">
-            <en>Dashboard</en>
-            <de>Dashboard</de>
-            <fr>Tableau de bord</fr>
-            <pl>Pulpit</pl>
-            <es>Panel</es>
-            <it>Cruscotto</it>
-            <cz>Řídicí panel</cz>
-            <br>Painel</br>
-            <uk>Панель</uk>
-            <ru>Панель</ru>
-            <cn>仪表盘</cn>
-        </text>
-
-        <text name="ft_app_store">
-            <en>App Store</en>
-            <de>App Store</de>
-            <fr>Boutique d'apps</fr>
-            <pl>Sklep z aplikacjami</pl>
-            <es>Tienda de apps</es>
-            <it>Negozio app</it>
-            <cz>Obchod s aplikacemi</cz>
-            <br>Loja de aplicativos</br>
-            <uk>Магазин додатків</uk>
-            <ru>Магазин приложений</ru>
-            <cn>应用商店</cn>
-        </text>
-
-        <text name="ft_app_updates">
-            <en>Updates</en>
-            <de>Updates</de>
-            <fr>Mises à jour</fr>
-            <pl>Aktualizacje</pl>
-            <es>Actualizaciones</es>
-            <it>Aggiornamenti</it>
-            <cz>Aktualizace</cz>
-            <br>Atualizações</br>
-            <uk>Оновлення</uk>
-            <ru>Обновления</ru>
-            <cn>更新</cn>
-        </text>
-
-        <text name="ft_app_settings">
-            <en>Settings</en>
-            <de>Einstellungen</de>
-            <fr>Paramètres</fr>
-            <pl>Ustawienia</pl>
-            <es>Ajustes</es>
-            <it>Impostazioni</it>
-            <cz>Nastavení</cz>
-            <br>Configurações</br>
-            <uk>Налаштування</uk>
-            <ru>Настройки</ru>
-            <cn>设置</cn>
-        </text>
-
-        <text name="ft_app_workshop">
-            <en>Workshop</en>
-            <de>Werkstatt</de>
-            <fr>Atelier</fr>
-            <pl>Warsztat</pl>
-            <es>Taller</es>
-            <it>Officina</it>
-            <cz>Dílna</cz>
-            <br>Oficina</br>
-            <uk>Майстерня</uk>
-            <ru>Мастерская</ru>
-            <cn>维修站</cn>
-        </text>
-
-        <text name="ft_app_field_status">
-            <en>Field Manager</en>
-            <de>Feldmanager</de>
-            <fr>Gestionnaire de champs</fr>
-            <pl>Menedżer pól</pl>
-            <es>Gestor de campos</es>
-            <it>Gestione campi</it>
-            <cz>Správce polí</cz>
-            <br>Gerenciador de campos</br>
-            <uk>Менеджер полів</uk>
-            <ru>Менеджер полей</ru>
-            <cn>农田管理</cn>
-        </text>
-
-        <text name="ft_app_animals">
-            <en>Animals</en>
-            <de>Tiere</de>
-            <fr>Animaux</fr>
-            <pl>Zwierzęta</pl>
-            <es>Animales</es>
-            <it>Animali</it>
-            <cz>Zvířata</cz>
-            <br>Animais</br>
-            <uk>Тварини</uk>
-            <ru>Животные</ru>
-            <cn>动物</cn>
-        </text>
-
-        <text name="ft_app_weather">
-            <en>Weather</en>
-            <de>Wetter</de>
-            <fr>Météo</fr>
-            <pl>Pogoda</pl>
-            <es>Clima</es>
-            <it>Meteo</it>
-            <cz>Počasí</cz>
-            <br>Tempo</br>
-            <uk>Погода</uk>
-            <ru>Погода</ru>
-            <cn>天气</cn>
-        </text>
-
-        <text name="ft_app_digging">
-            <en>Digging</en>
-            <de>Graben</de>
-            <fr>Excavation</fr>
-            <pl>Kopanie</pl>
-            <es>Excavación</es>
-            <it>Scavo</it>
-            <cz>Kopání</cz>
-            <br>Escavação</br>
-            <uk>Копання</uk>
-            <ru>Копание</ru>
-            <cn>挖掘</cn>
-        </text>
-
-        <text name="ft_app_bucket_tracker">
-            <en>Bucket Tracker</en>
-            <de>Eimer-Zähler</de>
-            <fr>Compteur de Godets</fr>
-            <pl>Licznik łyżek</pl>
-            <es>Contador de Cucharones</es>
-            <it>Contatore Benne</it>
-            <cz>Počítač kbelíků</cz>
-            <br>Contador de Baldes</br>
-            <uk>Лічильник ковшів</uk>
-            <ru>Счетчик ковшей</ru>
-            <cn>铲斗计数器</cn>
-        </text>
-
-        <text name="ft_app_income_mod">
-            <en>Income Mod</en>
-            <de>Einkommens-Mod</de>
-            <fr>Mod Revenus</fr>
-            <pl>Mod Dochodu</pl>
-            <es>Mod Ingresos</es>
-            <it>Mod Reddito</it>
-            <cz>Příjmový Mod</cz>
-            <br>Mod de Renda</br>
-            <uk>Мод доходу</uk>
-            <ru>Мод дохода</ru>
-            <cn>收入模组</cn>
-        </text>
-
-        <text name="ft_app_tax_mod">
-            <en>Tax Mod</en>
-            <de>Steuer-Mod</de>
-            <fr>Mod Taxes</fr>
-            <pl>Mod Podatkowy</pl>
-            <es>Mod Impuestos</es>
-            <it>Mod Tasse</it>
-            <cz>Daňový Mod</cz>
-            <br>Mod de Impostos</br>
-            <uk>Мод податків</uk>
-            <ru>Мод налогов</ru>
-            <cn>税务模组</cn>
-        </text>
-
-        <text name="ft_app_npc_favor">
-            <en>NPC Favor</en>
-            <de>NPC-Gunst</de>
-            <fr>Faveurs NPC</fr>
-            <pl>Przysługi NPC</pl>
-            <es>Favor NPC</es>
-            <it>Favore NPC</it>
-            <cz>Přízeň NPC</cz>
-            <br>Favor NPC</br>
-            <uk>Прихильність NPC</uk>
-            <ru>Расположение НПС</ru>
-            <cn>NPC好感</cn>
-        </text>
-
-        <text name="ft_app_crop_stress">
-            <en>Crop Stress</en>
-            <de>Pflanzenstress</de>
-            <fr>Stress des cultures</fr>
-            <pl>Stres upraw</pl>
-            <es>Estrés de cultivos</es>
-            <it>Stress colture</it>
-            <cz>Stres plodin</cz>
-            <br>Estresse de culturas</br>
-            <uk>Стрес рослин</uk>
-            <ru>Стресс растений</ru>
-            <cn>作物胁迫</cn>
-        </text>
-
-        <text name="ft_app_soil_fertilizer">
-            <en>Soil Fertilizer</en>
-            <de>Bodendünger</de>
-            <fr>Fertilisation du sol</fr>
-            <pl>Nawożenie gleby</pl>
-            <es>Fertilizante de suelo</es>
-            <it>Fertilizzante suolo</it>
-            <cz>Hnojení půdy</cz>
-            <br>Fertilizante do solo</br>
-            <uk>Добрива ґрунту</uk>
-            <ru>Удобрение почвы</ru>
-            <cn>土壤施肥</cn>
-        </text>
+        <!-- App names (used in App Store + topbar) -->
+        <text name="ft_app_dashboard"><en>Dashboard</en></text>
+        <text name="ft_app_store"><en>App Store</en></text>
+        <text name="ft_app_updates"><en>Updates</en></text>
+        <text name="ft_app_settings"><en>Settings</en></text>
+        <text name="ft_app_workshop"><en>Workshop</en></text>
+        <text name="ft_app_field_status"><en>Field Manager</en></text>
+        <text name="ft_app_animals"><en>Animals</en></text>
+        <text name="ft_app_weather"><en>Weather</en></text>
+        <text name="ft_app_digging"><en>Digging</en></text>
+        <text name="ft_app_bucket_tracker"><en>Bucket Tracker</en></text>
+        <text name="ft_app_income_mod"><en>Income Mod</en></text>
+        <text name="ft_app_tax_mod"><en>Tax Mod</en></text>
+        <text name="ft_app_npc_favor"><en>NPC Favor</en></text>
+        <text name="ft_app_crop_stress"><en>Crop Stress</en></text>
+        <text name="ft_app_soil_fertilizer"><en>Soil Fertilizer</en></text>
     </l10n>
 </modDesc>

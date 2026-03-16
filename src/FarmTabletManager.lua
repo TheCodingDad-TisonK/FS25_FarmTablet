@@ -1,14 +1,6 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – FarmTabletManager
+-- Top-level coordinator
 -- =========================================================
 ---@class FarmTabletManager
 FarmTabletManager = {}
@@ -16,129 +8,97 @@ local FarmTabletManager_mt = Class(FarmTabletManager)
 
 function FarmTabletManager.new(mission, modDirectory, modName)
     local self = setmetatable({}, FarmTabletManager_mt)
-    
-    self.mission = mission
+
+    self.mission      = mission
     self.modDirectory = modDirectory
-    self.modName = modName
-    
-    -- Initialize subsystems
+    self.modName      = modName
+
+    -- Settings subsystem
     self.settingsManager = SettingsManager.new()
-    self.settings = Settings.new(self.settingsManager)
-    
-    self.farmTabletSystem = FarmTabletSystem.new(self.settings)
-    self.farmTabletUI = FarmTabletUI.new(self.settings, self.farmTabletSystem)
-    
-    -- Initialize input handler
+    self.settings        = Settings.new(self.settingsManager)
+    self.settings:load()
+
+    -- Core systems
+    self.system = FarmTabletSystem.new(self.settings)
+    self.ui     = FarmTabletUI.new(self.settings, self.system, modDirectory)
+
+    -- Input
     self.inputHandler = InputHandler.new(self)
-    
-    -- Settings UI for pause menu
+
+    -- Settings UI (pause menu injection)
     if mission:getIsClient() and g_gui then
         self.settingsUI = SettingsUI.new(self.settings)
-        
-        InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(InGameMenuSettingsFrame.onFrameOpen, function()
-            self.settingsUI:inject()
-        end)
-        
-        InGameMenuSettingsFrame.updateButtons = Utils.appendedFunction(InGameMenuSettingsFrame.updateButtons, function(frame)
-            if self.settingsUI then
-                self.settingsUI:ensureResetButton(frame)
-            end
-        end)
+        InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(
+            InGameMenuSettingsFrame.onFrameOpen,
+            function() self.settingsUI:inject() end
+        )
+        InGameMenuSettingsFrame.updateButtons = Utils.appendedFunction(
+            InGameMenuSettingsFrame.updateButtons,
+            function(frame) self.settingsUI:ensureResetButton(frame) end
+        )
     end
-    
-    -- Console commands
+
+    -- Console commands GUI
     self.settingsGUI = SettingsGUI.new()
     self.settingsGUI:registerConsoleCommands()
-    
-    -- Load settings
-    self.settings:load()
-    
+
     return self
 end
 
 function FarmTabletManager:onMissionLoaded()
-    if self.farmTabletSystem then
-        self.farmTabletSystem:initialize()
-    end
-    
-    -- Register input binding
+    self.system:initialize()
     self.inputHandler:registerKeyBinding()
-    
+
     if self.settings.enabled and self.settings.showTabletNotifications then
-        self:showNotification(
-            g_i18n:getText("ft_welcome_title") or "Farm Tablet",
-            string.format(g_i18n:getText("ft_welcome_message") or "Press %s to open", self.settings.tabletKeybind)
+        local title = (g_i18n and g_i18n:getText("ft_welcome_title")) or "Farm Tablet v2"
+        local msg   = string.format(
+            (g_i18n and g_i18n:getText("ft_welcome_message")) or "Press %s to open",
+            self.settings.tabletKeybind
         )
+        self:showNotification(title, msg)
     end
 end
 
 function FarmTabletManager:update(dt)
-    if not self.settings.enabled then
-        return
-    end
-    
-    -- Update input handler (checks for key presses)
-    if self.inputHandler then
-        self.inputHandler:update(dt)
-    end
-    
-    -- Update system
-    if self.farmTabletSystem then
-        self.farmTabletSystem:update(dt)
-    end
-    
-    -- Update UI
-    if self.farmTabletUI then
-        self.farmTabletUI:update(dt)
-    end
+    if not self.settings.enabled then return end
+    if self.inputHandler then self.inputHandler:update(dt) end
+    if self.system       then self.system:update(dt)      end
+    if self.ui           then self.ui:update(dt)          end
 end
 
 function FarmTabletManager:openTablet()
-    if self.farmTabletUI then
-        self.farmTabletUI:openTablet()
-    end
+    if self.ui then self.ui:openTablet() end
 end
 
 function FarmTabletManager:closeTablet()
-    if self.farmTabletUI then
-        self.farmTabletUI:closeTablet()
-    end
+    if self.ui then self.ui:closeTablet() end
 end
 
 function FarmTabletManager:toggleTablet()
-    if self.farmTabletUI then
-        self.farmTabletUI:toggleTablet()
-    end
+    if self.ui then self.ui:toggleTablet() end
+end
+
+function FarmTabletManager:switchApp(appId)
+    if self.ui then return self.ui:switchApp(appId) end
+    return false
 end
 
 function FarmTabletManager:showNotification(title, message)
-    if not self.mission or not self.settings.showTabletNotifications then
-        return
-    end
-    
+    if not self.mission or not self.settings.showTabletNotifications then return end
     if self.mission.hud and self.mission.hud.showBlinkingWarning then
-        self.mission.hud:showBlinkingWarning(string.format("%s: %s", title, message), 4000)
-    end
-end
-
-function FarmTabletManager:log(msg, ...)
-    if self.settings.debugMode then
-        print(string.format("[Farm Tablet] " .. msg, ...))
+        self.mission.hud:showBlinkingWarning(title .. ": " .. message, 4000)
     end
 end
 
 function FarmTabletManager:delete()
-    if self.settings then
-        self.settings:save()
+    if self.settings then self.settings:save() end
+    if self.inputHandler then self.inputHandler:unregisterKeyBinding() end
+    if self.ui then self.ui:delete() end
+    Logging.info("[FarmTablet v2] Shutdown complete.")
+end
+
+function FarmTabletManager:log(msg, ...)
+    if self.settings and self.settings.debugMode then
+        Logging.info("[FarmTablet] " .. string.format(msg, ...))
     end
-    
-    if self.inputHandler then
-        self.inputHandler:unregisterKeyBinding()
-    end
-    
-    if self.farmTabletUI then
-        self.farmTabletUI:delete()
-    end
-    
-    print("Farm Tablet: Shutting down")
 end

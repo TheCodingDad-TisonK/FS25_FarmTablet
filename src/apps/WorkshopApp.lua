@@ -1,268 +1,136 @@
 -- =========================================================
--- FS25 Farm Tablet -- Workshop App
--- =========================================================
--- Detects nearby vehicles, shows diagnostics (fuel, wear,
--- operating hours), lets the player open the in-game workshop.
+-- FarmTablet v2 – Workshop App
+-- Nearby vehicle diagnostics with selection
 -- =========================================================
 
-function FarmTabletUI:loadWorkshopApp()
-    self.ui.appTexts = {}
-    self.ui.workshopVehicleButtons = {}
-    self.ui.workshopOpenButton     = nil
+FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
+    local data   = self.system.data
+    local nearby = data:getNearbyVehicles(25)
+    local sel    = self.system.workshopSelectedVehicle
 
-    local content = self.ui.appContentArea
-    if not content then return end
+    local startY = self:drawAppHeader("Workshop",
+        #nearby .. " nearby")
 
-    local C    = self.UI_CONSTANTS
-    local padX = self:px(15)
-    local padY = self:py(12)
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local minY = contentY + FT.py(8)
 
-    local nearby   = self:getWorkshopNearbyVehicles(20)
-    local selected = self.tabletSystem.workshopSelectedVehicle
+    -- Validate selection still in range
+    if sel then
+        local found = false
+        for _, v in ipairs(nearby) do
+            if v.vehicle == sel then found = true; break end
+        end
+        if not found then
+            self.system.workshopSelectedVehicle = nil
+            sel = nil
+        end
+    end
 
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Workshop", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
-    self:drawText(#nearby .. " nearby", content.x + content.width - padX, titleY,
-        0.013, RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
-    self:drawDivider(titleY - self:py(4))
-
-    local y = titleY - 0.030
-
-    -- No vehicles nearby
+    -- ── No vehicles ────────────────────────────────────────
     if #nearby == 0 then
-        self:drawText("No vehicles within 20 m.", content.x + padX, y, 0.015,
-            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-        y = y - 0.022
-        self:drawText("Walk closer to a vehicle.", content.x + padX, y, 0.013,
-            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-        self.tabletSystem.workshopSelectedVehicle = nil
+        self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
+            "No vehicles within 25 m.",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self.r:appText(x, y - FT.py(30), FT.FONT.SMALL,
+            "Walk closer to a vehicle to inspect it.",
+            RenderText.ALIGN_LEFT, FT.C.MUTED)
         return
     end
 
-    -- Nearby vehicle list
-    self:drawSectionHeader("NEARBY  (" .. #nearby .. ")", y)
-    y = y - 0.022
+    -- ── Vehicle list ───────────────────────────────────────
+    y = self:drawSection(y, "NEARBY  (" .. #nearby .. ")")
 
-    local btnW = self:px(44)
-    local btnH = self:py(20)
+    local btnW = FT.px(42)
+    local btnH = FT.py(18)
 
-    for i = 1, math.min(4, #nearby) do
+    for i = 1, math.min(5, #nearby) do
         local v = nearby[i]
-        if y <= content.y + padY + self:py(35) then break end
+        if y - btnH < minY then break end
 
-        local isSelected = (v.vehicle == selected)
-        local nameColor  = isSelected and C.VALUE_COLOR or C.LABEL_COLOR
+        local isSel   = (v.vehicle == sel)
+        local nameColor = isSel and FT.C.TEXT_BRIGHT or FT.C.TEXT_NORMAL
 
-        local name = v.name
-        if #name > 22 then name = name:sub(1, 19) .. "..." end
+        -- Row bg on hover / selected
+        if isSel then
+            self.r:appRect(x - FT.px(4), y - FT.py(4),
+                cw + FT.px(8), btnH + FT.py(6), FT.C.BRAND_GLOW)
+        end
 
-        self:drawText(name,
-            content.x + padX, y, 0.014, RenderText.ALIGN_LEFT, nameColor)
-        self:drawText(string.format("%.0f m", v.distance),
-            content.x + content.width - padX - btnW - self:px(8), y,
-            0.012, RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
+        -- Name
+        local nm = v.name
+        if #nm > 22 then nm = nm:sub(1,20) .. "…" end
+        self.r:appText(x, y, FT.FONT.SMALL, nm,
+            RenderText.ALIGN_LEFT, nameColor)
 
-        local btn = self:drawButton("SEL",
-            content.x + content.width - padX - btnW, y - self:py(2),
-            btnW, btnH,
-            isSelected and C.BTN_GREEN or C.BTN_GRAY)
-        btn.vehicle = v.vehicle
-        table.insert(self.ui.workshopVehicleButtons, btn)
+        -- Distance
+        self.r:appText(x + cw - btnW - FT.px(50), y, FT.FONT.TINY,
+            v.distance .. " m",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
 
-        y = y - 0.024
+        -- Select button
+        local bColor  = isSel and FT.C.BTN_ACTIVE or FT.C.BTN_NEUTRAL
+        local bLabel  = isSel and "SELECTED" or "SELECT"
+        local vehicle = v.vehicle  -- capture for closure
+        local btn = self.r:button(x + cw - btnW, y - FT.py(2), btnW, btnH,
+            bLabel, bColor,
+            { onClick = function()
+                self.system.workshopSelectedVehicle = vehicle
+                self:switchApp(FT.APP.WORKSHOP)
+            end })
+        table.insert(self._contentBtns, btn)
+
+        y = y - FT.py(22)
     end
 
-    -- Validate selected vehicle is still in range
-    if selected then
-        local stillNear = false
-        for _, v in ipairs(nearby) do
-            if v.vehicle == selected then stillNear = true; break end
-        end
-        if not stillNear then
-            self.tabletSystem.workshopSelectedVehicle = nil
-            selected = nil
-        end
+    -- ── Diagnostics panel ──────────────────────────────────
+    if not sel then
+        y = y - FT.py(6)
+        self.r:appText(x, y, FT.FONT.SMALL,
+            "Select a vehicle to see diagnostics.",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        return
     end
 
-    -- Selected vehicle diagnostics
-    if selected then
-        y = y - 0.008
-        self:drawSectionHeader("DIAGNOSTICS", y)
-        y = y - 0.022
-
-        local fullName = (selected.getFullName and selected:getFullName()) or "Unknown"
-        if #fullName > 26 then fullName = fullName:sub(1, 23) .. "..." end
-        self:drawRow("Vehicle", fullName, y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
-
-        -- Fuel
-        local fuel, fuelCap = 0, 1
-        local mSpec = selected.spec_motorized
-        if mSpec then
-            fuel    = mSpec.fuelFillLevel or 0
-            fuelCap = math.max(mSpec.fuelCapacity or 1, 1)
-        end
-        local fuelPct   = math.floor((fuel / fuelCap) * 100)
-        local fuelColor = fuelPct > 30 and C.POSITIVE_COLOR
-                       or fuelPct > 10 and C.WARNING_COLOR or C.NEGATIVE_COLOR
-
-        self:drawRow("Fuel",
-            string.format("%d%%  (%.0f / %.0f L)", fuelPct, fuel, fuelCap),
-            y, C.LABEL_COLOR, fuelColor)
-        y = y - 0.022
-        y = self:drawProgressBar(fuelPct, 100, y, fuelColor)
-
-        -- Wear / condition
-        local wear    = 0
-        local wSpec   = selected.spec_wearable
-        if wSpec then wear = math.floor((wSpec.totalWear or 0) * 100) end
-        local wearColor = wear < 30 and C.POSITIVE_COLOR
-                       or wear < 70 and C.WARNING_COLOR or C.NEGATIVE_COLOR
-        local condition = 100 - wear
-
-        self:drawRow("Condition",
-            string.format("%d%%  (wear: %d%%)", condition, wear),
-            y, C.LABEL_COLOR, wearColor)
-        y = y - 0.022
-        y = self:drawProgressBar(condition, 100, y, wearColor)
-
-        -- Operating hours
-        local opH = math.floor((selected.operatingTime or 0) / 3600000)
-        self:drawRow("Op. Hours", string.format("%d h", opH), y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
-
-        -- Attached implements
-        if selected.getAttachedImplements then
-            local implCount = 0
-            for _ in ipairs(selected:getAttachedImplements()) do
-                implCount = implCount + 1
-            end
-            if implCount > 0 then
-                self:drawRow("Attachments", tostring(implCount), y, C.LABEL_COLOR, C.VALUE_COLOR)
-                y = y - 0.022
-            end
-        end
-
-        -- Open Workshop button (pinned to bottom of content area)
-        local owBtnW = self:px(160)
-        local owBtnH = self:py(24)
-        local owBtnY = content.y + padY + self:py(4)
-        self.ui.workshopOpenButton = self:drawButton(
-            "Open Workshop",
-            content.x + padX, owBtnY,
-            owBtnW, owBtnH, C.BTN_BLUE)
-    else
-        y = y - 0.008
-        self:drawText("Select a vehicle above to inspect.",
-            content.x + padX, y, 0.013, RenderText.ALIGN_LEFT, C.MUTED_COLOR)
+    -- Find selected in nearby list
+    local selData = nil
+    for _, v in ipairs(nearby) do
+        if v.vehicle == sel then selData = v; break end
     end
-end
+    if not selData then return end
 
--- Returns up to 10 motorized vehicles within `radius` metres, sorted by distance.
-function FarmTabletUI:getWorkshopNearbyVehicles(radius)
-    local result = {}
-    if not (g_currentMission and g_currentMission.vehicles) then return result end
+    y = y - FT.py(4)
+    y = self:drawRule(y, 0.4)
+    y = self:drawSection(y, "DIAGNOSTICS")
 
-    -- Player position: g_localPlayer is the reliable reference for the local client.
-    -- g_currentMission.player can be nil or lack a rootNode when the tablet is open.
-    local px, py, pz = 0, 0, 0
-    if g_localPlayer then
-        if type(g_localPlayer.getIsInVehicle) == "function" and g_localPlayer:getIsInVehicle() then
-            local cv = g_localPlayer:getCurrentVehicle()
-            if cv and cv.rootNode then
-                pcall(function() px, py, pz = getWorldTranslation(cv.rootNode) end)
-            end
-        end
-        if px == 0 and py == 0 and pz == 0 and g_localPlayer.rootNode then
-            pcall(function() px, py, pz = getWorldTranslation(g_localPlayer.rootNode) end)
-        end
-    end
-    if px == 0 and py == 0 and pz == 0 then
-        local player = g_currentMission and g_currentMission.player
-        if player and player.rootNode then
-            pcall(function() px, py, pz = getWorldTranslation(player.rootNode) end)
-        end
-    end
+    -- Full vehicle name
+    local fullName = (sel.getFullName and sel:getFullName()) or selData.name
+    if #fullName > 26 then fullName = fullName:sub(1,24) .. "…" end
+    y = self:drawRow(y, "Vehicle", fullName)
 
-    for _, v in pairs(g_currentMission.vehicles) do
-        -- Mirror DiggingApp exactly: direct isa check, no pcall, no spec pre-filter
-        if v:isa(Vehicle) and v.rootNode then
-            local vx, vy, vz = getWorldTranslation(v.rootNode)
-            local dist = MathUtil.vector2Length(vx - px, vz - pz)
+    -- Fuel
+    local fuelPct  = selData.fuelPct
+    local fuelColor = fuelPct >= 50 and FT.C.POSITIVE
+                   or fuelPct >= 20 and FT.C.WARNING
+                   or FT.C.NEGATIVE
+    y = self:drawRow(y, "Fuel",
+        string.format("%.0f%%  (%.0fL / %.0fL)",
+            fuelPct, selData.fuel, selData.fuelCap),
+        nil, fuelColor)
+    y = y + FT.py(FT.SP.ROW) - FT.py(8)
+    y = self:drawBar(y, fuelPct, 100, fuelColor)
 
-            if dist <= radius then
-                local name = (v.getFullName and v:getFullName())
-                          or v.configFileName or "Vehicle"
-                table.insert(result, { vehicle = v, name = name, distance = dist })
-            end
-        end
-    end
+    -- Wear
+    local wearPct  = selData.wearPct
+    local wearColor = wearPct <= 30 and FT.C.POSITIVE
+                   or wearPct <= 65 and FT.C.WARNING
+                   or FT.C.NEGATIVE
+    y = self:drawRow(y - FT.py(4), "Wear",
+        string.format("%d%%", wearPct), nil, wearColor)
+    y = y + FT.py(FT.SP.ROW) - FT.py(8)
+    y = self:drawBar(y, wearPct, 100, wearColor)
 
-    table.sort(result, function(a, b) return a.distance < b.distance end)
-    return result
-end
-
--- Opens the FS25 WorkshopScreen for the selected vehicle,
--- mirroring exactly how FS25_MobileWorkshop does it.
-function FarmTabletUI:openVehicleWorkshop()
-    local vehicle = self.tabletSystem.workshopSelectedVehicle
-    if not vehicle then return end
-
-    if not (g_workshopScreen and g_gui) then return end
-
-    -- Gather the root vehicle's full train (vehicle + all attached implements/trailers)
-    local vehicles = {}
-    local root = vehicle.rootVehicle or vehicle
-    if root.getChildVehicles then
-        local farmId = g_currentMission and g_currentMission:getFarmId()
-        for _, subVehicle in ipairs(root:getChildVehicles()) do
-            if subVehicle.getShowInVehiclesOverview and subVehicle:getShowInVehiclesOverview()
-            and subVehicle.getOwnerFarmId and subVehicle:getOwnerFarmId() == farmId then
-                table.insert(vehicles, subVehicle)
-            end
-        end
-        table.sort(vehicles, function(a, b) return a.rootNode < b.rootNode end)
-    end
-    if #vehicles == 0 then
-        table.insert(vehicles, vehicle)
-    end
-
-    self:closeTablet()
-
-    g_workshopScreen:setSellingPoint(nil, false, false, true) -- isMobileWorkshop = true
-    g_workshopScreen:setVehicles(vehicles)
-    if g_workshopScreen.list then
-        for i, v in ipairs(vehicles) do
-            if v == vehicle then
-                g_workshopScreen.list:setSelectedIndex(i)
-                break
-            end
-        end
-    end
-    g_gui:showGui("WorkshopScreen")
-end
-
--- Mouse event handler for the Workshop app.
-function FarmTabletUI:handleWorkshopMouseEvent(posX, posY)
-    -- Vehicle SELECT buttons
-    if self.ui.workshopVehicleButtons then
-        for _, btn in ipairs(self.ui.workshopVehicleButtons) do
-            if posX >= btn.x and posX <= btn.x + btn.width and
-               posY >= btn.y and posY <= btn.y + btn.height then
-                self.tabletSystem.workshopSelectedVehicle = btn.vehicle
-                self:switchApp("workshop")
-                return true
-            end
-        end
-    end
-    -- Open Workshop button
-    if self.ui.workshopOpenButton then
-        local b = self.ui.workshopOpenButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            self:openVehicleWorkshop()
-            return true
-        end
-    end
-    return false
-end
+    -- Hours
+    y = self:drawRow(y - FT.py(4), "Operating Hours",
+        selData.opHours .. " h")
+end)

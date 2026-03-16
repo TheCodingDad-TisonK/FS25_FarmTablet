@@ -15,11 +15,13 @@
 Settings = {}
 local Settings_mt = Class(Settings)
 
--- Startup app options
-Settings.STARTUP_DASHBOARD = 1
-Settings.STARTUP_APP_STORE = 2
-Settings.STARTUP_WEATHER = 3
-Settings.STARTUP_DIGGING = 4
+-- Startup app migration helper
+local STARTUP_MAP = {
+    [1] = "dashboard",
+    [2] = "app_store",
+    [3] = "weather",
+    [4] = "digging",
+}
 
 function Settings.new(manager)
     local self = setmetatable({}, Settings_mt)
@@ -38,7 +40,7 @@ function Settings:resetToDefaults(saveImmediately)
     self.enabled = true
     self.tabletKeybind = "T"
     self.showTabletNotifications = true
-    self.startupApp = Settings.STARTUP_DASHBOARD
+    self.startupApp = "dashboard"
     self.vibrationFeedback = true
     self.soundEffects = true
     self.debugMode = false
@@ -50,17 +52,7 @@ function Settings:resetToDefaults(saveImmediately)
 end
 
 function Settings:getStartupAppName()
-    if self.startupApp == Settings.STARTUP_DASHBOARD then
-        return "Dashboard"
-    elseif self.startupApp == Settings.STARTUP_APP_STORE then
-        return "App Store"
-    elseif self.startupApp == Settings.STARTUP_WEATHER then
-        return "Weather"
-    elseif self.startupApp == Settings.STARTUP_DIGGING then
-        return "Digging"
-    else
-        return "Dashboard"
-    end
+    return string.upper(tostring(self.startupApp or "dashboard"))
 end
 
 function Settings:load()
@@ -72,10 +64,14 @@ function Settings:load()
 end
 
 function Settings:validateSettings()
+    -- Migration: if startupApp is a number, convert to ID
+    if type(self.startupApp) == "number" then
+        self.startupApp = STARTUP_MAP[self.startupApp] or "dashboard"
+    end
+    
     -- Ensure startup app is valid
-    if self.startupApp < 1 or self.startupApp > 4 then
-        Logging.warning("Farm Tablet: Invalid startup app %d, resetting to Dashboard", self.startupApp)
-        self.startupApp = Settings.STARTUP_DASHBOARD
+    if self.startupApp == nil or self.startupApp == "" then
+        self.startupApp = "dashboard"
     end
     
     -- Ensure keybind is valid
@@ -97,9 +93,9 @@ function Settings:save()
         self.tabletKeybind, self:getStartupAppName())
 end
 
-function Settings:setStartupApp(app)
-    if app >= 1 and app <= 4 then
-        self.startupApp = app
+function Settings:setStartupApp(appId)
+    if appId and appId ~= "" then
+        self.startupApp = tostring(appId)
         Logging.info("Farm Tablet: Startup app changed to: %s", self:getStartupAppName())
     end
 end

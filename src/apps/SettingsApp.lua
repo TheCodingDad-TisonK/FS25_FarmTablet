@@ -1,93 +1,87 @@
 -- =========================================================
--- FS25 Farm Tablet -- Settings App (in-tablet interactive settings)
+-- FarmTablet v2 – Settings App
 -- =========================================================
 
-function FarmTabletUI:loadSettingsApp()
-    self.ui.appTexts = {}
-    self.ui.settingsToggleButtons = {}
-    local content = self.ui.appContentArea
-    if not content then return end
+FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
+    local s = self.settings
 
-    local C    = self.UI_CONSTANTS
-    local padX = self:px(15)
-    local padY = self:py(12)
-    local s    = self.settings
+    local startY = self:drawAppHeader("Settings", "FarmTablet v" .. FT.VERSION)
 
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Settings", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local minY = contentY + FT.py(8)
 
-    local version = "v1.1.0.6"
-    self:drawText(version, content.x + content.width - padX, titleY, 0.012,
-        RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
+    -- ── General ───────────────────────────────────────────
+    y = self:drawSection(y, "GENERAL")
 
-    self:drawDivider(titleY - self:py(4))
-    local y = titleY - 0.032
-    self:drawSectionHeader("TABLET", y)
-    y = y - 0.024
-
-    -- Helper: draw a toggle row with ON/OFF button
-    local btnW = self:px(52)
-    local btnH = self:py(20)
-
-    local function drawToggle(label, state, key, y_)
-        self:drawText(label, content.x + padX, y_ + 0.003, 0.014,
-            RenderText.ALIGN_LEFT, C.LABEL_COLOR)
-
-        local bx = content.x + content.width - padX - btnW
-        local by = y_ - 0.002
-        local btn = self:drawButton(
-            state and "ON" or "OFF",
-            bx, by, btnW, btnH,
-            state and C.BTN_GREEN or C.BTN_RED
-        )
-        btn.settingKey = key
-        btn.currentState = state
-        table.insert(self.ui.settingsToggleButtons, btn)
-    end
-
-    drawToggle("Tablet Enabled",    s.enabled,                 "enabled",                 y)
-    y = y - 0.030
-    drawToggle("Notifications",     s.showTabletNotifications, "showTabletNotifications", y)
-    y = y - 0.030
-    drawToggle("Sound Effects",     s.soundEffects,            "soundEffects",            y)
-    y = y - 0.030
-    drawToggle("Debug Logging",     s.debugMode,               "debugMode",               y)
-
-    -- Keybind display
-    y = y - 0.038
-    self:drawSectionHeader("CONTROLS", y)
-    y = y - 0.024
-    self:drawRow("Open Key",    "[" .. (s.tabletKeybind or "T") .. "]",    y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
-    self:drawText("Change via: TabletKeybind [KEY] in console", content.x + padX,
-        y, 0.012, RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-
-    -- Startup app display
-    y = y - 0.034
-    self:drawSectionHeader("STARTUP", y)
-    y = y - 0.024
-    self:drawRow("Startup App", s:getStartupAppName(), y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
-    self:drawText("Change via: TabletSetStartupApp 1-4 in console", content.x + padX,
-        y, 0.012, RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-end
-
-function FarmTabletUI:handleSettingsAppMouseEvent(posX, posY)
-    local btns = self.ui.settingsToggleButtons
-    if not btns then return false end
-    for _, btn in ipairs(btns) do
-        if posX >= btn.x and posX <= btn.x + btn.width and
-           posY >= btn.y and posY <= btn.y + btn.height then
-            -- Toggle the setting
-            local key = btn.settingKey
-            if key and self.settings[key] ~= nil then
-                self.settings[key] = not self.settings[key]
-                self.settings:save()
-            end
-            -- Refresh app
-            self:switchApp("settings")
-            return true
+    -- Notifications toggle
+    local nLabel = s.showTabletNotifications and "NOTIFICATIONS: ON" or "NOTIFICATIONS: OFF"
+    local nColor = s.showTabletNotifications and FT.C.POSITIVE or FT.C.MUTED
+    local _, nBtn = self:drawButton(y, nLabel, nColor, {
+        onClick = function()
+            s.showTabletNotifications = not s.showTabletNotifications
+            s:save()
+            self:switchApp(FT.APP.SETTINGS)
         end
+    })
+    y = y - FT.py(28)
+
+    -- Sound Effects toggle
+    local sLabel = s.soundEffects and "SOUND: ON" or "SOUND: OFF"
+    local sColor = s.soundEffects and FT.C.POSITIVE or FT.C.MUTED
+    local _, sBtn = self:drawButton(y, sLabel, sColor, {
+        onClick = function()
+            s.soundEffects = not s.soundEffects
+            s:save()
+            self:switchApp(FT.APP.SETTINGS)
+        end
+    })
+    y = y - FT.py(28)
+
+    -- Debug Mode toggle
+    local dLabel = s.debugMode and "DEBUG: ON" or "DEBUG: OFF"
+    local dColor = s.debugMode and FT.C.NEGATIVE or FT.C.MUTED
+    local _, dBtn = self:drawButton(y, dLabel, dColor, {
+        onClick = function()
+            s.debugMode = not s.debugMode
+            s:save()
+            self:switchApp(FT.APP.SETTINGS)
+        end
+    })
+    y = y - FT.py(28)
+
+    y = y - FT.py(4)
+    y = self:drawRule(y, 0.3)
+
+    -- ── Info ──────────────────────────────────────────────
+    y = self:drawSection(y, "INFO")
+    y = self:drawRow(y, "Version",  "v" .. FT.VERSION)
+    y = self:drawRow(y, "Author",   "TisonK")
+
+    local appCount = #self.system.registry:getAll()
+    y = self:drawRow(y, "Apps Loaded", tostring(appCount))
+
+    -- ── Console hint ─────────────────────────────────────
+    if y > minY + FT.py(28) then
+        y = y - FT.py(8)
+        self.r:appRect(x - FT.px(4), y - FT.py(26),
+            cw + FT.px(8), FT.py(30), FT.C.BG_CARD)
+        self.r:appText(x + FT.px(8), y - FT.py(4),
+            FT.FONT.TINY, "Type  tablet  in console for all commands.",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self.r:appText(x + FT.px(8), y - FT.py(18),
+            FT.FONT.TINY, "Full settings: Pause → Settings → Farm Tablet",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        y = y - FT.py(34)
     end
-    return false
-end
+
+    -- ── Reset button ─────────────────────────────────────
+    if y > minY then
+        local _, resetBtn = self:drawButton(minY + FT.py(2), "RESET DEFAULTS",
+            FT.C.BTN_DANGER,
+            { onClick = function()
+                self.settings:resetToDefaults(true)
+                self:switchApp(FT.APP.SETTINGS)
+            end })
+    end
+end)

@@ -28,7 +28,8 @@ function SettingsGUI:registerConsoleCommands()
     addConsoleCommand("TabletToggle", "Toggle tablet", "consoleCommandTabletToggle", self)
     addConsoleCommand("TabletKeybind", "Set tablet keybind", "consoleCommandTabletKeybind", self)
     addConsoleCommand("TabletSetNotifications", "Enable/disable notifications", "consoleCommandTabletSetNotifications", self)
-    addConsoleCommand("TabletSetStartupApp", "Set startup app (1-4)", "consoleCommandTabletSetStartupApp", self)
+    addConsoleCommand("TabletSetStartupApp", "Set startup app ID", "consoleCommandTabletSetStartupApp", self)
+    addConsoleCommand("TabletApp", "Switch to app by ID", "consoleCommandTabletApp", self)
     addConsoleCommand("TabletShowSettings", "Show current settings", "consoleCommandTabletShowSettings", self)
     addConsoleCommand("TabletResetSettings", "Reset all settings to defaults", "consoleCommandTabletResetSettings", self)
     
@@ -45,11 +46,28 @@ function SettingsGUI:consoleCommandHelp()
     print("TabletToggle - Toggle tablet")
     print("TabletKeybind [key] - Set open key")
     print("TabletSetNotifications true|false - Toggle notifications")
-    print("TabletSetStartupApp 1|2|3|4 - Set startup app")
+    print("TabletSetStartupApp [id] - Set startup app (e.g. dashboard, weather)")
+    print("TabletApp [id] - Switch to app immediately")
     print("TabletShowSettings - Show current settings")
     print("TabletResetSettings - Reset to defaults")
     print("===================================")
     return "Type 'help' for more info"
+end
+
+function SettingsGUI:consoleCommandTabletApp(appId)
+    if not appId or appId == "" then
+        return "Usage: TabletApp [app_id] (e.g., dashboard, weather, animals)"
+    end
+    
+    if g_FarmTablet then
+        if g_FarmTablet:switchApp(appId) then
+            return string.format("Switched to app: %s", appId)
+        else
+            return string.format("Error: App '%s' not found or not enabled", appId)
+        end
+    end
+    
+    return "Error: Farm Tablet not initialized"
 end
 
 function SettingsGUI:consoleCommandTabletEnable()
@@ -133,14 +151,13 @@ function SettingsGUI:consoleCommandTabletSetNotifications(enabled)
     return "Error: Farm Tablet not initialized"
 end
 
-function SettingsGUI:consoleCommandTabletSetStartupApp(app)
-    local appNum = tonumber(app)
-    if not appNum or appNum < 1 or appNum > 4 then
-        return "Invalid app. Use 1 (Dashboard), 2 (App Store), 3 (Weather), or 4 (Digging)"
+function SettingsGUI:consoleCommandTabletSetStartupApp(appId)
+    if not appId or appId == "" then
+        return "Usage: TabletSetStartupApp [app_id] (e.g., dashboard, weather, animals)"
     end
     
     if g_FarmTablet and g_FarmTablet.settings then
-        g_FarmTablet.settings:setStartupApp(appNum)
+        g_FarmTablet.settings:setStartupApp(appId)
         g_FarmTablet.settings:save()
         return string.format("Startup app set to: %s", g_FarmTablet.settings:getStartupAppName())
     end

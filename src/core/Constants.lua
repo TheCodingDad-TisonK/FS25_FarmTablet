@@ -1,0 +1,119 @@
+-- =========================================================
+-- FarmTablet v2 – Constants
+-- Single source of truth for the entire design system
+-- =========================================================
+FT = FT or {}
+
+FT.VERSION = "2.0.0"
+
+-- ── Design Tokens ─────────────────────────────────────────
+-- Reference dimensions (at 1080p; scaled at runtime)
+FT.REF_W = 860   -- tablet width  in ref pixels
+FT.REF_H = 620   -- tablet height in ref pixels
+
+-- Color Palette  (R, G, B, A)
+FT.C = {
+    -- Backgrounds
+    BG_DEEP      = {0.04, 0.05, 0.07, 0.97},   -- main tablet body
+    BG_PANEL     = {0.07, 0.09, 0.12, 0.96},   -- inner panels
+    BG_CARD      = {0.09, 0.11, 0.15, 0.94},   -- card/row bg
+    BG_NAV       = {0.05, 0.06, 0.09, 0.98},   -- sidebar bg
+
+    -- Brand / Accent
+    BRAND        = {0.16, 0.76, 0.38, 1.00},   -- green accent
+    BRAND_DIM    = {0.10, 0.44, 0.22, 0.85},   -- dimmed
+    BRAND_GLOW   = {0.16, 0.76, 0.38, 0.18},   -- subtle bg glow
+
+    -- Status
+    POSITIVE     = {0.22, 0.88, 0.46, 1.00},
+    NEGATIVE     = {0.95, 0.28, 0.28, 1.00},
+    WARNING      = {1.00, 0.72, 0.10, 1.00},
+    INFO         = {0.30, 0.65, 1.00, 1.00},
+    MUTED        = {0.42, 0.44, 0.50, 1.00},
+
+    -- Text
+    TEXT_BRIGHT  = {0.96, 0.97, 0.98, 1.00},
+    TEXT_NORMAL  = {0.78, 0.80, 0.84, 1.00},
+    TEXT_DIM     = {0.50, 0.52, 0.58, 1.00},
+    TEXT_ACCENT  = {0.30, 0.90, 0.50, 1.00},
+
+    -- Borders / Rules
+    BORDER       = {0.16, 0.76, 0.38, 0.22},
+    BORDER_BRIGHT= {0.16, 0.76, 0.38, 0.55},
+    RULE         = {0.20, 0.22, 0.28, 0.80},
+
+    -- Buttons
+    BTN_PRIMARY  = {0.12, 0.58, 0.28, 0.95},
+    BTN_DANGER   = {0.70, 0.18, 0.18, 0.95},
+    BTN_NEUTRAL  = {0.18, 0.20, 0.26, 0.95},
+    BTN_ACTIVE   = {0.16, 0.76, 0.38, 0.95},
+    BTN_HOVER    = {0.15, 0.65, 0.34, 0.95},
+
+    -- Overlay / decorative
+    OVERLAY_DARK = {0.00, 0.00, 0.00, 0.60},
+    SCANLINE     = {0.00, 0.00, 0.00, 0.04},
+
+    -- App-specific
+    WEATHER_RAIN = {0.30, 0.58, 1.00, 1.00},
+    WEATHER_SUN  = {1.00, 0.82, 0.20, 1.00},
+    WEATHER_STORM= {0.70, 0.44, 1.00, 1.00},
+    WEATHER_FOG  = {0.72, 0.74, 0.80, 1.00},
+}
+
+-- ── Typography Scale ──────────────────────────────────────
+FT.FONT = {
+    TITLE    = 0.021,   -- app title
+    HEADER   = 0.016,   -- section header
+    BODY     = 0.015,   -- standard body text
+    SMALL    = 0.013,   -- caption / label
+    TINY     = 0.011,   -- metadata / column headers
+    HUGE     = 0.028,   -- hero number (balance etc.)
+}
+
+-- ── Spacing ────────────────────────────────────────────────
+FT.SP = {
+    XS   = 4,    -- tight spacing (ref pixels)
+    SM   = 8,
+    MD   = 14,
+    LG   = 20,
+    XL   = 28,
+    ROW  = 22,   -- standard row height
+    SECT = 30,   -- section gap
+}
+
+-- ── Layout Zones (set at runtime by FarmTabletUI) ─────────
+FT.LAYOUT = {
+    -- These are populated in FarmTabletUI:buildLayout()
+    tabletX = 0, tabletY = 0, tabletW = 0, tabletH = 0,
+    -- Sidebar (left)
+    sidebarX = 0, sidebarY = 0, sidebarW = 0, sidebarH = 0,
+    -- Content (right of sidebar)
+    contentX = 0, contentY = 0, contentW = 0, contentH = 0,
+    -- Topbar
+    topbarX = 0, topbarY = 0, topbarW = 0, topbarH = 0,
+    -- Scale factors
+    scaleX = 1, scaleY = 1,
+}
+
+-- ── App Icon IDs (for internal routing) ───────────────────
+FT.APP = {
+    DASHBOARD    = "dashboard",
+    APP_STORE    = "app_store",
+    SETTINGS     = "settings",
+    UPDATES      = "updates",
+    WORKSHOP     = "workshop",
+    FIELDS       = "field_status",
+    ANIMALS      = "animals",
+    WEATHER      = "weather",
+    DIGGING      = "digging",
+    BUCKET       = "bucket_tracker",
+    INCOME       = "income_mod",
+    TAX          = "tax_mod",
+    NPC_FAVOR    = "npc_favor",
+    CROP_STRESS  = "crop_stress",
+    SOIL_FERT    = "soil_fertilizer",
+}
+
+-- Helper: scale a reference pixel value to normalized coords
+function FT.px(v) return v * FT.LAYOUT.scaleX end
+function FT.py(v) return v * FT.LAYOUT.scaleY end

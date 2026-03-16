@@ -1,107 +1,113 @@
 -- =========================================================
--- FS25 Farm Tablet -- Weather App
+-- FarmTablet v2 – Weather App
 -- =========================================================
 
-function FarmTabletUI:loadWeatherApp()
-    self.ui.appTexts = {}
-    local content = self.ui.appContentArea
-    if not content then return end
+FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
+    local data = self.system.data
+    local w    = data:getWeather()
 
-    local C    = self.UI_CONSTANTS
-    local padX = self:px(15)
-    local padY = self:py(12)
+    local startY = self:drawAppHeader("Weather", "")
 
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Weather", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
-    self:drawDivider(titleY - self:py(4))
-
-    local w = self:getWeatherInfo()
     if not w then
-        self:drawText("Weather data unavailable.", content.x + padX, titleY - 0.038, 0.015,
-            RenderText.ALIGN_LEFT, C.WARNING_COLOR)
+        self.r:appText(FT.LAYOUT.contentX + FT.px(16),
+            startY - FT.py(10), FT.FONT.BODY,
+            "Weather data unavailable.",
+            RenderText.ALIGN_LEFT, FT.C.WARNING)
         return
     end
 
-    local y = titleY - 0.030
-    self:drawSectionHeader("CONDITIONS", y)
-    y = y - 0.022
+    local y = startY
 
-    -- Condition with color
-    local condColor = C.VALUE_COLOR
-    if w.isRaining     then condColor = {0.40, 0.65, 1.00, 1} end
-    if w.isStorming    then condColor = {0.80, 0.50, 1.00, 1} end
-    if w.isFoggy       then condColor = {0.75, 0.75, 0.80, 1} end
-    self:drawRow("Condition",   w.condition,                       y, C.LABEL_COLOR, condColor)
-    y = y - 0.022
-    self:drawRow("Temperature", string.format("%.1f °C", w.temperature), y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
+    -- ── Condition hero card ────────────────────────────────
+    y = y - FT.py(4)
+    local x, _, cw, _ = self:contentInner()
 
-    if w.windSpeed and w.windSpeed > 0 then
-        self:drawRow("Wind Speed", string.format("%.1f km/h", w.windSpeed), y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
+    -- Hero bg
+    local heroH = FT.py(48)
+    local heroColor = FT.C.BG_CARD
+    self.r:appRect(x, y - heroH, cw, heroH, heroColor)
+
+    -- Big condition text
+    local condColor = FT.C.TEXT_ACCENT
+    if     w.isStorming  then condColor = FT.C.WEATHER_STORM
+    elseif w.isRaining   then condColor = FT.C.WEATHER_RAIN
+    elseif w.isFoggy     then condColor = FT.C.WEATHER_FOG
+    elseif w.condKey == "clear" then condColor = FT.C.WEATHER_SUN
     end
 
-    self:drawRow("Cloud Cover", string.format("%.0f%%", w.cloudCover * 100), y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
+    -- Weather condition label (ASCII-only — FS25 has no emoji support)
+    local condLabel = {
+        storm    = "[STORM]",
+        rain     = "[RAIN]",
+        fog      = "[FOG]",
+        overcast = "[OVERCAST]",
+        cloudy   = "[CLOUDY]",
+        clear    = "[CLEAR]",
+    }
+    local icon = condLabel[w.condKey] or "[?]"
+
+    self.r:appText(x + FT.px(14), y - heroH/2 + FT.py(2),
+        0.032, icon, RenderText.ALIGN_LEFT, condColor)
+
+    self.r:appText(x + FT.px(58), y - heroH/2 + FT.py(10),
+        FT.FONT.TITLE, w.condition,
+        RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
+
+    self.r:appText(x + FT.px(58), y - heroH/2 - FT.py(6),
+        FT.FONT.SMALL, string.format("%.1f °C", w.temperature),
+        RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+
+    -- Right: wind
+    if w.windSpeed and w.windSpeed > 0 then
+        self.r:appText(x + cw - FT.px(12), y - heroH/2 + FT.py(6),
+            FT.FONT.BODY, string.format("%.0f km/h", w.windSpeed),
+            RenderText.ALIGN_RIGHT, FT.C.TEXT_NORMAL)
+        self.r:appText(x + cw - FT.px(12), y - heroH/2 - FT.py(8),
+            FT.FONT.TINY, "WIND",
+            RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
+    end
+
+    y = y - heroH - FT.py(8)
+    y = self:drawRule(y, 0.35)
+
+    -- ── Detail rows ────────────────────────────────────────
+    y = self:drawSection(y, "CONDITIONS")
+
+    y = self:drawRow(y, "Temperature",
+        string.format("%.1f °C", w.temperature), nil,
+        w.temperature < 0 and FT.C.INFO or
+        w.temperature > 30 and FT.C.WARNING or FT.C.TEXT_ACCENT)
+
+    y = self:drawRow(y, "Cloud Cover",
+        string.format("%.0f%%", w.cloudCover * 100))
 
     if w.humidity then
-        self:drawRow("Humidity", string.format("%.0f%%", w.humidity), y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
+        y = self:drawRow(y, "Humidity",
+            string.format("%.0f%%", w.humidity))
     end
 
-    -- Rain
+    if w.windSpeed and w.windSpeed > 0 then
+        y = self:drawRow(y, "Wind Speed",
+            string.format("%.1f km/h", w.windSpeed))
+    end
+
     if w.isRaining then
-        self:drawRow("Rain", "Active", y, C.LABEL_COLOR, {0.40, 0.65, 1.00, 1})
-        y = y - 0.022
+        local rainLabel = w.isStorming and "Heavy storm" or "Light rain"
+        y = self:drawRow(y, "Precipitation", rainLabel, nil, FT.C.WEATHER_RAIN)
     end
 
-    -- Forecast (if available)
+    -- ── Forecast ───────────────────────────────────────────
     if w.forecast and #w.forecast > 0 then
-        y = y - 0.010
-        self:drawSectionHeader("FORECAST", y)
-        y = y - 0.022
-        for i = 1, math.min(3, #w.forecast) do
+        y = y - FT.py(4)
+        y = self:drawRule(y, 0.25)
+        y = self:drawSection(y, "FORECAST")
+
+        for i = 1, math.min(4, #w.forecast) do
             local f = w.forecast[i]
-            self:drawRow("Day +" .. i, f.condition or "Unknown", y, C.LABEL_COLOR, C.MUTED_COLOR)
-            y = y - 0.020
+            y = self:drawRow(y,
+                "Day +" .. i,
+                (f.condition or f.weatherType or "Unknown"),
+                nil, FT.C.TEXT_DIM)
         end
     end
-end
-
-function FarmTabletUI:getWeatherInfo()
-    if not g_currentMission or not g_currentMission.environment then
-        return nil
-    end
-    local env = g_currentMission.environment
-
-    local rainScale   = env.currentRainScale or 0
-    local cloudCover  = 0
-    if env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
-        cloudCover = env.cloudUpdater:getCloudCoverage()
-    elseif env.cloudCoverage then
-        cloudCover = env.cloudCoverage
-    end
-
-    local temp = env.temperature or 20
-
-    local w = {
-        temperature = temp,
-        isRaining   = rainScale > 0.05,
-        isStorming  = rainScale > 0.70,
-        isFoggy     = (env.fogScale or 0) > 0.3,
-        cloudCover  = cloudCover,
-        windSpeed   = env.windSpeed or 0,
-        humidity    = env.humidity,
-        forecast    = env.forecast,
-    }
-
-    if w.isStorming    then w.condition = "Stormy"
-    elseif w.isRaining then w.condition = "Rainy"
-    elseif w.isFoggy   then w.condition = "Foggy"
-    elseif cloudCover > 0.70 then w.condition = "Overcast"
-    elseif cloudCover > 0.30 then w.condition = "Partly Cloudy"
-    else                          w.condition = "Clear"
-    end
-
-    return w
-end
+end)

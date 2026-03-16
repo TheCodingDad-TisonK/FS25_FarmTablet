@@ -1,654 +1,163 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – FarmTabletSystem
+-- Orchestrates state, data and the app registry
 -- =========================================================
 ---@class FarmTabletSystem
 FarmTabletSystem = {}
 local FarmTabletSystem_mt = Class(FarmTabletSystem)
 
--- Maps settings.startupApp integer (1-4) to app id string
-FarmTabletSystem.STARTUP_APP_IDS = {
-    [1] = "financial_dashboard",
-    [2] = "app_store",
-    [3] = "weather",
-    [4] = "digging",
-}
-
 function FarmTabletSystem.new(settings)
     local self = setmetatable({}, FarmTabletSystem_mt)
-    self.settings = settings
+    self.settings      = settings
     self.isInitialized = false
-    
-    -- Registered apps
-    self.registeredApps = {
-        {
-            id = "financial_dashboard",
-            name = "ft_app_dashboard",
-            navLabel = "DASH",
-            icon = "dashboard_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "app_store",
-            name = "ft_app_store",
-            navLabel = "APPS",
-            icon = "store_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "settings",
-            name = "ft_app_settings",
-            navLabel = "SET",
-            icon = "settings_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "updates",
-            name = "ft_app_updates",
-            navLabel = "UPD",
-            icon = "updates_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "workshop",
-            name = "ft_app_workshop",
-            navLabel = "WRK",
-            icon = "workshop_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "field_status",
-            name = "ft_app_field_status",
-            navLabel = "FLD",
-            icon = "field_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "animals",
-            name = "ft_app_animals",
-            navLabel = "ANI",
-            icon = "animals_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "weather",
-            name = "ft_app_weather",
-            navLabel = "WTH",
-            icon = "weather_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "digging",
-            name = "ft_app_digging",
-            navLabel = "DIG",
-            icon = "digging_app",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        },
-        {
-            id = "bucket_tracker",
-            name = "ft_app_bucket_tracker",
-            navLabel = "BCK",
-            icon = "bucket_icon",
-            developer = "FarmTablet",
-            version = "Built-in",
-            enabled = true
-        }
+
+    self.registry      = AppRegistry.new()
+    self.data          = FT_DataProvider.new()
+
+    -- Startup app (ID string from settings)
+    self.currentApp   = self.settings.startupApp or "dashboard"
+    self.isTabletOpen = false
+
+    -- Workshop state
+    self.workshopSelectedVehicle = nil
+
+    -- Bucket tracker
+    self.bucket = {
+        isEnabled   = true,
+        vehicle     = nil,
+        history     = {},   -- last 20 loads
+        totalLoads  = 0,
+        totalWeight = 0,
+        lastFill    = 0,
+        lastType    = nil,
+        startTime   = 0,
     }
 
-    self.currentApp = FarmTabletSystem.STARTUP_APP_IDS[self.settings.startupApp] or "financial_dashboard"
-    self.isTabletOpen = false
-    self.workshopSelectedVehicle = nil
-    
-    -- Live data cache
-    self.liveCache = {
-        balance = -1,
-        income = -1,
-        expenses = -1,
-        profit = -1
-    }
-    
-    -- Bucket tracker
-    self.bucketTracker = {
-        isEnabled = true,
-        currentVehicle = nil,
-        bucketHistory = {},
-        totalLoads = 0,
-        totalWeight = 0,
-        currentFillLevel = 0,
-        currentFillType = nil,
-        startTime = 0,
-        lastLoadTime = 0
-    }
-    
     return self
 end
 
 function FarmTabletSystem:initialize()
-    if self.isInitialized then
-        return
-    end
-    
+    if self.isInitialized then return end
     self.isInitialized = true
-    self:log("Farm Tablet System initialized successfully")
-    self:log("Startup app: %s", self.currentApp)
-    self:log("Registered apps: %d", #self.registeredApps)
-    
-    -- Auto-detect other mods
-    self:autoRegisterModApps()
-end
-
-function FarmTabletSystem:log(msg, ...)
-    if self.settings.debugMode then
-        print(string.format("[Farm Tablet] " .. msg, ...))
-    end
-end
-
-function FarmTabletSystem:_appRegistered(id)
-    for _, app in ipairs(self.registeredApps) do
-        if app.id == id then return true end
-    end
-    return false
-end
-
-function FarmTabletSystem:autoRegisterModApps()
-    self:log("Starting mod auto-registration")
-    
-    -- Check for Income Mod (g_IncomeManager is per-mod env scoped; use g_currentMission attachment)
-    if g_currentMission and g_currentMission.incomeManager then
-        if not self:_appRegistered("income_mod") then
-            table.insert(self.registeredApps, {
-                id = "income_mod",
-                name = "ft_app_income_mod",
-                navLabel = "INC",
-                icon = "income_icon",
-                developer = "TisonK",
-                version = "Integrated",
-                enabled = true
-            })
-            self:log("Income Mod app registered")
-        end
-    end
-    
-    -- Check for Tax Mod (g_TaxManager is per-mod env scoped; use g_currentMission attachment)
-    if g_currentMission and g_currentMission.taxManager then
-        if not self:_appRegistered("tax_mod") then
-            table.insert(self.registeredApps, {
-                id = "tax_mod",
-                name = "ft_app_tax_mod",
-                navLabel = "TAX",
-                icon = "tax_icon",
-                developer = "TisonK",
-                version = "Integrated",
-                enabled = true
-            })
-            self:log("Tax Mod app registered")
-        end
-    end
-    
-    -- Check for NPC Favor
-    local npcFavorPresent = g_currentMission and g_currentMission.npcFavorSystem ~= nil
-    if npcFavorPresent and not self:_appRegistered("npc_favor") then
-        table.insert(self.registeredApps, {
-            id = "npc_favor",
-            name = "ft_app_npc_favor",
-            navLabel = "NPC",
-            developer = "TisonK",
-            version = "Integrated",
-            enabled = true
-        })
-        self:log("NPC Favor app registered")
-    end
-
-    -- Check for Seasonal Crop Stress
-    local cropStressPresent = g_currentMission and g_currentMission.cropStressManager ~= nil
-    if cropStressPresent and not self:_appRegistered("crop_stress") then
-        table.insert(self.registeredApps, {
-            id = "crop_stress",
-            name = "ft_app_crop_stress",
-            navLabel = "CRPS",
-            developer = "TisonK",
-            version = "Integrated",
-            enabled = true
-        })
-        self:log("Seasonal Crop Stress app registered")
-    end
-
-    -- Check for Soil Fertilizer
-    local soilFertPresent = g_soilFertilizerManager ~= nil or
-        (g_currentMission and g_currentMission.soilFertilizerManager ~= nil)
-    if soilFertPresent and not self:_appRegistered("soil_fertilizer") then
-        table.insert(self.registeredApps, {
-            id = "soil_fertilizer",
-            name = "ft_app_soil_fertilizer",
-            navLabel = "SOIL",
-            developer = "TisonK",
-            version = "Integrated",
-            enabled = true
-        })
-        self:log("Soil Fertilizer app registered")
-    end
-
-    self:log("Mod auto-registration complete")
-    self:log("Total registered apps: %d", #self.registeredApps)
-end
-
-function FarmTabletSystem:getPlayerFarmId()
-    if g_currentMission ~= nil then
-        if g_currentMission.player ~= nil then
-            local player = g_currentMission.player
-            if player.getFarmId ~= nil then
-                return player:getFarmId()
-            elseif player.farmId ~= nil then
-                return player.farmId
-            end
-        end
-    end
-    return 1
-end
-
-function FarmTabletSystem:TotalMoney(farmId)
-    if g_farmManager ~= nil then
-        local farm = g_farmManager:getFarmById(farmId)
-        if farm ~= nil then
-            return math.floor(farm:getBalance() or 0)
-        end
-    end
-    return 0
-end
-
-function FarmTabletSystem:TotalIncome(farmId)
-    local totalIncome = 0
-
-    if g_currentMission == nil or g_currentMission.statistics == nil then
-        return 0
-    end
-
-    local incomeKeywords = {
-        "income",
-        "revenue",
-        "harvest",
-        "mission",
-        "selling",
-        "contract"
-    }
-
-    for _, statsItem in ipairs(g_currentMission.statistics.statsItems or {}) do
-        if statsItem.farmId == farmId and statsItem.name then
-            local name = statsItem.name:lower()
-            for _, key in ipairs(incomeKeywords) do
-                if name:find(key) then
-                    local v = statsItem:getValue() or 0
-                    if v > 0 then
-                        totalIncome = totalIncome + v
-                    end
-                    break
-                end
-            end
-        end
-    end
-
-    return math.floor(totalIncome)
-end
-
-function FarmTabletSystem:TotalExpenses(farmId)
-    local totalExpenses = 0
-
-    if g_currentMission == nil or g_currentMission.statistics == nil then
-        return 0
-    end
-
-    local expenseKeywords = {
-        "expense",
-        "cost",
-        "maintenance",
-        "wage",
-        "fuel",
-        "seed",
-        "fertilizer",
-        "spray",
-        "repair",
-        "lease",
-        "insurance",
-        "animal",
-        "property",
-        "loanInterest"
-    }
-
-    if g_currentMission.statistics.statsItems ~= nil then
-        for _, statsItem in ipairs(g_currentMission.statistics.statsItems) do
-            if statsItem.farmId == farmId and statsItem.name ~= nil then
-                local nameLower = statsItem.name:lower()
-
-                for _, keyword in ipairs(expenseKeywords) do
-                    if nameLower:find(keyword) then
-                        local value = statsItem:getValue() or 0
-                        if value > 0 then
-                            totalExpenses = totalExpenses + value
-                        end
-                        break
-                    end
-                end
-            end
-        end
-    end
-
-    return math.floor(totalExpenses)
-end
-
-function FarmTabletSystem:LoanedMoney(farmId)
-    if g_farmManager ~= nil then
-        local farm = g_farmManager:getFarmById(farmId)
-        if farm ~= nil and farm.loan ~= nil then
-            return math.floor(farm.loan)
-        end
-    end
-    return 0
-end
-
-function FarmTabletSystem:ActiveFields(farmId)
-    local count = 0
-
-    if g_farmlandManager == nil then
-        return 0
-    end
-
-    for farmlandId, farmland in pairs(g_farmlandManager.farmlands) do
-        if farmland.farmId == farmId then
-            if farmland.fieldIds ~= nil then
-                count = count + #farmland.fieldIds
-            end
-        end
-    end
-
-    return count
-end
-
-function FarmTabletSystem:VehiclesCount(farmId)
-    local count = 0
-
-    if g_currentMission ~= nil and g_currentMission.vehicles ~= nil then
-        for _, vehicle in pairs(g_currentMission.vehicles) do
-            if vehicle.spec_motorized ~= nil then
-                local ownerFarmId = nil
-
-                if vehicle.getOwnerFarmId ~= nil then
-                    ownerFarmId = vehicle:getOwnerFarmId()
-                elseif vehicle.farmId ~= nil then
-                    ownerFarmId = vehicle.farmId
-                end
-
-                if ownerFarmId == farmId then
-                    count = count + 1
-                end
-            end
-        end
-    end
-
-    return count
+    self.registry:autoDetect()
+    self:log("System initialized. Apps: %d", #self.registry:getAll())
 end
 
 function FarmTabletSystem:update(dt)
-    if not self.settings.enabled or not self.isInitialized then
-        return
-    end
-    
-    -- Update bucket tracker if enabled
-    if self.bucketTracker.isEnabled and self.currentApp == "bucket_tracker" then
-        self:trackBucketLoad()
+    if not self.settings.enabled or not self.isInitialized then return end
+    if self.currentApp == FT.APP.BUCKET and self.bucket.isEnabled then
+        self:_updateBucket()
     end
 end
 
--- Bucket tracker functions
-function FarmTabletSystem:getCurrentBucketVehicle()
-    if g_currentMission == nil or g_currentMission.controlledVehicle == nil then
+-- ── Bucket Tracker ────────────────────────────────────────
+
+function FarmTabletSystem:_getBucketVehicle()
+    if not (g_currentMission and g_currentMission.controlledVehicle) then
         return nil
     end
-    
-    local vehicle = g_currentMission.controlledVehicle
-    
-    if self:isBucketVehicle(vehicle) then
-        return vehicle
+    local v = g_currentMission.controlledVehicle
+    if not v.spec_fillUnit then return nil end
+
+    -- Accept if it's a loader type or has a bucket attachment
+    local typeName = (v.typeName or ""):lower()
+    local loaderTypes = {"wheelloader","frontloader","loader","excavator",
+                         "backhoe","telehandler","skidsteer","materialhandler"}
+    for _, t in ipairs(loaderTypes) do
+        if typeName:find(t) then return v end
     end
-    
+    -- Check attachments
+    if v.getAttachedImplements then
+        for _, impl in ipairs(v:getAttachedImplements()) do
+            local it = ((impl.object or {}).typeName or ""):lower()
+            if it:find("bucket") or it:find("loader") or
+               it:find("grapple") or it:find("fork") then
+                return v
+            end
+        end
+    end
     return nil
 end
 
-function FarmTabletSystem:isBucketVehicle(vehicle)
-    if not vehicle then return false end
-    
-    -- Check vehicle type
-    local typeName = vehicle.typeName or ""
-    typeName = typeName:lower()
-    
-    local bucketVehicleTypes = {
-        "wheelLoader",
-        "frontLoader",
-        "loader",
-        "excavator",
-        "backhoe",
-        "telehandler",
-        "skidSteer",
-        "materialHandler"
-    }
-    
-    for _, vehicleType in ipairs(bucketVehicleTypes) do
-        if typeName:find(vehicleType) then
-            return true
+function FarmTabletSystem:_getBucketFillInfo(v)
+    local info = { total=0, cap=0, fillType=nil, name="Empty", pct=0 }
+    if not v or not v.spec_fillUnit then return info end
+    for _, fu in ipairs(v.spec_fillUnit.fillUnits or {}) do
+        info.cap   = info.cap   + (fu.capacity  or 0)
+        info.total = info.total + (fu.fillLevel or 0)
+        if (fu.fillLevel or 0) > 0 then
+            info.fillType = fu.fillType or FillType.UNKNOWN
         end
     end
-    
-    -- Check attachments
-    if vehicle.getAttachedImplements then
-        local attached = vehicle:getAttachedImplements()
-        for _, impl in ipairs(attached) do
-            local implType = impl.object.typeName or ""
-            implType = implType:lower()
-            
-            if implType:find("bucket") or 
-               implType:find("loader") or 
-               implType:find("grapple") or
-               implType:find("fork") then
-                return true
-            end
-        end
+    if info.cap > 0 then info.pct = info.total / info.cap * 100 end
+    if info.fillType and g_fillTypeManager then
+        local ft2 = g_fillTypeManager:getFillTypeByIndex(info.fillType)
+        if ft2 then info.name = ft2.title or ft2.name or "Unknown" end
     end
-    
-    return false
+    return info
 end
 
-function FarmTabletSystem:getBucketFillInfo(vehicle)
-    local fillInfo = {
-        hasFillUnit = false,
-        totalCapacity = 0,
-        totalFillLevel = 0,
-        currentFillType = nil,
-        fillTypeName = "Empty",
-        fillPercentage = 0
-    }
-    
-    if vehicle == nil or g_fillTypeManager == nil then
-        return fillInfo
-    end
-    
-    -- Check vehicle's fill units
-    if vehicle.spec_fillUnit then
-        local fillUnitSpec = vehicle.spec_fillUnit
-        fillInfo.hasFillUnit = true
-        
-        for _, fillUnit in ipairs(fillUnitSpec.fillUnits) do
-            fillInfo.totalCapacity = fillInfo.totalCapacity + (fillUnit.capacity or 0)
-            fillInfo.totalFillLevel = fillInfo.totalFillLevel + (fillUnit.fillLevel or 0)
-            
-            if (fillUnit.fillLevel or 0) > 0 then
-                fillInfo.currentFillType = fillUnit.fillType or FillType.UNKNOWN
-            end
-        end
-    end
-    
-    -- Calculate percentage
-    if fillInfo.totalCapacity > 0 then
-        fillInfo.fillPercentage = (fillInfo.totalFillLevel / fillInfo.totalCapacity) * 100
-    end
-    
-    -- Get fill type name
-    if fillInfo.currentFillType and g_fillTypeManager then
-        local fillType = g_fillTypeManager:getFillTypeByIndex(fillInfo.currentFillType)
-        if fillType then
-            fillInfo.fillTypeName = fillType.title or "Unknown"
-        end
-    end
-    
-    return fillInfo
+local DENSITIES = {
+    [FillType and FillType.SAND        or 0] = 1.6,
+    [FillType and FillType.GRAVEL      or 0] = 1.7,
+    [FillType and FillType.CRUSHEDSTONE or 0]= 1.6,
+    [FillType and FillType.DIRT        or 0] = 1.3,
+}
+
+function FarmTabletSystem:_estimateWeight(vol, fillType)
+    local d = DENSITIES[fillType or 0] or 1.5
+    return math.floor(vol * d)
 end
 
-function FarmTabletSystem:estimateBucketWeight(fillInfo)
-    if fillInfo.totalFillLevel <= 0 then
-        return 0
-    end
-    
-    -- Rough weight estimation (liters to kg)
-    local densities = {
-        [FillType.SAND] = 1.6,
-        [FillType.GRAVEL] = 1.7,
-        [FillType.CRUSHEDSTONE] = 1.6,
-        [FillType.STONE] = 2.6,
-        [FillType.DIRT] = 1.3,
-        [FillType.CLAY] = 1.8,
-        [FillType.LIMESTONE] = 2.6,
-        [FillType.COAL] = 1.3,
-        [FillType.ORE] = 2.5,
-        [FillType.CONCRETE] = 2.4
-    }
-    
-    local fillType = fillInfo.currentFillType or FillType.UNKNOWN
-    local density = densities[fillType] or 1.5
-    
-    return math.floor(fillInfo.totalFillLevel * density)
-end
+function FarmTabletSystem:_updateBucket()
+    local v = self:_getBucketVehicle()
+    local bt = self.bucket
 
-function FarmTabletSystem:resetBucketTracker()
-    self.bucketTracker = {
-        isEnabled = true,
-        currentVehicle = nil,
-        bucketHistory = {},
-        totalLoads = 0,
-        totalWeight = 0,
-        currentFillLevel = 0,
-        currentFillType = nil,
-        startTime = g_currentMission.time or 0,
-        lastLoadTime = 0
-    }
-    
-    self:log("Bucket tracker reset")
-end
-
-function FarmTabletSystem:trackBucketLoad()
-    if not self.bucketTracker.isEnabled then
+    if not v then
+        bt.vehicle = nil; bt.lastFill = 0; bt.lastType = nil
         return
     end
 
-    local vehicle = self:getCurrentBucketVehicle()
-
-    if vehicle then
-        if self.bucketTracker.currentVehicle ~= vehicle then
-            self.bucketTracker.currentVehicle = vehicle
-            self.bucketTracker.currentFillLevel = 0
-            self.bucketTracker.currentFillType = nil
-        end
-
-        local fillInfo = self:getBucketFillInfo(vehicle)
-        local oldFillLevel = self.bucketTracker.currentFillLevel or 0
-        local newFillLevel = fillInfo.totalFillLevel
-
-        -- Detect a dump: bucket had a meaningful amount and is now near-empty
-        local dumpThreshold = math.max(50, (fillInfo.totalCapacity or 0) * 0.10)
-        if oldFillLevel >= dumpThreshold and newFillLevel < dumpThreshold and oldFillLevel > 0 then
-            self.bucketTracker.totalLoads = self.bucketTracker.totalLoads + 1
-            if self.bucketTracker.startTime == 0 then
-                self.bucketTracker.startTime = g_currentMission.time or 0
-            end
-            local weight = self:estimateBucketWeight({
-                totalFillLevel = oldFillLevel,
-                currentFillType = self.bucketTracker.currentFillType
-            })
-            self.bucketTracker.totalWeight = self.bucketTracker.totalWeight + weight
-            self.bucketTracker.lastLoadTime = g_currentMission.time or 0
-
-            table.insert(self.bucketTracker.bucketHistory, {
-                number = self.bucketTracker.totalLoads,
-                volume = math.floor(oldFillLevel),
-                fillType = self.bucketTracker.currentFillType,
-                fillTypeName = fillInfo.fillTypeName,
-                weight = weight,
-                time = self.bucketTracker.lastLoadTime
-            })
-            -- Keep history capped at 20 entries
-            if #self.bucketTracker.bucketHistory > 20 then
-                table.remove(self.bucketTracker.bucketHistory, 1)
-            end
-        end
-
-        -- Update tracker state
-        self.bucketTracker.currentFillLevel = newFillLevel
-        self.bucketTracker.currentFillType = fillInfo.currentFillType
-    else
-        -- No bucket vehicle, reset current
-        if self.bucketTracker.currentVehicle ~= nil then
-            self.bucketTracker.currentVehicle = nil
-            self.bucketTracker.currentFillLevel = 0
-            self.bucketTracker.currentFillType = nil
-        end
+    if bt.vehicle ~= v then
+        bt.vehicle = v; bt.lastFill = 0; bt.lastType = nil
     end
+
+    local fi = self:_getBucketFillInfo(v)
+    local old = bt.lastFill
+    local new = fi.total
+    local threshold = math.max(50, (fi.cap or 0) * 0.10)
+
+    if old >= threshold and new < threshold and old > 0 then
+        bt.totalLoads = bt.totalLoads + 1
+        if bt.startTime == 0 then
+            bt.startTime = g_currentMission.time or 0
+        end
+        local w = self:_estimateWeight(old, bt.lastType)
+        bt.totalWeight = bt.totalWeight + w
+        table.insert(bt.history, {
+            n=bt.totalLoads, vol=math.floor(old),
+            type=bt.lastType, typeName=fi.name, weight=w,
+            time=g_currentMission.time or 0
+        })
+        if #bt.history > 20 then table.remove(bt.history, 1) end
+    end
+
+    bt.lastFill = new
+    bt.lastType = fi.fillType
 end
 
-function FarmTabletSystem:saveState()
-    return {
-        currentApp = self.currentApp,
-        isTabletOpen = self.isTabletOpen,
-        bucketTracker = self.bucketTracker
+function FarmTabletSystem:resetBucket()
+    self.bucket = {
+        isEnabled=true, vehicle=nil, history={},
+        totalLoads=0, totalWeight=0, lastFill=0, lastType=nil,
+        startTime=g_currentMission and g_currentMission.time or 0,
     }
 end
 
-function FarmTabletSystem:loadState(state)
-    if state then
-        self.currentApp = state.currentApp or "financial_dashboard"
-        self.isTabletOpen = state.isTabletOpen or false
-        self.bucketTracker = state.bucketTracker or {
-            isEnabled = true,
-            currentVehicle = nil,
-            bucketHistory = {},
-            totalLoads = 0,
-            totalWeight = 0,
-            currentFillLevel = 0,
-            currentFillType = nil,
-            startTime = 0,
-            lastLoadTime = 0
-        }
+-- ── Misc helpers ──────────────────────────────────────────
+
+function FarmTabletSystem:log(msg, ...)
+    if self.settings.debugMode then
+        Logging.info("[FarmTablet] " .. string.format(msg, ...))
     end
 end

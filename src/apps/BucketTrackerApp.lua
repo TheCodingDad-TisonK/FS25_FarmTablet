@@ -1,123 +1,102 @@
 -- =========================================================
--- FS25 Farm Tablet -- Bucket Load Tracker App
+-- FarmTablet v2 – Bucket Tracker App
 -- =========================================================
 
-function FarmTabletUI:loadBucketTrackerApp()
-    self.ui.appTexts = {}
-    local content = self.ui.appContentArea
-    if not content then return end
+FarmTabletUI:registerDrawer(FT.APP.BUCKET, function(self)
+    local bt      = self.system.bucket
+    local data    = self.system.data
 
-    local C       = self.UI_CONSTANTS
-    local padX    = self:px(15)
-    local padY    = self:py(12)
-    local sys     = self.tabletSystem
-    local tracker = sys.bucketTracker
+    local startY = self:drawAppHeader("Bucket Tracker", "")
 
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Bucket Load Tracker", content.x + padX, titleY, 0.019,
-        RenderText.ALIGN_LEFT, C.TITLE_COLOR)
-    self:drawDivider(titleY - self:py(4))
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
 
-    local y = titleY - 0.030
+    -- ── Summary cards ──────────────────────────────────────
+    y = y - FT.py(4)
+    local cardW = (cw - FT.px(8)) / 3
+    local cards = {
+        { label="LOADS",  value=tostring(bt.totalLoads) },
+        { label="WEIGHT", value=string.format("%.0ft", (bt.totalWeight or 0)/1000) },
+        { label="ITEMS",  value=tostring(#bt.history) },
+    }
 
-    -- Current vehicle / bucket
-    local vehicle = sys:getCurrentBucketVehicle()
-    self:drawSectionHeader("CURRENT VEHICLE", y)
-    y = y - 0.022
+    for i, card in ipairs(cards) do
+        local cx = x + (i-1) * (cardW + FT.px(4))
+        self.r:appRect(cx, y - FT.py(34), cardW, FT.py(38), FT.C.BG_CARD)
+        self.r:appText(cx + cardW/2, y - FT.py(10),
+            FT.FONT.HUGE, card.value,
+            RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
+        self.r:appText(cx + cardW/2, y - FT.py(28),
+            FT.FONT.TINY, card.label,
+            RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+    end
 
-    if vehicle then
-        local vname = (vehicle.getFullName and vehicle:getFullName()) or "Unknown"
-        if #vname > 24 then vname = vname:sub(1, 21) .. "..." end
-        self:drawRow("Vehicle", vname, y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
+    y = y - FT.py(40)
 
-        local fi = sys:getBucketFillInfo(vehicle)
-        if fi.totalFillLevel > 0 then
-            local pct = fi.fillPercentage
-            local pctColor = pct > 80 and C.POSITIVE_COLOR or
-                             pct > 40 and C.WARNING_COLOR  or C.NEGATIVE_COLOR
-            self:drawRow("Fill Type", fi.fillTypeName, y, C.LABEL_COLOR, C.VALUE_COLOR)
-            y = y - 0.022
-            self:drawRow("Volume",
-                string.format("%d / %d L", math.floor(fi.totalFillLevel), math.floor(fi.totalCapacity)),
-                y, C.LABEL_COLOR, C.VALUE_COLOR)
-            y = y - 0.022
-            self:drawRow("Fill %", string.format("%.0f%%", pct), y, C.LABEL_COLOR, pctColor)
-            y = y - 0.022
-            y = self:drawProgressBar(pct, 100, y, pctColor)
-            local wt = sys:estimateBucketWeight(fi)
-            self:drawRow("Est. Weight", string.format("%d kg", wt), y, C.LABEL_COLOR, C.VALUE_COLOR)
-            y = y - 0.022
-        else
-            self:drawText("Bucket empty.", content.x + padX, y, 0.014,
-                RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-            y = y - 0.022
-        end
+    -- ── Current vehicle ────────────────────────────────────
+    if bt.vehicle then
+        local fi = self.system:_getBucketFillInfo(bt.vehicle)
+        local nm = (bt.vehicle.getFullName and bt.vehicle:getFullName()) or "Unknown"
+        if #nm > 22 then nm = nm:sub(1,20) .. "…" end
+
+        y = self:drawSection(y, "ACTIVE VEHICLE")
+        y = self:drawRow(y, "Vehicle", nm)
+        y = self:drawRow(y, "Fill",
+            string.format("%.0f / %.0f L  (%s)",
+                fi.total, fi.cap, fi.name),
+            nil, FT.C.TEXT_ACCENT)
+        y = y + FT.py(FT.SP.ROW) - FT.py(8)
+        y = self:drawBar(y, fi.total, fi.cap, FT.C.BRAND)
+        y = y - FT.py(4)
     else
-        self:drawText("No bucket vehicle detected.", content.x + padX, y, 0.014,
-            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-        y = y - 0.020
-        self:drawText("Drive a loader or excavator.", content.x + padX, y, 0.013,
-            RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-        y = y - 0.022
+        y = self:drawSection(y, "ACTIVE VEHICLE")
+        self.r:appText(x, y, FT.FONT.SMALL,
+            "No bucket vehicle detected nearby.",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        y = y - FT.py(20)
     end
 
-    -- Session stats
-    y = y - 0.010
-    self:drawSectionHeader("SESSION", y)
-    y = y - 0.022
+    -- ── Load history ───────────────────────────────────────
+    y = self:drawRule(y, 0.35)
+    y = self:drawSection(y, "LOAD HISTORY  (" .. #bt.history .. ")")
 
-    self:drawRow("Total Loads",  tostring(tracker.totalLoads),                     y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
-    self:drawRow("Total Weight", string.format("%d kg", tracker.totalWeight),       y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
+    local minY = contentY + FT.py(32)
 
-    if tracker.startTime > 0 then
-        local elapsed = ((g_currentMission.time or 0) - tracker.startTime) / 1000
-        self:drawRow("Duration", self:formatTime(elapsed), y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
-        if tracker.totalLoads > 0 then
-            local avg = math.floor(tracker.totalWeight / tracker.totalLoads)
-            self:drawRow("Avg Load", string.format("%d kg", avg), y, C.LABEL_COLOR, C.VALUE_COLOR)
-            y = y - 0.022
+    if #bt.history == 0 then
+        self.r:appText(x, y, FT.FONT.SMALL,
+            "No loads recorded yet.",
+            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        y = y - FT.py(20)
+    else
+        -- Column headers
+        self.r:appText(x,            y, FT.FONT.TINY, "#",     RenderText.ALIGN_LEFT,  FT.C.TEXT_DIM)
+        self.r:appText(x + FT.px(20),y, FT.FONT.TINY, "MATERIAL", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self.r:appText(x + cw,       y, FT.FONT.TINY, "WEIGHT", RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
+        y = y - FT.py(14)
+
+        -- Show most recent 8
+        local start = math.max(1, #bt.history - 7)
+        for i = #bt.history, start, -1 do
+            if y < minY then break end
+            local load = bt.history[i]
+            self.r:appText(x, y, FT.FONT.TINY,
+                tostring(load.n), RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+            self.r:appText(x + FT.px(20), y, FT.FONT.SMALL,
+                load.typeName or "Unknown", RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
+            self.r:appText(x + cw, y, FT.FONT.SMALL,
+                string.format("%.0f kg", load.weight or 0),
+                RenderText.ALIGN_RIGHT, FT.C.TEXT_ACCENT)
+            y = y - FT.py(18)
         end
     end
 
-    -- Recent history
-    if #tracker.bucketHistory > 0 then
-        y = y - 0.010
-        self:drawSectionHeader("RECENT LOADS", y)
-        y = y - 0.022
-        local start = math.max(1, #tracker.bucketHistory - 4)
-        for i = #tracker.bucketHistory, start, -1 do
-            local load = tracker.bucketHistory[i]
-            if load and y > content.y + padY then
-                local ft = load.fillTypeName or (load.fillType and tostring(load.fillType)) or "?"
-                self:drawRow(
-                    string.format("#%d  %s", load.number, ft),
-                    string.format("%dL  %dkg", load.volume, load.weight),
-                    y, C.LABEL_COLOR, C.MUTED_COLOR
-                )
-                y = y - 0.020
-            end
-        end
+    -- ── Reset button ───────────────────────────────────────
+    if y > minY + FT.py(4) then
+        local ny, resetBtn = self:drawButton(minY + FT.py(2), "RESET",
+            FT.C.BTN_DANGER,
+            { onClick = function()
+                self.system:resetBucket()
+                self:switchApp(FT.APP.BUCKET)
+            end })
     end
-
-    -- Reset button — use createAppOverlay so it's cleaned on switch
-    local btnW = self:px(140)
-    local btnH = self:py(26)
-    local btnX = content.x + content.width - padX - btnW
-    local btnY = content.y + padY
-
-    self.ui.resetBucketButton = self:drawButton("Reset Session", btnX, btnY, btnW, btnH, C.BTN_RED)
-end
-
-function FarmTabletUI:formatTime(seconds)
-    local h = math.floor(seconds / 3600)
-    local m = math.floor((seconds % 3600) / 60)
-    local s = math.floor(seconds % 60)
-    if h > 0 then
-        return string.format("%02d:%02d:%02d", h, m, s)
-    end
-    return string.format("%02d:%02d", m, s)
-end
+end)
