@@ -1,5 +1,5 @@
 -- =========================================================
--- FarmTablet v2 – Dashboard App
+-- FarmTablet v2 – Dashboard App  (FIXED)
 -- Rich overview: hero balance, finance, farm stats, world
 -- =========================================================
 
@@ -25,18 +25,14 @@ FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
 
     -- ── Hero: Balance ──────────────────────────────────────
     y = y - FT.py(4)
-    -- Hero card bg
     self.r:appRect(x, y - FT.py(28), w, FT.py(34), FT.C.BG_CARD)
-    -- Hero label
     self.r:appText(x + FT.px(12), y - FT.py(5),
         FT.FONT.TINY, "CURRENT BALANCE",
         RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-    -- Hero value
     local balColor = balance >= 0 and FT.C.POSITIVE or FT.C.NEGATIVE
     self.r:appText(x + FT.px(12), y - FT.py(22),
         FT.FONT.HUGE, data:formatMoney(balance),
         RenderText.ALIGN_LEFT, balColor)
-    -- Right info in hero
     if loan > 0 then
         self.r:appText(x + w - FT.px(12), y - FT.py(8),
             FT.FONT.TINY, "LOAN",
@@ -54,7 +50,7 @@ FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
 
     local incColor = income  > 0 and FT.C.POSITIVE or FT.C.TEXT_DIM
     local expColor = expenses > 0 and FT.C.NEGATIVE or FT.C.TEXT_DIM
-    local plColor  = profit >= 0 and FT.C.POSITIVE or FT.C.NEGATIVE
+    local plColor  = profit >= 0 and FT.C.POSITIVE  or FT.C.NEGATIVE
 
     y = self:drawRow(y, "Income",   data:formatMoney(income),   nil, incColor)
     y = self:drawRow(y, "Expenses", data:formatMoney(expenses), nil, expColor)
@@ -75,22 +71,23 @@ FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
         y = self:drawSection(y, "WORLD")
 
         local timeStr = string.format("%02d:%02d", world.hour % 24, world.minute)
-        local seasonStr = data:getSeasonName(world.season)
+        -- FIX: season is nil in base game – only show it when available
+        local seasonName = data:getSeasonName(world.season)
+        if seasonName then
+            y = self:drawRow(y, "Season", seasonName)
+        end
+        y = self:drawRow(y, "Day",  tostring(world.day))
+        y = self:drawRow(y, "Time", timeStr)
 
-        y = self:drawRow(y, "Season",  seasonStr)
-        y = self:drawRow(y, "Day",     tostring(world.day))
-        y = self:drawRow(y, "Time",    timeStr)
-
-        -- Mini weather preview
         if weather then
-            local wColor = FT.C.VALUE_COLOR
-            if weather.isStorming   then wColor = FT.C.WEATHER_STORM
-            elseif weather.isRaining then wColor = FT.C.WEATHER_RAIN
+            local wColor = FT.C.TEXT_ACCENT
+            if weather.isStorming        then wColor = FT.C.WEATHER_STORM
+            elseif weather.isRaining     then wColor = FT.C.WEATHER_RAIN
             elseif weather.condKey == "clear" then wColor = FT.C.WEATHER_SUN
             end
             y = self:drawRow(y, "Weather",
-                string.format("%s  %.0f°C", weather.condition, weather.temperature),
-                nil, wColor or FT.C.TEXT_ACCENT)
+                string.format("%s  %.0f'C", weather.condition, weather.temperature),
+                nil, wColor)
         end
     end
 end)

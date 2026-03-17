@@ -16,30 +16,35 @@ function FT_Renderer.new()
 end
 
 -- ── Internal helpers ──────────────────────────────────────
-function FT_Renderer:_newOverlay(x, y, w, h, color, tex)
+function FT_Renderer:_newOverlay(x, y, w, h, color, sliceId)
     local ov
-    if tex and tex ~= "" then
-        ov = Overlay.new(tex, x, y, w, h)
+    if sliceId and sliceId ~= "" then
+        ov = g_overlayManager:createOverlay(sliceId, x, y, w, h)
     else
-        ov = Overlay.new(nil, x, y, w, h)
+        ov = g_overlayManager:createOverlay(g_plainColorSliceId, x, y, w, h)
     end
-    if color then ov:setColor(unpack(color)) end
-    ov:setVisible(true)
+
+    if ov ~= nil then
+        if color then ov:setColor(unpack(color)) end
+        ov:setVisible(true)
+    else
+        Logging.warning("FarmTablet: Could not create overlay for sliceId: %s", tostring(sliceId))
+    end
     return ov
 end
 
 -- ── Public drawing functions ──────────────────────────────
 
 -- Persistent overlay (lives until destroyAll)
-function FT_Renderer:rect(x, y, w, h, color, tex)
-    local ov = self:_newOverlay(x, y, w, h, color, tex)
+function FT_Renderer:rect(x, y, w, h, color, sliceId)
+    local ov = self:_newOverlay(x, y, w, h, color, sliceId)
     table.insert(self._overlays, ov)
     return ov
 end
 
 -- App-scoped overlay (cleared on app switch)
-function FT_Renderer:appRect(x, y, w, h, color, tex)
-    local ov = self:_newOverlay(x, y, w, h, color, tex)
+function FT_Renderer:appRect(x, y, w, h, color, sliceId)
+    local ov = self:_newOverlay(x, y, w, h, color, sliceId)
     table.insert(self._appLayer, ov)
     return ov
 end

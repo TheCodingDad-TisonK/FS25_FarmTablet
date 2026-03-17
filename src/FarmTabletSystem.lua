@@ -1,5 +1,5 @@
 -- =========================================================
--- FarmTablet v2 – FarmTabletSystem
+-- FarmTablet v2 – FarmTabletSystem  (FIXED)
 -- Orchestrates state, data and the app registry
 -- =========================================================
 ---@class FarmTabletSystem
@@ -14,7 +14,6 @@ function FarmTabletSystem.new(settings)
     self.registry      = AppRegistry.new()
     self.data          = FT_DataProvider.new()
 
-    -- Startup app (ID string from settings)
     self.currentApp   = self.settings.startupApp or "dashboard"
     self.isTabletOpen = false
 
@@ -25,7 +24,7 @@ function FarmTabletSystem.new(settings)
     self.bucket = {
         isEnabled   = true,
         vehicle     = nil,
-        history     = {},   -- last 20 loads
+        history     = {},
         totalLoads  = 0,
         totalWeight = 0,
         lastFill    = 0,
@@ -41,6 +40,12 @@ function FarmTabletSystem:initialize()
     self.isInitialized = true
     self.registry:autoDetect()
     self:log("System initialized. Apps: %d", #self.registry:getAll())
+end
+
+-- FIX: reset workshopSelectedVehicle on close so stale selections don't persist
+function FarmTabletSystem:onTabletClosed()
+    self.workshopSelectedVehicle = nil
+    self.data:invalidate()
 end
 
 function FarmTabletSystem:update(dt)
@@ -59,14 +64,12 @@ function FarmTabletSystem:_getBucketVehicle()
     local v = g_currentMission.controlledVehicle
     if not v.spec_fillUnit then return nil end
 
-    -- Accept if it's a loader type or has a bucket attachment
     local typeName = (v.typeName or ""):lower()
     local loaderTypes = {"wheelloader","frontloader","loader","excavator",
                          "backhoe","telehandler","skidsteer","materialhandler"}
     for _, t in ipairs(loaderTypes) do
         if typeName:find(t) then return v end
     end
-    -- Check attachments
     if v.getAttachedImplements then
         for _, impl in ipairs(v:getAttachedImplements()) do
             local it = ((impl.object or {}).typeName or ""):lower()
@@ -79,17 +82,40 @@ function FarmTabletSystem:_getBucketVehicle()
     return nil
 end
 
+-- FIX: use the correct FS25 fillUnit API:
+--   v:getNumFillUnits()           → count
+--   v:getFillUnitFillLevel(idx)   → current litres
+--   v:getFillUnitCapacity(idx)    → max litres
+--   v:getFillUnitFillType(idx)    → fill type index
 function FarmTabletSystem:_getBucketFillInfo(v)
     local info = { total=0, cap=0, fillType=nil, name="Empty", pct=0 }
-    if not v or not v.spec_fillUnit then return info end
-    for _, fu in ipairs(v.spec_fillUnit.fillUnits or {}) do
-        info.cap   = info.cap   + (fu.capacity  or 0)
-        info.total = info.total + (fu.fillLevel or 0)
-        if (fu.fillLevel or 0) > 0 then
-            info.fillType = fu.fillType or FillType.UNKNOWN
+    if not v then return info end
+
+    -- Prefer the public spec API if available
+    if v.getNumFillUnits then
+        for i = 1, v:getNumFillUnits() do
+            local level = v:getFillUnitFillLevel(i) or 0
+            local cap   = v:getFillUnitCapacity(i)  or 0
+            info.cap   = info.cap   + cap
+            info.total = info.total + level
+            if level > 0 and v.getFillUnitFillType then
+                info.fillType = v:getFillUnitFillType(i)
+            end
+        end
+    elseif v.spec_fillUnit then
+        -- Fallback: iterate raw fillUnits table
+        for _, fu in ipairs(v.spec_fillUnit.fillUnits or {}) do
+            info.cap   = info.cap   + (fu.capacity  or 0)
+            info.total = info.total + (fu.fillLevel  or 0)
+            if (fu.fillLevel or 0) > 0 then
+                info.fillType = fu.fillType or FillType.UNKNOWN
+            end
         end
     end
-    if info.cap > 0 then info.pct = info.total / info.cap * 100 end
+
+    if info.cap > 0 then
+        info.pct = info.total / info.cap * 100
+    end
     if info.fillType and g_fillTypeManager then
         local ft2 = g_fillTypeManager:getFillTypeByIndex(info.fillType)
         if ft2 then info.name = ft2.title or ft2.name or "Unknown" end
@@ -98,66 +124,61 @@ function FarmTabletSystem:_getBucketFillInfo(v)
 end
 
 local DENSITIES = {
-    [FillType and FillType.SAND        or 0] = 1.6,
-    [FillType and FillType.GRAVEL      or 0] = 1.7,
-    [FillType and FillType.CRUSHEDSTONE or 0]= 1.6,
-    [FillType and FillType.DIRT        or 0] = 1.3,
+    -- kg per litre for common fill types (approximate)
+    [FillType and FillType.DIRT        or 0]  = 1.5,
+    [FillType and FillType.STONES      or 0]  = 1.8,
+    [FillType and FillType.GRAVEL      or 0]  = 1.7,
+    [FillType and FillType.SAND        or 0]  = 1.6,
+    [FillType and FillType.SOIL        or 0]  = 1.4,
 }
 
-function FarmTabletSystem:_estimateWeight(vol, fillType)
-    local d = DENSITIES[fillType or 0] or 1.5
-    return math.floor(vol * d)
+function FarmTabletSystem:_estimateWeight(litres, fillType)
+    local density = DENSITIES[fillType or 0] or 1.0
+    return litres * density
 end
 
 function FarmTabletSystem:_updateBucket()
     local v = self:_getBucketVehicle()
-    local bt = self.bucket
+    self.bucket.vehicle = v
+    if not v then return end
 
-    if not v then
-        bt.vehicle = nil; bt.lastFill = 0; bt.lastType = nil
-        return
-    end
+    local fi      = self:_getBucketFillInfo(v)
+    local current = fi.total
 
-    if bt.vehicle ~= v then
-        bt.vehicle = v; bt.lastFill = 0; bt.lastType = nil
-    end
+    -- Detect a dump (fill level drops by more than 50 L)
+    if self.bucket.lastFill > 50 and current < self.bucket.lastFill - 50 then
+        local weight = self:_estimateWeight(self.bucket.lastFill, fi.fillType)
+        self.bucket.totalLoads  = self.bucket.totalLoads  + 1
+        self.bucket.totalWeight = self.bucket.totalWeight + weight
 
-    local fi = self:_getBucketFillInfo(v)
-    local old = bt.lastFill
-    local new = fi.total
-    local threshold = math.max(50, (fi.cap or 0) * 0.10)
-
-    if old >= threshold and new < threshold and old > 0 then
-        bt.totalLoads = bt.totalLoads + 1
-        if bt.startTime == 0 then
-            bt.startTime = g_currentMission.time or 0
+        local entry = {
+            n        = self.bucket.totalLoads,
+            typeName = fi.name,
+            litres   = self.bucket.lastFill,
+            weight   = weight,
+        }
+        table.insert(self.bucket.history, entry)
+        if #self.bucket.history > 20 then
+            table.remove(self.bucket.history, 1)
         end
-        local w = self:_estimateWeight(old, bt.lastType)
-        bt.totalWeight = bt.totalWeight + w
-        table.insert(bt.history, {
-            n=bt.totalLoads, vol=math.floor(old),
-            type=bt.lastType, typeName=fi.name, weight=w,
-            time=g_currentMission.time or 0
-        })
-        if #bt.history > 20 then table.remove(bt.history, 1) end
     end
 
-    bt.lastFill = new
-    bt.lastType = fi.fillType
+    self.bucket.lastFill = current
+    self.bucket.lastType = fi.fillType
 end
 
 function FarmTabletSystem:resetBucket()
-    self.bucket = {
-        isEnabled=true, vehicle=nil, history={},
-        totalLoads=0, totalWeight=0, lastFill=0, lastType=nil,
-        startTime=g_currentMission and g_currentMission.time or 0,
-    }
+    self.bucket.history     = {}
+    self.bucket.totalLoads  = 0
+    self.bucket.totalWeight = 0
+    self.bucket.lastFill    = 0
+    self.bucket.lastType    = nil
 end
 
--- ── Misc helpers ──────────────────────────────────────────
+-- ── Logging ───────────────────────────────────────────────
 
 function FarmTabletSystem:log(msg, ...)
-    if self.settings.debugMode then
-        Logging.info("[FarmTablet] " .. string.format(msg, ...))
+    if self.settings and self.settings.debugMode then
+        Logging.info("[FarmTablet System] " .. string.format(msg, ...))
     end
 end

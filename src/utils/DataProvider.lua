@@ -1,5 +1,5 @@
 -- =========================================================
--- FarmTablet v2 – DataProvider
+-- FarmTablet v2 – DataProvider  (FIXED)
 -- Single access point for all FS25 game data queries.
 -- Includes a simple time-based cache to avoid per-frame lookups.
 -- =========================================================
@@ -40,7 +40,12 @@ function FT_DataProvider:getBalance(farmId)
     return self:_cached("balance_"..farmId, 1000, function()
         if g_farmManager then
             local farm = g_farmManager:getFarmById(farmId)
-            if farm then return math.floor(farm:getBalance() or 0) end
+            -- FIX: farm:getBalance() is the proven API (confirmed in AIJob.lua reference)
+            if farm and farm.getBalance then
+                return math.floor(farm:getBalance() or 0)
+            elseif farm and farm.balance then
+                return math.floor(farm.balance)
+            end
         end
         return 0
     end)
@@ -64,22 +69,24 @@ function FT_DataProvider:getFarmName(farmId)
     return nil
 end
 
+-- FIX: FS25 does NOT expose a statsItems list on g_currentMission.statistics.
+-- Income/expenses come from farm.stats – a key/value table updated by the game.
 function FT_DataProvider:getIncome(farmId)
     return self:_cached("income_"..farmId, 3000, function()
+        if not g_farmManager then return 0 end
+        local farm = g_farmManager:getFarmById(farmId)
+        if not farm or not farm.stats then return 0 end
+
+        local incomeKeys = {
+            "fieldSelling", "woodSelling", "balesSelling", "milkSelling",
+            "woolSelling", "eggsSelling", "animalsSelling", "manureSelling",
+            "compostSelling", "digestateSelling", "propertyIncome",
+            "missionIncome", "contractIncome",
+        }
         local total = 0
-        if not (g_currentMission and g_currentMission.statistics) then return 0 end
-        local keywords = {"income","revenue","harvest","mission","selling","contract"}
-        for _, item in ipairs(g_currentMission.statistics.statsItems or {}) do
-            if item.farmId == farmId and item.name then
-                local nm = item.name:lower()
-                for _, k in ipairs(keywords) do
-                    if nm:find(k) then
-                        local v = item:getValue() or 0
-                        if v > 0 then total = total + v end
-                        break
-                    end
-                end
-            end
+        for _, key in ipairs(incomeKeys) do
+            local v = farm.stats[key]
+            if type(v) == "number" and v > 0 then total = total + v end
         end
         return math.floor(total)
     end)
@@ -87,22 +94,20 @@ end
 
 function FT_DataProvider:getExpenses(farmId)
     return self:_cached("expenses_"..farmId, 3000, function()
+        if not g_farmManager then return 0 end
+        local farm = g_farmManager:getFarmById(farmId)
+        if not farm or not farm.stats then return 0 end
+
+        local expenseKeys = {
+            "vehicleRunningCost", "vehicleRepairCost", "loanInterest",
+            "propertyMaintenance", "workerWage", "seedCost", "fertilizerCost",
+            "herbicideCost", "limeCost", "purchasedAnimals", "purchasedVehicles",
+            "purchasedFarmland", "purchasedBuildings",
+        }
         local total = 0
-        if not (g_currentMission and g_currentMission.statistics) then return 0 end
-        local keywords = {"expense","cost","maintenance","wage","fuel","seed",
-                          "fertilizer","spray","repair","lease","insurance",
-                          "animal","property","loanInterest"}
-        for _, item in ipairs(g_currentMission.statistics.statsItems or {}) do
-            if item.farmId == farmId and item.name then
-                local nm = item.name:lower()
-                for _, k in ipairs(keywords) do
-                    if nm:find(k) then
-                        local v = item:getValue() or 0
-                        if v > 0 then total = total + v end
-                        break
-                    end
-                end
-            end
+        for _, key in ipairs(expenseKeys) do
+            local v = farm.stats[key]
+            if type(v) == "number" and v > 0 then total = total + v end
         end
         return math.floor(total)
     end)
@@ -110,14 +115,19 @@ end
 
 -- ── Farm Stats ────────────────────────────────────────────
 
+-- FIX: Farmland.field is the single Field linked to a farmland (not a fieldIds array).
+-- g_fieldManager.farmlandIdFieldMapping[farmlandId] is the authoritative lookup.
 function FT_DataProvider:getActiveFieldCount(farmId)
     return self:_cached("fieldcount_"..farmId, 5000, function()
         local count = 0
-        if g_farmlandManager then
-            for _, fl in pairs(g_farmlandManager.farmlands) do
-                if fl.farmId == farmId and fl.fieldIds then
-                    count = count + #fl.fieldIds
+        if not g_farmlandManager then return 0 end
+        for _, fl in pairs(g_farmlandManager.farmlands) do
+            if fl.farmId == farmId then
+                local hasField = fl.field ~= nil
+                if not hasField and g_fieldManager and g_fieldManager.farmlandIdFieldMapping then
+                    hasField = g_fieldManager.farmlandIdFieldMapping[fl.id] ~= nil
                 end
+                if hasField then count = count + 1 end
             end
         end
         return count
@@ -129,9 +139,9 @@ function FT_DataProvider:getVehicleCount(farmId)
         local count = 0
         if g_currentMission and g_currentMission.vehicles then
             for _, v in pairs(g_currentMission.vehicles) do
-                if v.spec_motorized then
-                    local fid = (v.getOwnerFarmId and v:getOwnerFarmId()) or v.farmId
-                    if fid == farmId then count = count + 1 end
+                -- FIX: use getOwnerFarmId() only – it is the authoritative method
+                if v.spec_motorized and v.getOwnerFarmId then
+                    if v:getOwnerFarmId() == farmId then count = count + 1 end
                 end
             end
         end
@@ -147,12 +157,15 @@ function FT_DataProvider:getWorldInfo()
             return nil
         end
         local env = g_currentMission.environment
-        local ms  = g_currentMission.time or 0
+        -- FIX: FS25 uses env.dayTime (ms within the day, 0–86400000).
+        -- Seasons mod adds currentSeason; guard with nil check.
+        local dayTimeMs  = env.dayTime or 0
+        local totalHours = dayTimeMs / 3600000
         return {
             day    = env.currentDay or 1,
-            season = env.currentSeason,
-            hour   = math.floor(ms / 3600000),
-            minute = math.floor((ms % 3600000) / 60000),
+            season = env.currentSeason,   -- nil in base game
+            hour   = math.floor(totalHours) % 24,
+            minute = math.floor((totalHours % 1) * 60),
         }
     end)
 end
@@ -162,94 +175,138 @@ function FT_DataProvider:getWeather()
         if not (g_currentMission and g_currentMission.environment) then
             return nil
         end
-        local env       = g_currentMission.environment
-        local rainScale = env.currentRainScale or 0
-        local cloud     = 0
-        if env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
+        local env = g_currentMission.environment
+
+        -- FIX: FS25 weather lives at env.weather (not env directly).
+        -- Proven API: weather:getRainFallScale(), weather:getCurrentTemperature()
+        local weather = env.weather
+        if not weather then return nil end
+
+        local rainScale = weather.getRainFallScale     and weather:getRainFallScale()     or 0
+        local temp      = weather.getCurrentTemperature and weather:getCurrentTemperature() or 15
+
+        -- Cloud coverage – try weather object first, then env fallbacks
+        local cloud = 0
+        if weather.getCloudCoverage then
+            cloud = weather:getCloudCoverage()
+        elseif env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
             cloud = env.cloudUpdater:getCloudCoverage()
-        elseif env.cloudCoverage then
+        elseif type(env.cloudCoverage) == "number" then
             cloud = env.cloudCoverage
         end
-        local temp = env.temperature or 20
+
+        -- Fog – not a standard weather API field, wrap defensively
+        local fogScale = 0
+        if type(env.fogScale) == "number" then fogScale = env.fogScale end
+
+        -- Wind – not guaranteed in base game
+        local windSpeed = 0
+        if weather.getWindSpeed then
+            windSpeed = weather:getWindSpeed()
+        elseif type(env.windSpeed) == "number" then
+            windSpeed = env.windSpeed
+        end
+
         local w = {
             temperature = temp,
             rainScale   = rainScale,
             isRaining   = rainScale > 0.05,
             isStorming  = rainScale > 0.70,
-            isFoggy     = (env.fogScale or 0) > 0.3,
-            cloudCover  = cloud,
-            windSpeed   = env.windSpeed or 0,
-            windDir     = env.windDir or 0,
-            humidity    = env.humidity,
-            forecast    = env.forecast,
+            isFoggy     = fogScale  > 0.3,
+            cloudCover  = cloud,   -- 0.0–1.0
+            windSpeed   = windSpeed,
         }
-        if     w.isStorming     then w.condition = "Stormy";       w.condKey = "storm"
-        elseif w.isRaining      then w.condition = "Rainy";        w.condKey = "rain"
-        elseif w.isFoggy        then w.condition = "Foggy";        w.condKey = "fog"
-        elseif cloud > 0.70     then w.condition = "Overcast";     w.condKey = "overcast"
-        elseif cloud > 0.30     then w.condition = "Partly Cloudy";w.condKey = "cloudy"
-        else                         w.condition = "Clear";        w.condKey = "clear"
+
+        if     w.isStorming then w.condition = "Stormy";        w.condKey = "storm"
+        elseif w.isRaining  then w.condition = "Rainy";         w.condKey = "rain"
+        elseif w.isFoggy    then w.condition = "Foggy";         w.condKey = "fog"
+        elseif cloud > 0.70 then w.condition = "Overcast";      w.condKey = "overcast"
+        elseif cloud > 0.30 then w.condition = "Partly Cloudy"; w.condKey = "cloudy"
+        else                     w.condition = "Clear";         w.condKey = "clear"
         end
+
+        -- Forecast: try both naming conventions
+        w.forecast = weather.forecast or weather.forecastItems or nil
+
         return w
     end)
 end
 
 -- ── Fields ────────────────────────────────────────────────
 
--- Growth state names
 local GROWTH_STATES = {
-    [0]  = { name = "Withered",  color = FT.C.NEGATIVE  },
-    [1]  = { name = "Seeded",    color = FT.C.MUTED     },
-    [2]  = { name = "Germinated",color = FT.C.INFO      },
-    [3]  = { name = "Growing",   color = FT.C.WARNING   },
-    [4]  = { name = "Growing",   color = FT.C.WARNING   },
-    [5]  = { name = "Growing",   color = FT.C.WARNING   },
-    [6]  = { name = "Ripening",  color = FT.C.BRAND     },
-    [7]  = { name = "Ready",     color = FT.C.POSITIVE  },
-    [8]  = { name = "Harvested", color = FT.C.MUTED     },
+    [0]  = { name = "Withered",   color = FT.C.NEGATIVE  },
+    [1]  = { name = "Seeded",     color = FT.C.MUTED     },
+    [2]  = { name = "Germinated", color = FT.C.INFO      },
+    [3]  = { name = "Growing",    color = FT.C.WARNING   },
+    [4]  = { name = "Growing",    color = FT.C.WARNING   },
+    [5]  = { name = "Growing",    color = FT.C.WARNING   },
+    [6]  = { name = "Ripening",   color = FT.C.BRAND     },
+    [7]  = { name = "Ready",      color = FT.C.POSITIVE  },
+    [8]  = { name = "Harvested",  color = FT.C.MUTED     },
 }
 
+-- FIX: Each Farmland links to ONE Field via farmland.field (set by FieldManager).
+-- Crop/growth state must be queried via FieldState:update(cx, cz), not from field directly.
 function FT_DataProvider:getOwnedFields(farmId)
     return self:_cached("fields_"..farmId, 4000, function()
         local out = {}
         if not g_farmlandManager then return out end
+
+        -- One reusable FieldState for sampling crop/growth at each field's center
+        local fieldState = (FieldState ~= nil) and FieldState.new() or nil
+
         for _, fl in pairs(g_farmlandManager.farmlands) do
             if fl.farmId == farmId then
-                for _, fieldId in ipairs(fl.fieldIds or {}) do
-                    local field = g_fieldManager and g_fieldManager:getFieldById(fieldId)
-                    if field then
-                        local cropName  = "Empty"
-                        local stateName = "Empty"
-                        local stateColor= FT.C.MUTED
-                        local phase     = "empty"
+                -- Resolve the field linked to this farmland
+                local field = fl.field
+                if field == nil and g_fieldManager and g_fieldManager.farmlandIdFieldMapping then
+                    field = g_fieldManager.farmlandIdFieldMapping[fl.id]
+                end
 
-                        if field.fruitType and g_fruitTypeManager then
-                            local ft2 = g_fruitTypeManager:getFruitTypeByIndex(field.fruitType)
-                            if ft2 then
-                                cropName = ft2.nameI18N or ft2.name or "Unknown"
-                                local gs = GROWTH_STATES[field.growthState] or
-                                           { name="Growing", color=FT.C.WARNING }
-                                stateName  = gs.name
-                                stateColor = gs.color
-                                if field.growthState == 7 then phase = "ready"
-                                elseif field.growthState and field.growthState > 0 then phase = "growing"
+                if field then
+                    local cropName   = "Empty"
+                    local stateName  = "Empty"
+                    local stateColor = FT.C.MUTED
+                    local phase      = "empty"
+
+                    if fieldState and field.getCenterOfFieldWorldPosition then
+                        local cx, cz = field:getCenterOfFieldWorldPosition()
+                        if cx then
+                            fieldState:update(cx, cz)
+
+                            local fruitIdx = fieldState.fruitTypeIndex
+                            local unknown  = FruitType and FruitType.UNKNOWN or 0
+                            if fruitIdx and fruitIdx ~= unknown and g_fruitTypeManager then
+                                local ft2 = g_fruitTypeManager:getFruitTypeByIndex(fruitIdx)
+                                if ft2 then
+                                    cropName = ft2.nameI18N or ft2.name or "Unknown"
+                                    local gs  = fieldState.growthState or 0
+                                    local gsd = GROWTH_STATES[gs] or { name="Growing", color=FT.C.WARNING }
+                                    stateName  = gsd.name
+                                    stateColor = gsd.color
+                                    if gs == 7 then
+                                        phase = "ready"
+                                    elseif gs > 0 then
+                                        phase = "growing"
+                                    end
                                 end
                             end
                         end
-
-                        table.insert(out, {
-                            id         = fl.id,
-                            fieldId    = fieldId,
-                            cropName   = cropName,
-                            stateName  = stateName,
-                            stateColor = stateColor,
-                            phase      = phase,
-                            area       = fl.totalFieldArea or 0,
-                        })
                     end
+
+                    table.insert(out, {
+                        id         = fl.id,
+                        cropName   = cropName,
+                        stateName  = stateName,
+                        stateColor = stateColor,
+                        phase      = phase,
+                        area       = fl.areaInHa or 0,
+                    })
                 end
             end
         end
+
         table.sort(out, function(a, b) return a.id < b.id end)
         return out
     end)
@@ -257,50 +314,86 @@ end
 
 -- ── Animals ───────────────────────────────────────────────
 
+-- FIX: Animal pens are Placeables with spec_husbandry.
+-- Counts:  placeable:getNumOfAnimals() / getMaxNumOfAnimals()
+-- Food:    placeable:getTotalFood()    / getFoodCapacity()
+-- Water:   placeable:getHusbandryFillLevel(FillType.WATER) / getHusbandryCapacity(FillType.WATER)
+-- Straw:   placeable:getConditionInfos() → array of {title, value, ratio}
 function FT_DataProvider:getAnimalPens(farmId)
     return self:_cached("animals_"..farmId, 3000, function()
         local out = {}
-        if not (g_currentMission and g_currentMission.husbandrySystem) then
+        if not (g_currentMission and g_currentMission.placeableSystem) then
             return out
         end
-        for _, cluster in pairs(g_currentMission.husbandrySystem.clusters or {}) do
-            if cluster.farmId == farmId or
-               (cluster.getFarmId and cluster:getFarmId() == farmId) then
 
-                local typeName = cluster.typeName or "Unknown"
-                local num  = 0
-                local maxN = 0
+        for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
+            if placeable.spec_husbandry and
+               placeable.getOwnerFarmId and
+               placeable:getOwnerFarmId() == farmId then
 
-                if cluster.getNumAnimals then
-                    num = cluster:getNumAnimals()
-                elseif cluster.numAnimals then
-                    num = cluster.numAnimals
+                -- Animal type name from spec_husbandryAnimals
+                local typeName = "Unknown"
+                if placeable.spec_husbandryAnimals then
+                    local aspec = placeable.spec_husbandryAnimals
+                    if aspec.animalType and aspec.animalType.name then
+                        typeName = aspec.animalType.name
+                    end
                 end
-                if cluster.maxNumAnimals then maxN = cluster.maxNumAnimals end
 
-                local function getPct(spec, key)
-                    if spec then
-                        local v = spec[key]
-                        if type(v) == "number" then return math.floor(v * 100) end
-                        if spec.getFillLevel and spec.capacity then
-                            return math.floor(spec:getFillLevel() / math.max(spec.capacity,1) * 100)
+                -- Count
+                local numAnimals = 0
+                local maxAnimals = 0
+                if placeable.getNumOfAnimals then
+                    numAnimals = placeable:getNumOfAnimals()
+                end
+                if placeable.getMaxNumOfAnimals then
+                    maxAnimals = placeable:getMaxNumOfAnimals()
+                end
+
+                -- Food
+                local foodPct = nil
+                if placeable.getTotalFood and placeable.getFoodCapacity then
+                    local cap = placeable:getFoodCapacity()
+                    if cap and cap > 0 then
+                        foodPct = math.floor(placeable:getTotalFood() / cap * 100)
+                    end
+                end
+
+                -- Water
+                local waterPct = nil
+                if placeable.getHusbandryFillLevel and placeable.getHusbandryCapacity then
+                    local wt = FillType and FillType.WATER
+                    if wt then
+                        local wCap = placeable:getHusbandryCapacity(wt)
+                        if wCap and wCap > 0 then
+                            waterPct = math.floor(
+                                placeable:getHusbandryFillLevel(wt) / wCap * 100)
                         end
                     end
-                    return nil
+                end
+
+                -- Straw/cleanliness from condition infos
+                local cleanPct = nil
+                if placeable.getConditionInfos then
+                    local infos = placeable:getConditionInfos() or {}
+                    for _, info in ipairs(infos) do
+                        if info.ratio ~= nil then
+                            cleanPct = math.floor(info.ratio * 100)
+                            break
+                        end
+                    end
                 end
 
                 table.insert(out, {
-                    typeName   = typeName,
-                    numAnimals = num,
-                    maxAnimals = maxN,
-                    foodPct    = getPct(cluster.foodSpec,  "fillLevel") or
-                                 (cluster.food ~= nil and math.floor(cluster.food*100)) or nil,
-                    waterPct   = getPct(cluster.waterSpec, "fillLevel") or
-                                 (cluster.water ~= nil and math.floor(cluster.water*100)) or nil,
-                    cleanPct   = (cluster.cleanliness ~= nil and math.floor(cluster.cleanliness*100)) or nil,
-                    hasFood    = cluster.foodSpec ~= nil or cluster.food ~= nil,
-                    hasWater   = cluster.waterSpec ~= nil or cluster.water ~= nil,
-                    hasCleanliness = cluster.cleanliness ~= nil,
+                    typeName       = typeName,
+                    numAnimals     = numAnimals,
+                    maxAnimals     = maxAnimals,
+                    foodPct        = foodPct,
+                    waterPct       = waterPct,
+                    cleanPct       = cleanPct,
+                    hasFood        = placeable.getTotalFood ~= nil,
+                    hasWater       = placeable.getHusbandryFillLevel ~= nil and FillType ~= nil,
+                    hasCleanliness = placeable.getConditionInfos ~= nil,
                 })
             end
         end
@@ -312,15 +405,12 @@ end
 
 function FT_DataProvider:getNearbyVehicles(radiusM)
     radiusM = radiusM or 20
-    if not (g_currentMission and g_currentMission.player) then
-        return {}
-    end
+    if not (g_currentMission and g_currentMission.player) then return {} end
 
-    -- Get actual world position, considering if seated
     local px, py, pz
     local player = g_currentMission.player
     local seatedVehicle = player.getCurrentVehicle and player:getCurrentVehicle()
-    
+
     if seatedVehicle and seatedVehicle.rootNode then
         px, py, pz = getWorldTranslation(seatedVehicle.rootNode)
     elseif player.rootNode then
@@ -337,15 +427,15 @@ function FT_DataProvider:getNearbyVehicles(radiusM)
             if dist <= radiusM then
                 local name = (v.getFullName and v:getFullName()) or
                              v.configFileName or "Unknown"
-                -- Fuel
+
+                -- Fuel is on spec_motorized
                 local fuel, fuelCap = 0, 1
                 local ms = v.spec_motorized
                 if ms then
-                    if ms.fuelFillLevel and ms.fuelCapacity then
-                        fuel    = ms.fuelFillLevel
-                        fuelCap = math.max(ms.fuelCapacity, 1)
-                    end
+                    fuel    = ms.fuelFillLevel or 0
+                    fuelCap = math.max(ms.fuelCapacity or 1, 1)
                 end
+
                 -- Wear
                 local wearPct = 0
                 if v.spec_wearable then
@@ -356,10 +446,11 @@ function FT_DataProvider:getNearbyVehicles(radiusM)
                         wearPct = math.floor(ws:getVehicleWearAmount() * 100)
                     end
                 end
-                -- Operating hours
+
+                -- FIX: operatingTime is on the vehicle root table in milliseconds
                 local opHours = 0
-                if v.spec_motorized and v.spec_motorized.operatingTime then
-                    opHours = math.floor(v.spec_motorized.operatingTime / 3600)
+                if v.operatingTime then
+                    opHours = math.floor(v.operatingTime / 3600000)
                 end
 
                 table.insert(out, {
@@ -388,9 +479,11 @@ function FT_DataProvider:formatMoney(amount)
     return string.format("$%d", amount or 0)
 end
 
+-- FIX: guard against nil season (base game has no seasons mod)
 local SEASON_NAMES = {"Spring","Summer","Autumn","Winter"}
 function FT_DataProvider:getSeasonName(seasonIdx)
-    return SEASON_NAMES[(seasonIdx or 0) + 1] or "Unknown"
+    if seasonIdx == nil then return nil end
+    return SEASON_NAMES[seasonIdx + 1] or "Unknown"
 end
 
 function FT_DataProvider:invalidate()

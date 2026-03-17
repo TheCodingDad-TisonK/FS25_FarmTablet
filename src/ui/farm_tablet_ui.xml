@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GUI>
+    <GuiProfiles>
+        <!-- Profiles can be added here later for styling -->
+    </GuiProfiles>
+
+    <texture>
+        <meta>
+            <!-- For now, we use a simple blank texture. We can create a proper texture atlas later. -->
+            <filename>../../../fff.png</filename>
+            <size width="1024" height="1024" />
+        </meta>
+        <slices>
+            <slice id="tabletBackground" uvs="0 0 1024 1024" width="1024" height="1024" />
+        </slices>
+    </texture>
+</GUI>

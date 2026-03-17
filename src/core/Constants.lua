@@ -8,8 +8,8 @@ FT.VERSION = "2.0.0"
 
 -- ── Design Tokens ─────────────────────────────────────────
 -- Reference dimensions (at 1080p; scaled at runtime)
-FT.REF_W = 860   -- tablet width  in ref pixels
-FT.REF_H = 620   -- tablet height in ref pixels
+FT.REF_W = 900   -- tablet width  in ref pixels
+FT.REF_H = 600   -- tablet height in ref pixels
 
 -- Color Palette  (R, G, B, A)
 FT.C = {
@@ -62,12 +62,12 @@ FT.C = {
 
 -- ── Typography Scale ──────────────────────────────────────
 FT.FONT = {
-    TITLE    = 0.021,   -- app title
-    HEADER   = 0.016,   -- section header
-    BODY     = 0.015,   -- standard body text
-    SMALL    = 0.013,   -- caption / label
-    TINY     = 0.011,   -- metadata / column headers
-    HUGE     = 0.028,   -- hero number (balance etc.)
+    TITLE    = 0.016,   -- app title
+    HEADER   = 0.012,   -- section header
+    BODY     = 0.011,   -- standard body text
+    SMALL    = 0.009,   -- caption / label
+    TINY     = 0.007,   -- metadata / column headers
+    HUGE     = 0.020,   -- hero number (balance etc.)
 }
 
 -- ── Spacing ────────────────────────────────────────────────

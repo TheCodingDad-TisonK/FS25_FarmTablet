@@ -60,6 +60,7 @@ end
 local function load(mission)
     if farmTabletManager == nil then
         Logging.info("[FarmTablet v2] Initializing...")
+        
         farmTabletManager = FarmTabletManager.new(mission, modDirectory, modName)
         getfenv(0)["g_FarmTablet"] = farmTabletManager
         Logging.info("[FarmTablet v2] Ready.")

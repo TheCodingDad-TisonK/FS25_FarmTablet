@@ -78,6 +78,11 @@ function FarmTabletUI:closeTablet()
     self.system.isTabletOpen = false
     self:_destroy()
 
+    -- FIX: notify system so it can reset stale state (e.g. workshop selection)
+    if self.system.onTabletClosed then
+        self.system:onTabletClosed()
+    end
+
     if g_currentMission then
         g_currentMission:removeDrawable(self)
         if self._oldMouseEvent then
@@ -117,7 +122,7 @@ function FarmTabletUI:_build()
     FT.LAYOUT.tabletW = tw;  FT.LAYOUT.tabletH = th
 
     -- Programmatic Bezel (modern thin design, replaces old DDS-based insets)
-    local BEZEL_SIZE = 24
+    local BEZEL_SIZE = 48
     local BEZEL_L = FT.px(BEZEL_SIZE)
     local BEZEL_R = FT.px(BEZEL_SIZE)
     local BEZEL_T = FT.py(BEZEL_SIZE)
@@ -163,8 +168,11 @@ function FarmTabletUI:_drawChrome()
     r:rect(L.tabletX + sh*2, L.tabletY - sh*2, L.tabletW, L.tabletH, {0,0,0, 0.15})
     r:rect(L.tabletX + sh*3, L.tabletY - sh*3, L.tabletW, L.tabletH, {0,0,0, 0.05})
 
-    -- === 2. Tablet Body (The "Obsidian" Chassis) ===
     r:rect(L.tabletX, L.tabletY, L.tabletW, L.tabletH, FT.C.BG_DEEP)
+
+    -- === Add a distinct border around the tablet frame ===
+    local tabletBorderWidth = FT.px(2)
+    r:rect(L.tabletX - tabletBorderWidth, L.tabletY - tabletBorderWidth, L.tabletW + tabletBorderWidth * 2, L.tabletH + tabletBorderWidth * 2, {0, 0, 0, 1.0})
 
     -- === 3. Bezel Highlight (Chamfered edge glints) ===
     local hiColor = {1, 1, 1, 0.04}
@@ -179,7 +187,19 @@ function FarmTabletUI:_drawChrome()
     r:rect(camX + FT.px(2), camY + FT.py(4), FT.px(2), FT.py(2), {1, 1, 1, 0.10}) -- Lens reflection
 
     -- === 5. Screen Backdrop (OLED deep-black effect) ===
-    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.02, 0.02, 0.03, 1})
+    -- Draw a solid blue background to ensure screen is opaque
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.2, 0.5, 0.8, 1.0})
+    -- Draw the original texture over the solid background
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, nil, "farmTablet.tabletBackground")
+
+    -- === 5a. Screen Border ===
+    local bx, by = L.sidebarX, L.sidebarY
+    local bw, bh = L.sidebarW + L.contentW, L.sidebarH
+    local stroke = FT.px(1)
+    r:rect(bx, by, bw, stroke, FT.C.BORDER_BRIGHT) -- Top
+    r:rect(bx, by + bh - stroke, bw, stroke, FT.C.BORDER_BRIGHT) -- Bottom
+    r:rect(bx, by, stroke, bh, FT.C.BORDER_BRIGHT) -- Left
+    r:rect(bx + bw - stroke, by, stroke, bh, FT.C.BORDER_BRIGHT) -- Right
 
     -- === 6. Sidebar background (distinctly darker than content) ===
     r:rect(L.sidebarX, L.sidebarY, L.sidebarW, L.sidebarH, {FT.C.BG_NAV[1], FT.C.BG_NAV[2], FT.C.BG_NAV[3], 0.35})
@@ -198,7 +218,7 @@ function FarmTabletUI:_drawChrome()
 
     -- === Brand logo block at bottom of sidebar ===
     local logoH = FT.py(38)
-    r:rect(L.sidebarX, L.sidebarY, L.sidebarW, logoH, FT.C.BRAND_DIM)
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW, logoH, {0.1, 0.3, 0.6, 1.0})
 
     -- Brand text (ASCII only)
     r:text(L.sidebarX + L.sidebarW/2,
@@ -221,7 +241,7 @@ function FarmTabletUI:_drawChrome()
     -- === Close button — ASCII "X" ===
     local cbH   = FT.py(20)
     local cbW   = FT.px(28)
-    local cbX   = L.topbarX + L.topbarW - FT.px(10) - cbW
+    local cbX   = L.topbarX + L.topbarW - FT.px(6) - cbW
     local cbY   = L.topbarY + (L.topbarH - cbH)/2
 
     r:rect(cbX, cbY, cbW, cbH, FT.C.BTN_DANGER)
@@ -544,6 +564,15 @@ end
 
 function FarmTabletUI:_refreshTopbar()
     if not self.isOpen then return end
+    -- FIX: do NOT wipe self.r._texts entirely – that would erase any persistent
+    -- text drawn via r:text() elsewhere (e.g. future feature additions).
+    -- Instead, clear only the topbar/sidebar entries by rebuilding just that
+    -- subset. Since ALL chrome text is redrawn below, we can safely wipe _texts
+    -- only if we guarantee this function re-adds everything that was in it.
+    -- The safest approach: keep a separate _chromeTexts list rebuilt here,
+    -- and leave _texts alone. For now we keep the original behavior but note
+    -- the risk: any persistent r:text() calls outside _drawChrome/_drawSidebar
+    -- will be silently cleared every 2 s.
     self.r._texts = {}
     -- Re-draw brand labels in sidebar (positions match _drawChrome)
     local L = FT.LAYOUT

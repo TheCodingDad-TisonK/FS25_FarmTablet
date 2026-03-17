@@ -1,5 +1,5 @@
 -- =========================================================
--- FarmTablet v2 – Weather App
+-- FarmTablet v2 – Weather App  (FIXED)
 -- =========================================================
 
 FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
@@ -8,9 +8,10 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
 
     local startY = self:drawAppHeader("Weather", "")
 
+    local x, _, cw, _ = self:contentInner()
+
     if not w then
-        self.r:appText(FT.LAYOUT.contentX + FT.px(16),
-            startY - FT.py(10), FT.FONT.BODY,
+        self.r:appText(x, startY - FT.py(10), FT.FONT.BODY,
             "Weather data unavailable.",
             RenderText.ALIGN_LEFT, FT.C.WARNING)
         return
@@ -20,22 +21,16 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
 
     -- ── Condition hero card ────────────────────────────────
     y = y - FT.py(4)
-    local x, _, cw, _ = self:contentInner()
-
-    -- Hero bg
     local heroH = FT.py(48)
-    local heroColor = FT.C.BG_CARD
-    self.r:appRect(x, y - heroH, cw, heroH, heroColor)
+    self.r:appRect(x, y - heroH, cw, heroH, FT.C.BG_CARD)
 
-    -- Big condition text
     local condColor = FT.C.TEXT_ACCENT
-    if     w.isStorming  then condColor = FT.C.WEATHER_STORM
-    elseif w.isRaining   then condColor = FT.C.WEATHER_RAIN
-    elseif w.isFoggy     then condColor = FT.C.WEATHER_FOG
-    elseif w.condKey == "clear" then condColor = FT.C.WEATHER_SUN
+    if     w.isStorming             then condColor = FT.C.WEATHER_STORM
+    elseif w.isRaining              then condColor = FT.C.WEATHER_RAIN
+    elseif w.isFoggy                then condColor = FT.C.WEATHER_FOG
+    elseif w.condKey == "clear"     then condColor = FT.C.WEATHER_SUN
     end
 
-    -- Weather condition label (ASCII-only — FS25 has no emoji support)
     local condLabel = {
         storm    = "[STORM]",
         rain     = "[RAIN]",
@@ -54,10 +49,9 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
         RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
 
     self.r:appText(x + FT.px(58), y - heroH/2 - FT.py(6),
-        FT.FONT.SMALL, string.format("%.1f °C", w.temperature),
+        FT.FONT.SMALL, string.format("%.1f C", w.temperature),
         RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
 
-    -- Right: wind
     if w.windSpeed and w.windSpeed > 0 then
         self.r:appText(x + cw - FT.px(12), y - heroH/2 + FT.py(6),
             FT.FONT.BODY, string.format("%.0f km/h", w.windSpeed),
@@ -74,17 +68,13 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
     y = self:drawSection(y, "CONDITIONS")
 
     y = self:drawRow(y, "Temperature",
-        string.format("%.1f °C", w.temperature), nil,
+        string.format("%.1f C", w.temperature), nil,
         w.temperature < 0 and FT.C.INFO or
         w.temperature > 30 and FT.C.WARNING or FT.C.TEXT_ACCENT)
 
+    -- FIX: cloudCover is 0.0–1.0, so multiply by 100 to get a percentage
     y = self:drawRow(y, "Cloud Cover",
         string.format("%.0f%%", w.cloudCover * 100))
-
-    if w.humidity then
-        y = self:drawRow(y, "Humidity",
-            string.format("%.0f%%", w.humidity))
-    end
 
     if w.windSpeed and w.windSpeed > 0 then
         y = self:drawRow(y, "Wind Speed",
@@ -96,6 +86,10 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
         y = self:drawRow(y, "Precipitation", rainLabel, nil, FT.C.WEATHER_RAIN)
     end
 
+    if w.isFoggy then
+        y = self:drawRow(y, "Fog", "Present", nil, FT.C.WEATHER_FOG)
+    end
+
     -- ── Forecast ───────────────────────────────────────────
     if w.forecast and #w.forecast > 0 then
         y = y - FT.py(4)
@@ -104,10 +98,12 @@ FarmTabletUI:registerDrawer(FT.APP.WEATHER, function(self)
 
         for i = 1, math.min(4, #w.forecast) do
             local f = w.forecast[i]
-            y = self:drawRow(y,
-                "Day +" .. i,
-                (f.condition or f.weatherType or "Unknown"),
-                nil, FT.C.TEXT_DIM)
+            if f then
+                y = self:drawRow(y,
+                    "Day +" .. i,
+                    (f.condition or f.weatherType or f.type or "Unknown"),
+                    nil, FT.C.TEXT_DIM)
+            end
         end
     end
 end)
