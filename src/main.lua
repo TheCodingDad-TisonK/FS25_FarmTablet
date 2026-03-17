@@ -1,5 +1,5 @@
 -- =========================================================
--- FS25 Farm Tablet  v2.0.0  (complete overhaul)
+-- FS25 Farm Tablet  v2.1.0.0  (complete overhaul)
 -- Author: TisonK
 -- =========================================================
 local modDirectory = g_currentModDirectory

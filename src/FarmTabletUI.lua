@@ -36,6 +36,10 @@ function FarmTabletUI.new(settings, system, modDirectory)
     self._iconBtns    = {}  -- {appId, x,y,w,h}
     self._contentBtns = {}  -- app-specific, cleared per switch
 
+    -- Sidebar scroll state
+    self._sidebarScrollOffset = 0   -- in icon slots (integer)
+    self._sidebarMaxScroll    = 0   -- set in _drawSidebar
+
     -- Backdrop overlay (separate from renderer for ordering)
     self._backdrop = nil
 
@@ -109,6 +113,7 @@ function FarmTabletUI:_build()
     self.r:destroyAll()
     self._iconBtns    = {}
     self._contentBtns = {}
+    self._sidebarScrollOffset = self._sidebarScrollOffset or 0
 
     -- 1. Compute layout in normalized coords
     local tw, th = getNormalizedScreenValues(FT.REF_W, FT.REF_H)
@@ -212,9 +217,14 @@ function FarmTabletUI:_drawChrome()
     -- === 7. Top status bar ===
     r:rect(L.topbarX, L.topbarY, L.topbarW, L.topbarH, {FT.C.BG_NAV[1], FT.C.BG_NAV[2], FT.C.BG_NAV[3], 0.35})
 
-    -- Topbar bottom border
+    -- Per-app color tint on topbar
+    local appAccent = FT.appColor(self.system.currentApp)
+    r:rect(L.topbarX, L.topbarY, L.topbarW, L.topbarH,
+           {appAccent[1], appAccent[2], appAccent[3], 0.06})
+
+    -- Topbar bottom border (uses current app accent)
     r:rect(L.topbarX, L.topbarY, L.topbarW, FT.py(1),
-           {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.35})
+           {appAccent[1], appAccent[2], appAccent[3], 0.55})
 
     -- === Brand logo block at bottom of sidebar ===
     local logoH = FT.py(38)
@@ -250,6 +260,38 @@ function FarmTabletUI:_drawChrome()
            RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
 
     self._closeBtn = { x=cbX, y=cbY, w=cbW, h=cbH }
+
+    -- === Side hardware buttons (right side of tablet bezel) ===
+    local btnSideW  = FT.px(6)
+    local btnSideH  = FT.py(32)
+    local sideX     = L.tabletX + L.tabletW   -- right bezel outer edge
+    local btnGap    = FT.py(8)
+
+    -- Power button (top-right)
+    local pwrY = L.tabletY + L.tabletH - FT.py(120)
+    r:rect(sideX - FT.px(3), pwrY, btnSideW, btnSideH, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), pwrY + FT.py(1), FT.px(4), btnSideH - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Volume Up button
+    local volUpY = L.tabletY + L.tabletH - FT.py(68)
+    r:rect(sideX - FT.px(3), volUpY, btnSideW, btnSideH, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), volUpY + FT.py(1), FT.px(4), btnSideH - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Volume Down button
+    local volDnY = volUpY + btnSideH + btnGap
+    r:rect(sideX - FT.px(3), volDnY, btnSideW, btnSideH * 0.9, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), volDnY + FT.py(1), FT.px(4), btnSideH * 0.9 - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Small speaker grille dots on left bezel
+    local grY = L.tabletY + FT.py(30)
+    local grX = L.tabletX + FT.px(6)
+    for i = 0, 5 do
+        r:rect(grX, grY + i * FT.py(8), FT.px(2), FT.py(3), {0.08, 0.09, 0.12, 1.0})
+    end
+    grX = L.tabletX + FT.px(10)
+    for i = 0, 5 do
+        r:rect(grX, grY + i * FT.py(8) + FT.py(2), FT.px(2), FT.py(3), {0.08, 0.09, 0.12, 1.0})
+    end
 
 end
 
@@ -321,45 +363,88 @@ function FarmTabletUI:_drawSidebar()
     local r     = self.r
     local apps  = self.system.registry:getAll()
 
-    local iconW  = L.sidebarW - FT.px(10)   -- nearly full sidebar width
+    local iconW  = L.sidebarW - FT.px(10)
     local iconH  = FT.py(ICON_SIZE_REF * 0.72)
     local gap    = FT.py(ICON_GAP_REF)
     local ix     = L.sidebarX + FT.px(5)
     local logoH  = FT.py(38)
-    -- Stack icons from ABOVE the logo block, going upward
-    local startY = L.sidebarY + logoH + FT.py(6)
 
-    self._iconBtns = {}
+    -- Available vertical space for icons (between logo block and top of sidebar)
+    local availH     = L.sidebarH - logoH - FT.py(10)
+    local slotH      = iconH + gap
+    local visibleMax = math.floor(availH / slotH)
+
+    -- Compute max scroll
+    local totalApps = #apps
+    self._sidebarMaxScroll = math.max(0, totalApps - visibleMax)
+    self._sidebarScrollOffset = math.max(0,
+        math.min(self._sidebarScrollOffset or 0, self._sidebarMaxScroll))
+
+    local startY    = L.sidebarY + logoH + FT.py(6)
     local currentApp = self.system.currentApp
 
-    for i, app in ipairs(apps) do
-        local iy = startY + (i-1) * (iconH + gap)
-
-        -- Stop if we'd overflow the sidebar height
-        if iy + iconH > L.sidebarY + L.sidebarH - logoH - FT.py(4) then break end
-
-        local isActive = (app.id == currentApp)
-
-        -- Icon tile background
-        local bgColor = isActive and FT.C.BTN_ACTIVE or FT.C.BG_CARD
-        r:rect(ix, iy, iconW, iconH, bgColor)
-
-        -- Active indicator: bright left edge bar
-        if isActive then
-            r:rect(L.sidebarX, iy, FT.px(4), iconH, FT.C.BRAND)
+    -- Draw scroll indicator if needed
+    if self._sidebarMaxScroll > 0 then
+        local indX = L.sidebarX + L.sidebarW - FT.px(5)
+        local indY = startY
+        local indH = availH - FT.py(4)
+        -- Track
+        r:rect(indX, indY, FT.px(3), indH, {0.12, 0.14, 0.20, 0.8})
+        -- Thumb
+        local thumbRatio = visibleMax / totalApps
+        local thumbH     = math.max(FT.py(12), indH * thumbRatio)
+        local thumbOffsetRatio = self._sidebarScrollOffset / totalApps
+        local thumbY = indY + indH * thumbOffsetRatio
+        r:rect(indX, thumbY, FT.px(3), thumbH,
+               {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.70})
+        -- Up/down arrows
+        if self._sidebarScrollOffset > 0 then
+            r:text(indX + FT.px(1), indY + indH - FT.py(4),
+                   FT.FONT.TINY, "^", RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
         end
+        if self._sidebarScrollOffset < self._sidebarMaxScroll then
+            r:text(indX + FT.px(1), indY + FT.py(4),
+                   FT.FONT.TINY, "v", RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+        end
+    end
 
-        -- Nav label — centered in tile, ASCII only
-        local label  = app.navLabel or string.upper(string.sub(app.id, 1, 4))
-        local tColor = isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM
-        r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
-               FT.FONT.SMALL, label,
-               RenderText.ALIGN_CENTER, tColor)
+    self._iconBtns = {}
 
-        table.insert(self._iconBtns, {
-            appId = app.id,
-            x = ix, y = iy, w = iconW, h = iconH
-        })
+    for i, app in ipairs(apps) do
+        local slot = i - 1 - (self._sidebarScrollOffset or 0)
+        if slot >= 0 and slot < visibleMax then
+            local iy = startY + slot * slotH
+            local isActive = (app.id == currentApp)
+            local accent   = FT.appColor(app.id)
+
+            -- Icon tile background
+            local bgColor = isActive
+                and {accent[1]*0.25, accent[2]*0.25, accent[3]*0.25, 0.95}
+                or  FT.C.BG_CARD
+            r:rect(ix, iy, iconW, iconH, bgColor)
+
+            -- Active indicator: colored left edge bar
+            if isActive then
+                r:rect(L.sidebarX, iy, FT.px(4), iconH, accent)
+            else
+                -- Subtle color dot on inactive
+                r:rect(L.sidebarX, iy + iconH/2 - FT.py(3),
+                       FT.px(2), FT.py(6),
+                       {accent[1], accent[2], accent[3], 0.35})
+            end
+
+            -- Nav label — centered in tile
+            local label  = app.navLabel or string.upper(string.sub(app.id, 1, 4))
+            local tColor = isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM
+            r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
+                   FT.FONT.SMALL, label,
+                   RenderText.ALIGN_CENTER, tColor)
+
+            table.insert(self._iconBtns, {
+                appId = app.id,
+                x = ix, y = iy, w = iconW, h = iconH
+            })
+        end
     end
 end
 
@@ -414,6 +499,9 @@ function FarmTabletUI:drawAppHeader(title, subtitle)
     local x, y, w, h = self:contentInner()
     local topY = y + h - FT.py(2)
 
+    -- Get current app accent color
+    local accent = FT.appColor(self.system.currentApp)
+
     self.r:appText(x, topY, FT.FONT.TITLE, title,
         RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
 
@@ -422,9 +510,14 @@ function FarmTabletUI:drawAppHeader(title, subtitle)
             RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
     end
 
-    -- Divider below title
+    -- Colored divider below title
     local divY = topY - FT.py(18)
-    self.r:rule(x, divY, w, 0.5)
+    -- Accent colored rule
+    self.r:appRect(x, divY, w, math.max(FT.py(1.5), 0.001),
+        {accent[1], accent[2], accent[3], 0.80})
+    -- Glow under rule
+    self.r:appRect(x, divY - FT.py(2), w, FT.py(3),
+        {accent[1], accent[2], accent[3], 0.12})
 
     -- Return the Y coordinate where content should start (below header)
     return divY - FT.py(6)
@@ -543,6 +636,9 @@ end
 function FarmTabletUI:update(dt)
     if not self.isOpen then return end
 
+    -- Poll scroll wheel for sidebar navigation (FS25 has no mouseWheelEvent callback)
+    self:_pollSidebarScroll()
+
     -- Forward to app-specific updaters
     local appId = self.system.currentApp
     if appId == FT.APP.DIGGING then
@@ -594,16 +690,22 @@ function FarmTabletUI:_refreshTopbar()
     local iconH  = FT.py(ICON_SIZE_REF * 0.72)
     local gap    = FT.py(ICON_GAP_REF)
     local ix     = L.sidebarX + FT.px(5)
+    local logoH  = FT.py(38)
+    local availH = L.sidebarH - logoH - FT.py(10)
+    local slotH  = iconH + gap
+    local visibleMax = math.floor(availH / slotH)
     local startY = L.sidebarY + logoH + FT.py(6)
     local currentApp = self.system.currentApp
     for i, app in ipairs(apps) do
-        local iy = startY + (i-1) * (iconH + gap)
-        if iy + iconH > L.sidebarY + L.sidebarH - logoH - FT.py(4) then break end
-        local isActive = (app.id == currentApp)
-        local label = app.navLabel or string.upper(string.sub(app.id, 1, 4))
-        self.r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
-               FT.FONT.SMALL, label, RenderText.ALIGN_CENTER,
-               isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM)
+        local slot = i - 1 - (self._sidebarScrollOffset or 0)
+        if slot >= 0 and slot < visibleMax then
+            local iy = startY + slot * slotH
+            local isActive = (app.id == currentApp)
+            local label = app.navLabel or string.upper(string.sub(app.id, 1, 4))
+            self.r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
+                   FT.FONT.SMALL, label, RenderText.ALIGN_CENTER,
+                   isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM)
+        end
     end
     -- Close button label
     if self._closeBtn then
@@ -616,12 +718,60 @@ function FarmTabletUI:_refreshTopbar()
 end
 
 -- ─────────────────────────────────────────────────────────
+-- SCROLL INPUT (sidebar — polled each frame via update)
+-- FS25 exposes scroll wheel as Input.isMouseButtonPressed,
+-- NOT as a mouseWheelEvent callback. We poll in update().
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_pollSidebarScroll()
+    if not self.isOpen then return end
+    local L = FT.LAYOUT
+
+    -- Only scroll when cursor is over the sidebar
+    local px, py = self._mouseX, self._mouseY
+    if not (px >= L.sidebarX and px <= L.sidebarX + L.sidebarW and
+            py >= L.sidebarY and py <= L.sidebarY + L.sidebarH) then
+        self._wheelUpWas   = false
+        self._wheelDownWas = false
+        return
+    end
+
+    -- Edge-detect: only fire once per physical wheel tick
+    local upNow   = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_UP)
+    local downNow = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_DOWN)
+
+    local dir = nil
+    if upNow   and not self._wheelUpWas   then dir = -1 end  -- scroll up → earlier apps
+    if downNow and not self._wheelDownWas then dir =  1 end  -- scroll down → later apps
+
+    self._wheelUpWas   = upNow
+    self._wheelDownWas = downNow
+
+    if dir == nil then return end
+
+    local newOffset = math.max(0,
+        math.min((self._sidebarScrollOffset or 0) + dir,
+                 self._sidebarMaxScroll or 0))
+
+    if newOffset ~= self._sidebarScrollOffset then
+        self._sidebarScrollOffset = newOffset
+        self.r:destroyAll()
+        self._iconBtns    = {}
+        self._contentBtns = {}
+        self:_drawChrome()
+        self:_drawSidebar()
+        self:_drawContent()
+    end
+end
+
+-- ─────────────────────────────────────────────────────────
 -- MOUSE INPUT
 -- ─────────────────────────────────────────────────────────
 
 function FarmTabletUI:_onMouse(px, py, isDown, isUp, btn)
     if not self.isOpen then return false end
 
+    -- Always track cursor position (needed for scroll hover detection)
     self._mouseX = px
     self._mouseY = py
 

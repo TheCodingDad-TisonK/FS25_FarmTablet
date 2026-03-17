@@ -4,7 +4,7 @@
 
 local CHANGELOG = {
     {
-        version = "2.0.0",
+        version = "2.1.0.0",
         date    = "2025",
         changes = {
             "Complete V2 overhaul — new sidebar layout",

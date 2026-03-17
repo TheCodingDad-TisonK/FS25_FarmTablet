@@ -177,7 +177,8 @@ function AppRegistry:setEnabled(id, state)
     end
 end
 
--- Auto-detect companion mods and register their apps
+-- Auto-detect companion mods and register their apps.
+-- Each check uses the EXACT global name set by that mod's main.lua.
 function AppRegistry:autoDetect()
     -- Income Mod
     if g_currentMission and g_currentMission.incomeManager then
@@ -206,34 +207,40 @@ function AppRegistry:autoDetect()
     end
 
     -- NPC Favor
-    if g_currentMission and g_currentMission.npcFavorSystem then
-        if not self:has(FT.APP.NPC_FAVOR) then
-            self:register({
-                id = FT.APP.NPC_FAVOR, group = "mods",
-                name = "ft_app_npc_favor", navLabel = "NPC",
-                icon = "npc", order = 22,
-                developer = "TisonK", version = "Integrated",
-                description = "NPC favor tracker",
-            })
-        end
+    -- Global: g_NPCSystem  (getfenv(0)["g_NPCSystem"] in NPCFavor main.lua)
+    -- Also aliased as mission.npcFavorSystem for cross-mod access.
+    local hasNPC = (g_NPCSystem ~= nil)
+                or (g_currentMission and g_currentMission.npcFavorSystem ~= nil)
+    if hasNPC and not self:has(FT.APP.NPC_FAVOR) then
+        self:register({
+            id = FT.APP.NPC_FAVOR, group = "mods",
+            name = "ft_app_npc_favor", navLabel = "NPC",
+            icon = "npc", order = 22,
+            developer = "TisonK", version = "Integrated",
+            description = "NPC favor tracker",
+        })
     end
 
-    -- Crop Stress
-    if g_currentMission and g_currentMission.cropStressManager then
-        if not self:has(FT.APP.CROP_STRESS) then
-            self:register({
-                id = FT.APP.CROP_STRESS, group = "mods",
-                name = "ft_app_crop_stress", navLabel = "CRPS",
-                icon = "crop_stress", order = 23,
-                developer = "TisonK", version = "Integrated",
-                description = "Seasonal crop stress monitor",
-            })
-        end
+    -- Seasonal Crop Stress
+    -- Global: g_cropStressManager  (getfenv(0)["g_cropStressManager"] in CropStress main.lua)
+    if g_cropStressManager ~= nil and not self:has(FT.APP.CROP_STRESS) then
+        self:register({
+            id = FT.APP.CROP_STRESS, group = "mods",
+            name = "ft_app_crop_stress", navLabel = "CRPS",
+            icon = "crop_stress", order = 23,
+            developer = "TisonK", version = "Integrated",
+            description = "Seasonal crop stress monitor",
+        })
     end
 
     -- Soil Fertilizer
-    local hasSoil = g_soilFertilizerManager ~= nil or
-        (g_currentMission and g_currentMission.soilFertilizerManager ~= nil)
+    -- Global: g_SoilFertilityManager  (getfenv(0)["g_SoilFertilityManager"] in SoilFertilizer main.lua)
+    -- Note: capital S, capital F, capital M  — exact casing matters in Lua globals.
+    local hasSoil = (g_SoilFertilityManager ~= nil)
+                 or (g_soilFertilizerManager ~= nil)
+                 or (g_currentMission and (
+                        g_currentMission.soilFertilityManager ~= nil
+                     or g_currentMission.soilFertilizerManager ~= nil))
     if hasSoil and not self:has(FT.APP.SOIL_FERT) then
         self:register({
             id = FT.APP.SOIL_FERT, group = "mods",

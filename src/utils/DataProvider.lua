@@ -177,44 +177,90 @@ function FT_DataProvider:getWeather()
         end
         local env = g_currentMission.environment
 
-        -- FIX: FS25 weather lives at env.weather (not env directly).
-        -- Proven API: weather:getRainFallScale(), weather:getCurrentTemperature()
+        -- FS25 weather object sits at env.weather
         local weather = env.weather
         if not weather then return nil end
 
-        local rainScale = weather.getRainFallScale     and weather:getRainFallScale()     or 0
-        local temp      = weather.getCurrentTemperature and weather:getCurrentTemperature() or 15
+        -- ── Rain / precipitation ──────────────────────────
+        -- Try all known FS25 rain scale method/field names
+        local rainScale = 0
+        if     weather.getRainFallScale          then rainScale = weather:getRainFallScale()
+        elseif weather.getRainScale              then rainScale = weather:getRainScale()
+        elseif weather.getPrecipitationIntensity then rainScale = weather:getPrecipitationIntensity()
+        elseif type(weather.rainFallScale) == "number" then rainScale = weather.rainFallScale
+        elseif type(env.rainScale)         == "number" then rainScale = env.rainScale
+        end
 
-        -- Cloud coverage – try weather object first, then env fallbacks
+        -- ── Temperature ───────────────────────────────────
+        local temp = 15
+        if     weather.getCurrentTemperature then temp = weather:getCurrentTemperature()
+        elseif weather.getTemperature        then temp = weather:getTemperature()
+        elseif type(weather.temperature) == "number" then temp = weather.temperature
+        elseif type(env.temperature)     == "number" then temp = env.temperature
+        end
+
+        -- ── Cloud cover (0.0 – 1.0) ───────────────────────
         local cloud = 0
-        if weather.getCloudCoverage then
+        if     weather.getCloudCoverage then
             cloud = weather:getCloudCoverage()
         elseif env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
             cloud = env.cloudUpdater:getCloudCoverage()
-        elseif type(env.cloudCoverage) == "number" then
-            cloud = env.cloudCoverage
+        elseif type(weather.cloudCoverage) == "number" then cloud = weather.cloudCoverage
+        elseif type(env.cloudCoverage)     == "number" then cloud = env.cloudCoverage
         end
+        -- Clamp to 0–1 (some mods return 0–100)
+        if cloud > 1.0 then cloud = cloud / 100 end
 
-        -- Fog – not a standard weather API field, wrap defensively
+        -- ── Fog ───────────────────────────────────────────
         local fogScale = 0
-        if type(env.fogScale) == "number" then fogScale = env.fogScale end
-
-        -- Wind – not guaranteed in base game
-        local windSpeed = 0
-        if weather.getWindSpeed then
-            windSpeed = weather:getWindSpeed()
-        elseif type(env.windSpeed) == "number" then
-            windSpeed = env.windSpeed
+        if     type(weather.fogScale) == "number" then fogScale = weather.fogScale
+        elseif type(env.fogScale)     == "number" then fogScale = env.fogScale
         end
 
+        -- ── Wind ──────────────────────────────────────────
+        local windSpeed = 0
+        if     weather.getWindSpeed       then windSpeed = weather:getWindSpeed()
+        elseif type(weather.windSpeed) == "number" then windSpeed = weather.windSpeed
+        elseif type(env.windSpeed)     == "number" then windSpeed = env.windSpeed
+        end
+        -- Convert m/s → km/h if value looks like m/s (< 30)
+        if windSpeed > 0 and windSpeed < 30 then windSpeed = windSpeed * 3.6 end
+
+        -- Wind direction (optional)
+        local windDir = nil
+        if     weather.getWindDirection then
+            local deg = weather:getWindDirection()
+            if type(deg) == "number" then
+                local dirs = {"N","NE","E","SE","S","SW","W","NW"}
+                local idx  = math.floor(((deg + 22.5) % 360) / 45) + 1
+                windDir    = dirs[idx]
+            end
+        elseif type(weather.windDirection) == "number" then
+            local deg  = weather.windDirection
+            local dirs = {"N","NE","E","SE","S","SW","W","NW"}
+            local idx  = math.floor(((deg + 22.5) % 360) / 45) + 1
+            windDir    = dirs[idx]
+        end
+
+        -- ── Humidity (optional, present in some mods) ─────
+        local humidity = nil
+        if     weather.getHumidity        then humidity = weather:getHumidity()
+        elseif type(weather.humidity) == "number" then humidity = weather.humidity
+        elseif type(env.humidity)     == "number" then humidity = env.humidity
+        end
+        if humidity and humidity > 1.0 then humidity = humidity / 100 end
+
+        -- ── Build result table ─────────────────────────────
         local w = {
             temperature = temp,
             rainScale   = rainScale,
             isRaining   = rainScale > 0.05,
             isStorming  = rainScale > 0.70,
             isFoggy     = fogScale  > 0.3,
-            cloudCover  = cloud,   -- 0.0–1.0
-            windSpeed   = windSpeed,
+            cloudCover  = cloud,       -- 0.0–1.0
+            windSpeed   = windSpeed,   -- km/h
+            windDir     = windDir,     -- compass string or nil
+            humidity    = humidity,    -- 0.0–1.0 or nil
         }
 
         if     w.isStorming then w.condition = "Stormy";        w.condKey = "storm"
@@ -225,8 +271,35 @@ function FT_DataProvider:getWeather()
         else                     w.condition = "Clear";         w.condKey = "clear"
         end
 
-        -- Forecast: try both naming conventions
-        w.forecast = weather.forecast or weather.forecastItems or nil
+        -- ── Forecast ──────────────────────────────────────
+        -- FS25 stores forecast as weather.forecast (array of WeatherForecast objects)
+        -- Some versions: weather.forecastItems, weather.dailyForecast
+        local rawForecast = weather.forecast
+                         or weather.forecastItems
+                         or weather.dailyForecast
+                         or nil
+
+        -- Wrap non-table values defensively
+        if rawForecast ~= nil and type(rawForecast) ~= "table" then
+            rawForecast = nil
+        end
+
+        -- Build normalised forecast array
+        if rawForecast then
+            local fc = {}
+            for i, entry in ipairs(rawForecast) do
+                if i > 7 then break end
+                -- Normalise various field names into a consistent record
+                table.insert(fc, {
+                    weatherType    = entry.weatherType or entry.conditionType
+                                  or entry.condition or entry.type or entry.name,
+                    temperature    = entry.temperature or entry.avgTemperature,
+                    maxTemperature = entry.maxTemperature or entry.highTemperature,
+                    minTemperature = entry.minTemperature or entry.lowTemperature,
+                })
+            end
+            w.forecast = #fc > 0 and fc or nil
+        end
 
         return w
     end)

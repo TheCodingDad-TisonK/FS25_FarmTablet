@@ -4,7 +4,7 @@
 -- =========================================================
 FT = FT or {}
 
-FT.VERSION = "2.0.0"
+FT.VERSION = "2.1.0.0"
 
 -- ── Design Tokens ─────────────────────────────────────────
 -- Reference dimensions (at 1080p; scaled at runtime)
@@ -94,6 +94,35 @@ FT.LAYOUT = {
     -- Scale factors
     scaleX = 1, scaleY = 1,
 }
+
+-- ── Per-App Accent Colors ─────────────────────────────────
+-- Each app gets a unique accent used for: active sidebar highlight,
+-- app header divider, section headers, and topbar tint.
+FT.APP_COLOR = {
+    -- core
+    dashboard    = {0.16, 0.76, 0.38, 1.00},  -- green  (brand default)
+    app_store    = {0.30, 0.65, 1.00, 1.00},  -- sky blue
+    settings     = {0.60, 0.62, 0.70, 1.00},  -- slate
+    updates      = {1.00, 0.72, 0.10, 1.00},  -- amber
+    -- farm
+    weather      = {0.35, 0.72, 1.00, 1.00},  -- sky
+    field_status = {0.45, 0.85, 0.30, 1.00},  -- lime green
+    animals      = {1.00, 0.62, 0.22, 1.00},  -- orange
+    workshop     = {0.90, 0.38, 0.38, 1.00},  -- red/rust
+    digging      = {0.75, 0.55, 0.28, 1.00},  -- earth brown
+    bucket_tracker = {0.80, 0.60, 0.25, 1.00},-- sandy
+    -- finance / mods
+    income_mod   = {0.28, 0.90, 0.55, 1.00},  -- teal-green
+    tax_mod      = {1.00, 0.40, 0.40, 1.00},  -- coral-red
+    npc_favor    = {0.80, 0.50, 1.00, 1.00},  -- lavender
+    crop_stress  = {1.00, 0.80, 0.25, 1.00},  -- gold
+    soil_fertilizer = {0.55, 0.80, 0.40, 1.00},-- sage
+}
+
+-- Helper: get the accent color for a given app id
+function FT.appColor(appId)
+    return FT.APP_COLOR[appId] or FT.C.BRAND
+end
 
 -- ── App Icon IDs (for internal routing) ───────────────────
 FT.APP = {
