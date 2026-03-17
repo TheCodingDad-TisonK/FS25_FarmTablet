@@ -1,4 +1,6 @@
 <div align="center">
+  
+<img width="154" height="204" alt="icon" src="https://github.com/user-attachments/assets/040a03c2-517a-4a30-ba58-af85378cb2f7" />
 
 # 📱 FS25 Farm Tablet
 
@@ -15,6 +17,7 @@
 `Singleplayer` • `Multiplayer (per-farm)` • `15 apps` • `Mod integrations` • `Console commands`
 
 </div>
+<img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/aeafc106-6fb6-4d31-ac44-4cff21db0a0b" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/671061be-4e01-464d-a2a7-aa2a50c7a5b5" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/e51b9027-4816-43ec-97ca-f6c190ffa5b9" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/e5f5226e-d5c7-45df-ae2e-3822958cb649" />
 
 ---
 
