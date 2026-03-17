@@ -1,90 +1,97 @@
 -- =========================================================
--- FS25 Farm Tablet -- Updates / Changelog App
+-- FarmTablet v2 – Updates / Changelog App
 -- =========================================================
 
 local CHANGELOG = {
-    { version = "1.1.1.1", notes = {
-        "Fixed Workshop vehicle detection: now uses correct FS25 vehicle API",
-        "Fixed Field Manager: now uses g_farmlandManager for ownership checks",
-        "Fixed Animals: fixed placeable ownership and placeables access for FS25",
-        "Tablet height increased from 600 to 680px — less text overflow",
-    }},
-    { version = "1.1.0.9", notes = {
-        "Fixed Animals app crash (Lua 5.1 goto not supported in FS25)",
-        "Fixed Workshop app not detecting vehicles (wrong player position reference)",
-        "Fixed bullet character warning in Updates app (unsupported font glyph)",
-        "Nav bar now uses two rows, supporting up to 16 apps",
-    }},
-    { version = "1.1.0.8", notes = {
-        "Added in-game help section in the pause menu (F1 / Help tab)",
-        "Help covers all built-in apps, open key, App Store and console commands",
-    }},
-    { version = "1.1.0.7", notes = {
-        "New app: Workshop — detect nearby vehicles, view diagnostics, open workshop",
-        "New app: Field Manager — all owned fields with crop type and growth state",
-        "New app: Animals — animal pen food, water, cleanliness with progress bars",
-    }},
-    { version = "1.1.0.6", notes = {
-        "Scale-aware layout helpers: titleH, lineH, smallLineH, sectionGap",
-        "Section headers now render with a left accent bar for visual hierarchy",
-        "New drawDivider — title underline rendered across all apps",
-        "New drawProgressBar — fill level bar in Bucket Tracker app",
-        "Content area top accent line for card-style visual framing",
-        "Fixed hardcoded version strings in Settings and Updates apps",
-    }},
-    { version = "1.1.0.5", notes = {
-        "NPC Favor, Seasonal Crop Stress, Soil Fertilizer integrations",
-        "Interactive in-tablet Settings app with toggle buttons",
-        "Drawing helper system: drawRow, drawButton, drawSectionHeader",
-        "Fixed app-specific overlay leak on app switch",
-        "Fixed startup app mapping (now correctly resolves app ID)",
-        "Workshop app temporarily disabled (WIP)",
-    }},
-    { version = "1.1.0.0", notes = {
-        "Initial FS25 release",
-        "Dashboard, Weather, Digging, Bucket Tracker apps",
-        "Pause menu settings integration",
-        "Income Mod and Tax Mod integration",
-    }},
+    {
+        version = "2.1.0.0",
+        date    = "2025",
+        changes = {
+            "Complete V2 overhaul — new sidebar layout",
+            "FT_Renderer: centralized drawing API",
+            "FT_DataProvider: cached game data queries",
+            "AppRegistry: dynamic app registration system",
+            "EventBus: decoupled pub/sub communication",
+            "All apps rewritten with new drawer pattern",
+            "Improved progress bars with glow effects",
+            "Clock + farm name in persistent topbar",
+            "Hero card for balance on Dashboard",
+            "Weather hero card with condition icon",
+            "Field list with phase badges + row highlights",
+            "Animal pens with per-metric color bars",
+            "Workshop: vehicle selection with diagnostics",
+            "Bucket Tracker: summary stat cards",
+        },
+    },
+    {
+        version = "1.1.2",
+        date    = "2024",
+        changes = {
+            "Added Soil Fertilizer integration",
+            "Added Seasonal Crop Stress integration",
+            "Added NPC Favor integration",
+            "Fixed nav button overflow on small screens",
+        },
+    },
+    {
+        version = "1.1.1",
+        date    = "2024",
+        changes = {
+            "Tax Mod integration app",
+            "Income Mod integration app",
+            "Bucket Tracker app introduced",
+            "Scale fixes for ultrawide monitors",
+        },
+    },
+    {
+        version = "1.0.0",
+        date    = "2024",
+        changes = {
+            "Initial release",
+            "Dashboard, Weather, Fields, Animals, Workshop",
+            "Settings integration in pause menu",
+            "Console commands for power users",
+        },
+    },
 }
 
-function FarmTabletUI:loadUpdatesApp()
-    self.ui.appTexts = {}
-    local content = self.ui.appContentArea
-    if not content then return end
+FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
+    local startY = self:drawAppHeader("Updates", "Changelog")
 
-    local C    = self.UI_CONSTANTS
-    local padX = self:px(15)
-    local padY = self:py(12)
-
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Updates & Changelog", content.x + padX, titleY, 0.019,
-        RenderText.ALIGN_LEFT, C.TITLE_COLOR)
-    self:drawDivider(titleY - self:py(4))
-
-    local y = titleY - 0.032
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local minY = contentY + FT.py(8)
 
     for _, entry in ipairs(CHANGELOG) do
-        if y <= content.y + padY then break end
+        if y < minY then break end
 
         -- Version header
-        self:drawText("v" .. entry.version, content.x + padX, y, 0.015,
-            RenderText.ALIGN_LEFT, C.SECTION_COLOR)
-        y = y - 0.022
+        self.r:appRect(x - FT.px(4), y - FT.py(2),
+            cw + FT.px(8), FT.py(18), FT.C.BG_CARD)
+        self.r:appText(x + FT.px(6), y + FT.py(4),
+            FT.FONT.BODY, "v" .. entry.version,
+            RenderText.ALIGN_LEFT, FT.C.BRAND)
+        self.r:appText(x + cw - FT.px(4), y + FT.py(4),
+            FT.FONT.TINY, entry.date,
+            RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
 
-        for _, note in ipairs(entry.notes) do
-            if y <= content.y + padY then break end
-            self:drawText("-" .. note, content.x + padX + self:px(8), y, 0.013,
-                RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-            y = y - 0.019
+        y = y - FT.py(22)
+
+        for _, change in ipairs(entry.changes) do
+            if y < minY then break end
+
+            -- Bullet point
+            self.r:appRect(x + FT.px(6), y + FT.py(5),
+                FT.px(4), FT.px(4), FT.C.BRAND_DIM)
+
+            local txt = change
+            if #txt > 46 then txt = txt:sub(1,44) .. "…" end
+            self.r:appText(x + FT.px(16), y, FT.FONT.SMALL,
+                txt, RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
+
+            y = y - FT.py(16)
         end
 
-        y = y - 0.012
+        y = y - FT.py(6)
     end
-
-    -- Footer
-    if y > content.y + padY then
-        self:drawText("Full changelog on KingMods.", content.x + padX, content.y + padY + 0.010,
-            0.012, RenderText.ALIGN_LEFT, C.MUTED_COLOR)
-    end
-end
+end)

@@ -1,93 +1,93 @@
 -- =========================================================
--- FS25 Farm Tablet -- Dashboard App
+-- FarmTablet v2 – Dashboard App  (FIXED)
+-- Rich overview: hero balance, finance, farm stats, world
 -- =========================================================
 
-local function fmt(amount)
-    return g_i18n:formatMoney(amount, 0, true, true) or string.format("$%d", amount)
-end
+FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
+    local data   = self.system.data
+    local farmId = data:getPlayerFarmId()
 
-function FarmTabletUI:loadDashboardApp()
-    self.ui.appTexts = {}
-    local content = self.ui.appContentArea
-    if not content then return end
-
-    local C  = self.UI_CONSTANTS
-    local padX = self:px(15)
-    local padY = self:py(12)
-    local sys  = self.tabletSystem
-    local farmId = sys:getPlayerFarmId()
-
-    -- Title
-    local titleY = content.y + content.height - padY - self:titleH()
-    self:drawText("Farm Dashboard", content.x + padX, titleY, 0.019, RenderText.ALIGN_LEFT, C.TITLE_COLOR)
-
-    -- Farm name (if available)
-    local farm = g_farmManager and g_farmManager:getFarmById(farmId)
-    local farmName = (farm and farm.name and farm.name ~= "") and farm.name or nil
-    if farmName then
-        self:drawText(farmName, content.x + content.width - padX, titleY, 0.013,
-            RenderText.ALIGN_RIGHT, C.MUTED_COLOR)
-    end
-
-    self:drawDivider(titleY - self:py(4))
-    local y = titleY - 0.028
-
-    -- === Finance ===
-    self:drawSectionHeader("FINANCES", y)
-    y = y - 0.022
-
-    local balance  = sys:TotalMoney(farmId)
-    local loan     = sys:LoanedMoney(farmId)
-    local income   = sys:TotalIncome(farmId)
-    local expenses = sys:TotalExpenses(farmId)
+    local balance  = data:getBalance(farmId)
+    local loan     = data:getLoan(farmId)
+    local income   = data:getIncome(farmId)
+    local expenses = data:getExpenses(farmId)
     local profit   = income - expenses
+    local fields   = data:getActiveFieldCount(farmId)
+    local vehicles = data:getVehicleCount(farmId)
+    local world    = data:getWorldInfo()
+    local weather  = data:getWeather()
 
-    self:drawRow("Balance",   fmt(balance),  y,
-        C.LABEL_COLOR,
-        balance >= 0 and C.POSITIVE_COLOR or C.NEGATIVE_COLOR)
-    y = y - 0.022
+    local startY = self:drawAppHeader("Dashboard",
+        data:getFarmName(farmId) or "")
 
+    local x, _, w, _ = self:contentInner()
+    local y = startY
+
+    -- ── Hero: Balance ──────────────────────────────────────
+    y = y - FT.py(4)
+    self.r:appRect(x, y - FT.py(28), w, FT.py(34), FT.C.BG_CARD)
+    self.r:appText(x + FT.px(12), y - FT.py(5),
+        FT.FONT.TINY, "CURRENT BALANCE",
+        RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    local balColor = balance >= 0 and FT.C.POSITIVE or FT.C.NEGATIVE
+    self.r:appText(x + FT.px(12), y - FT.py(22),
+        FT.FONT.HUGE, data:formatMoney(balance),
+        RenderText.ALIGN_LEFT, balColor)
     if loan > 0 then
-        self:drawRow("Loan", fmt(loan), y, C.LABEL_COLOR, C.WARNING_COLOR)
-        y = y - 0.022
+        self.r:appText(x + w - FT.px(12), y - FT.py(8),
+            FT.FONT.TINY, "LOAN",
+            RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
+        self.r:appText(x + w - FT.px(12), y - FT.py(22),
+            FT.FONT.SMALL, data:formatMoney(loan),
+            RenderText.ALIGN_RIGHT, FT.C.WARNING)
     end
 
-    self:drawRow("Income",   fmt(income),   y, C.LABEL_COLOR, C.POSITIVE_COLOR)
-    y = y - 0.022
-    self:drawRow("Expenses", fmt(expenses), y, C.LABEL_COLOR, C.NEGATIVE_COLOR)
-    y = y - 0.022
-    self:drawRow("Net P/L",  fmt(profit),   y,
-        C.LABEL_COLOR,
-        profit >= 0 and C.POSITIVE_COLOR or C.NEGATIVE_COLOR)
+    y = y - FT.py(36)
+    y = self:drawRule(y, 0.4)
 
-    -- === Farm ===
-    y = y - 0.032
-    self:drawSectionHeader("FARM", y)
-    y = y - 0.022
+    -- ── Finance section ────────────────────────────────────
+    y = self:drawSection(y, "FINANCES")
 
-    local fields   = sys:ActiveFields(farmId)
-    local vehicles = sys:VehiclesCount(farmId)
-    self:drawRow("Active Fields", tostring(fields),   y, C.LABEL_COLOR, C.VALUE_COLOR)
-    y = y - 0.022
-    self:drawRow("Vehicles",      tostring(vehicles), y, C.LABEL_COLOR, C.VALUE_COLOR)
+    local incColor = income  > 0 and FT.C.POSITIVE or FT.C.TEXT_DIM
+    local expColor = expenses > 0 and FT.C.NEGATIVE or FT.C.TEXT_DIM
+    local plColor  = profit >= 0 and FT.C.POSITIVE  or FT.C.NEGATIVE
 
-    -- === World ===
-    if g_currentMission and g_currentMission.environment then
-        local env = g_currentMission.environment
-        y = y - 0.032
-        self:drawSectionHeader("WORLD", y)
-        y = y - 0.022
+    y = self:drawRow(y, "Income",   data:formatMoney(income),   nil, incColor)
+    y = self:drawRow(y, "Expenses", data:formatMoney(expenses), nil, expColor)
+    y = self:drawRow(y, "Net P/L",  data:formatMoney(profit),   nil, plColor)
 
-        local day    = env.currentDay    or 1
-        local season = env.currentSeason
-        local hour   = math.floor((g_currentMission.time or 0) / 3600000)
-        local minute = math.floor(((g_currentMission.time or 0) % 3600000) / 60000)
+    y = y - FT.py(4)
+    y = self:drawRule(y, 0.25)
 
-        local seasonNames = { "Spring", "Summer", "Autumn", "Winter" }
-        local seasonStr = season and (seasonNames[season + 1] or "Season " .. season) or "Unknown"
+    -- ── Farm Stats ─────────────────────────────────────────
+    y = self:drawSection(y, "FARM")
+    y = self:drawRow(y, "Active Fields", tostring(fields))
+    y = self:drawRow(y, "Vehicles",      tostring(vehicles))
 
-        self:drawRow("Season / Day", seasonStr .. "  Day " .. day, y, C.LABEL_COLOR, C.VALUE_COLOR)
-        y = y - 0.022
-        self:drawRow("Time", string.format("%02d:%02d", hour % 24, minute), y, C.LABEL_COLOR, C.VALUE_COLOR)
+    -- ── World ──────────────────────────────────────────────
+    if world then
+        y = y - FT.py(4)
+        y = self:drawRule(y, 0.25)
+        y = self:drawSection(y, "WORLD")
+
+        local timeStr = string.format("%02d:%02d", world.hour % 24, world.minute)
+        -- FIX: season is nil in base game – only show it when available
+        local seasonName = data:getSeasonName(world.season)
+        if seasonName then
+            y = self:drawRow(y, "Season", seasonName)
+        end
+        y = self:drawRow(y, "Day",  tostring(world.day))
+        y = self:drawRow(y, "Time", timeStr)
+
+        if weather then
+            local wColor = FT.C.TEXT_ACCENT
+            if weather.isStorming        then wColor = FT.C.WEATHER_STORM
+            elseif weather.isRaining     then wColor = FT.C.WEATHER_RAIN
+            elseif weather.condKey == "clear" then wColor = FT.C.WEATHER_SUN
+            end
+            y = self:drawRow(y, "Weather",
+                string.format("%s  %.0f'C", weather.condition, weather.temperature),
+                nil, wColor)
+        end
     end
-end
+end)

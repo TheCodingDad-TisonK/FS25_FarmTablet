@@ -66,7 +66,7 @@ function UIHelper.createDescription(layout, textId)
     end
     
     if desc.textColor then
-        desc.textColor = {0.7, 0.7, 0.7, 1} 
+        desc.textColor = {1, 1, 1, 1} 
     end
     
     layout:addElement(desc)

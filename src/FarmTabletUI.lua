@@ -1,975 +1,831 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – FarmTabletUI
+-- Complete UI overhaul:
+--   • Sidebar navigation with icon grid (not tiny button strip)
+--   • Top status bar with clock/farm info
+--   • Rich content area with structured layout
+--   • All drawing through FT_Renderer
+--   • Hover states tracked per-frame
 -- =========================================================
 ---@class FarmTabletUI
 FarmTabletUI = {}
 local FarmTabletUI_mt = Class(FarmTabletUI)
 
-function FarmTabletUI.new(settings, tabletSystem)
-    local self = setmetatable({}, FarmTabletUI_mt)
-    self.settings = settings
-    self.tabletSystem = tabletSystem
-    
-    -- UI state
-    self.isTabletOpen = false
+-- ── Sidebar app icon grid constants ──────────────────────
+local SIDEBAR_W_REF  = 100  -- ref px (wider for text labels)
+local TOPBAR_H_REF   = 34
+local ICON_SIZE_REF  = 60
+local ICON_GAP_REF   = 5
+local ICON_PAD_REF   = 8
 
-    -- UI elements
-    self.ui = {
-        overlays = {},
-        appOverlays = {},
-        texts = {},
-        appTexts = {},
-        appButtons = {},
-        contentOverlays = {}
-    }
-    
-    -- UI constants
-    self.UI_CONSTANTS = {
-        WIDTH = 800,
-        HEIGHT = 600,
-        NAV_BAR_HEIGHT = 40,
-        PADDING = 20,
-        -- Background & structure
-        BACKGROUND_COLOR  = {0.08, 0.08, 0.10, 0.96},
-        NAV_BAR_COLOR     = {0.12, 0.13, 0.16, 0.98},
-        CONTENT_BG_COLOR  = {0.10, 0.10, 0.13, 0.78},
-        BORDER_COLOR      = {0.30, 0.58, 0.32, 1},
-        CLOSE_BTN_COLOR   = {0.70, 0.18, 0.18, 0.92},
-        -- Nav buttons
-        BUTTON_HOVER_COLOR  = {0.22, 0.52, 0.26, 0.95},
-        BUTTON_NORMAL_COLOR = {0.18, 0.18, 0.22, 0.90},
-        -- Text
-        TEXT_COLOR    = {0.92, 0.92, 0.92, 1},
-        LABEL_COLOR   = {0.70, 0.72, 0.76, 1},
-        VALUE_COLOR   = {0.38, 0.88, 0.44, 1},
-        SECTION_COLOR = {0.50, 0.78, 0.52, 1},
-        TITLE_COLOR   = {1.00, 1.00, 1.00, 1},
-        -- Semantic
-        POSITIVE_COLOR = {0.28, 0.88, 0.38, 1},
-        NEGATIVE_COLOR = {0.90, 0.28, 0.28, 1},
-        WARNING_COLOR  = {0.95, 0.68, 0.18, 1},
-        MUTED_COLOR    = {0.58, 0.58, 0.62, 1},
-        -- Action buttons
-        BTN_GREEN = {0.22, 0.58, 0.26, 0.92},
-        BTN_RED   = {0.68, 0.20, 0.20, 0.92},
-        BTN_BLUE  = {0.18, 0.42, 0.72, 0.92},
-        BTN_GRAY  = {0.30, 0.30, 0.35, 0.92},
-    }
-    
+function FarmTabletUI.new(settings, system, modDirectory)
+    local self = setmetatable({}, FarmTabletUI_mt)
+    self.settings     = settings
+    self.system       = system
+    self.modDirectory = modDirectory or ""
+    self.r        = FT_Renderer.new()
+    self.isOpen   = false
+
+    -- Per-frame hover tracking
+    self._mouseX  = 0
+    self._mouseY  = 0
+    self._hovered = nil
+
+    -- Named persistent hitboxes
+    self._closeBtn    = nil
+    self._iconBtns    = {}  -- {appId, x,y,w,h}
+    self._contentBtns = {}  -- app-specific, cleared per switch
+
+    -- Sidebar scroll state
+    self._sidebarScrollOffset = 0   -- in icon slots (integer)
+    self._sidebarMaxScroll    = 0   -- set in _drawSidebar
+
+    -- Backdrop overlay (separate from renderer for ordering)
+    self._backdrop = nil
+
     return self
 end
 
--- Add to FarmTabletUI class (after new function)
-function FarmTabletUI:getModPath()
-    local modsDirectory = g_modsDirectory or ""
-    return modsDirectory .. "/FS25_FarmTablet/"
-end
+-- ─────────────────────────────────────────────────────────
+-- OPEN / CLOSE / TOGGLE
+-- ─────────────────────────────────────────────────────────
 
 function FarmTabletUI:openTablet()
-    if not self.settings.enabled or self.isTabletOpen then
-        return
-    end
+    if not self.settings.enabled or self.isOpen then return end
+    self.isOpen = true
+    self.system.isTabletOpen = true
+    self.system.registry:autoDetect()
+    self:_build()
 
-    self.isTabletOpen = true
-    self.tabletSystem.isTabletOpen = true
-    
-    self:log("Opening farm tablet")
-    -- Re-check mod integrations every open. FS25 loads mods alphabetically, so
-    -- FS25_FarmTablet initializes before FS25_TaxMod (and others). By the time
-    -- the player first opens the tablet, all mods are loaded and their globals exist.
-    self.tabletSystem:autoRegisterModApps()
-    self:createTabletUI()
-
-    if g_currentMission ~= nil then
+    if g_currentMission then
         g_currentMission:addDrawable(self)
     end
 
-    if g_inputBinding ~= nil then
+    if g_inputBinding then
         g_inputBinding:setShowMouseCursor(true)
-        
-        -- Register mouse event handler for FS25
-        self.oldMouseEventFunc = g_currentMission.mouseEvent
-        g_currentMission.mouseEvent = function(mission, posX, posY, isDown, isUp, button)
-            -- First let the tablet handle the event
-            if self:mouseEvent(posX, posY, isDown, isUp, button) then
-                return true  -- Tablet handled it, stop propagation
-            end
-            
-            -- Then call original handler if needed
-            if self.oldMouseEventFunc then
-                return self.oldMouseEventFunc(mission, posX, posY, isDown, isUp, button)
+        self._oldMouseEvent = g_currentMission.mouseEvent
+        g_currentMission.mouseEvent = function(mission, px, py, isDown, isUp, btn)
+            if self:_onMouse(px, py, isDown, isUp, btn) then return true end
+            if self._oldMouseEvent then
+                return self._oldMouseEvent(mission, px, py, isDown, isUp, btn)
             end
             return false
         end
     end
+
+    FT_EventBus:emit(FT_EventBus.EVENTS.TABLET_OPENED)
 end
 
 function FarmTabletUI:closeTablet()
-    if not self.isTabletOpen then
-        return
+    if not self.isOpen then return end
+    self.isOpen = false
+    self.system.isTabletOpen = false
+    self:_destroy()
+
+    -- FIX: notify system so it can reset stale state (e.g. workshop selection)
+    if self.system.onTabletClosed then
+        self.system:onTabletClosed()
     end
 
-    self.isTabletOpen = false
-    self.tabletSystem.isTabletOpen = false
-    self:log("Closing farm tablet")
-
-    self:destroyTabletUI()
-
-    if g_currentMission ~= nil then
+    if g_currentMission then
         g_currentMission:removeDrawable(self)
-        
-        -- Restore original mouse event handler
-        if self.oldMouseEventFunc then
-            g_currentMission.mouseEvent = self.oldMouseEventFunc
-            self.oldMouseEventFunc = nil
+        if self._oldMouseEvent then
+            g_currentMission.mouseEvent = self._oldMouseEvent
+            self._oldMouseEvent = nil
         end
     end
-
-    if g_inputBinding ~= nil then
+    if g_inputBinding then
         g_inputBinding:setShowMouseCursor(false)
     end
+
+    FT_EventBus:emit(FT_EventBus.EVENTS.TABLET_CLOSED)
 end
 
 function FarmTabletUI:toggleTablet()
-    if self.isTabletOpen then
-        self:closeTablet()
-    else
-        self:openTablet()
+    if self.isOpen then self:closeTablet() else self:openTablet() end
+end
+
+-- ─────────────────────────────────────────────────────────
+-- BUILD  (called once on open)
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_build()
+    self.r:destroyAll()
+    self._iconBtns    = {}
+    self._contentBtns = {}
+    self._sidebarScrollOffset = self._sidebarScrollOffset or 0
+
+    -- 1. Compute layout in normalized coords
+    local tw, th = getNormalizedScreenValues(FT.REF_W, FT.REF_H)
+    local tx = 0.5 - tw/2
+    local ty = 0.5 - th/2
+
+    -- Scale factors for ref->normalized
+    FT.LAYOUT.scaleX = tw / FT.REF_W
+    FT.LAYOUT.scaleY = th / FT.REF_H
+    FT.LAYOUT.tabletX = tx;  FT.LAYOUT.tabletY = ty
+    FT.LAYOUT.tabletW = tw;  FT.LAYOUT.tabletH = th
+
+    -- Programmatic Bezel (modern thin design, replaces old DDS-based insets)
+    local BEZEL_SIZE = 48
+    local BEZEL_L = FT.px(BEZEL_SIZE)
+    local BEZEL_R = FT.px(BEZEL_SIZE)
+    local BEZEL_T = FT.py(BEZEL_SIZE)
+    local BEZEL_B = FT.py(BEZEL_SIZE)
+
+    -- Inner screen origin and size
+    local sx = tx + BEZEL_L
+    local sy = ty + BEZEL_B
+    local sw = tw - BEZEL_L - BEZEL_R
+    local sh = th - BEZEL_T  - BEZEL_B
+
+    local sideW = FT.px(SIDEBAR_W_REF)
+    local topH  = FT.py(TOPBAR_H_REF)
+
+    FT.LAYOUT.sidebarX = sx;            FT.LAYOUT.sidebarY = sy
+    FT.LAYOUT.sidebarW = sideW;         FT.LAYOUT.sidebarH = sh
+    FT.LAYOUT.topbarX  = sx + sideW;    FT.LAYOUT.topbarY  = sy + sh - topH
+    FT.LAYOUT.topbarW  = sw - sideW;    FT.LAYOUT.topbarH  = topH
+    FT.LAYOUT.contentX = sx + sideW;    FT.LAYOUT.contentY = sy
+    FT.LAYOUT.contentW = sw - sideW;    FT.LAYOUT.contentH = sh - topH
+
+    -- 2. Draw chrome (persistent)
+    self:_drawChrome()
+
+    -- 3. Draw app icons in sidebar
+    self:_drawSidebar()
+
+    -- 4. Draw content area for current app
+    self:_drawContent()
+end
+
+-- ─────────────────────────────────────────────────────────
+-- CHROME  (tablet body + topbar)
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_drawChrome()
+    local L = FT.LAYOUT
+    local r = self.r
+
+    -- === 1. Drop Shadow (layered for softness) ===
+    local sh = FT.px(2)
+    r:rect(L.tabletX + sh,   L.tabletY - sh,   L.tabletW, L.tabletH, {0,0,0, 0.25})
+    r:rect(L.tabletX + sh*2, L.tabletY - sh*2, L.tabletW, L.tabletH, {0,0,0, 0.15})
+    r:rect(L.tabletX + sh*3, L.tabletY - sh*3, L.tabletW, L.tabletH, {0,0,0, 0.05})
+
+    r:rect(L.tabletX, L.tabletY, L.tabletW, L.tabletH, FT.C.BG_DEEP)
+
+    -- === Add a distinct border around the tablet frame ===
+    local tabletBorderWidth = FT.px(2)
+    r:rect(L.tabletX - tabletBorderWidth, L.tabletY - tabletBorderWidth, L.tabletW + tabletBorderWidth * 2, L.tabletH + tabletBorderWidth * 2, {0, 0, 0, 1.0})
+
+    -- === 3. Bezel Highlight (Chamfered edge glints) ===
+    local hiColor = {1, 1, 1, 0.04}
+    r:rect(L.tabletX, L.tabletY + L.tabletH - FT.py(1), L.tabletW, FT.py(1), hiColor) -- Top edge glint
+    r:rect(L.tabletX, L.tabletY, FT.px(1), L.tabletH, hiColor) -- Left edge glint
+
+    -- === 4. Camera Lens Detail (centered in top bezel) ===
+    local camSize = FT.px(8)
+    local camX = L.tabletX + L.tabletW/2 - camSize/2
+    local camY = L.tabletY + L.tabletH - FT.py(16)
+    r:rect(camX, camY, camSize, camSize, {0.02, 0.02, 0.03, 1}) -- Lens housing
+    r:rect(camX + FT.px(2), camY + FT.py(4), FT.px(2), FT.py(2), {1, 1, 1, 0.10}) -- Lens reflection
+
+    -- === 5. Screen Backdrop (OLED deep-black effect) ===
+    -- Draw a solid blue background to ensure screen is opaque
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.2, 0.5, 0.8, 1.0})
+    -- Draw the original texture over the solid background
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, nil, "farmTablet.tabletBackground")
+
+    -- === 5a. Screen Border ===
+    local bx, by = L.sidebarX, L.sidebarY
+    local bw, bh = L.sidebarW + L.contentW, L.sidebarH
+    local stroke = FT.px(1)
+    r:rect(bx, by, bw, stroke, FT.C.BORDER_BRIGHT) -- Top
+    r:rect(bx, by + bh - stroke, bw, stroke, FT.C.BORDER_BRIGHT) -- Bottom
+    r:rect(bx, by, stroke, bh, FT.C.BORDER_BRIGHT) -- Left
+    r:rect(bx + bw - stroke, by, stroke, bh, FT.C.BORDER_BRIGHT) -- Right
+
+    -- === 6. Sidebar background (distinctly darker than content) ===
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW, L.sidebarH, {FT.C.BG_NAV[1], FT.C.BG_NAV[2], FT.C.BG_NAV[3], 0.35})
+
+    -- Sidebar right edge — bright separator line
+    local sepX = L.sidebarX + L.sidebarW - FT.px(1)
+    r:rect(sepX, L.sidebarY, FT.px(1), L.sidebarH,
+           {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.35})
+
+    -- === 7. Top status bar ===
+    r:rect(L.topbarX, L.topbarY, L.topbarW, L.topbarH, {FT.C.BG_NAV[1], FT.C.BG_NAV[2], FT.C.BG_NAV[3], 0.35})
+
+    -- Per-app color tint on topbar
+    local appAccent = FT.appColor(self.system.currentApp)
+    r:rect(L.topbarX, L.topbarY, L.topbarW, L.topbarH,
+           {appAccent[1], appAccent[2], appAccent[3], 0.06})
+
+    -- Topbar bottom border (uses current app accent)
+    r:rect(L.topbarX, L.topbarY, L.topbarW, FT.py(1),
+           {appAccent[1], appAccent[2], appAccent[3], 0.55})
+
+    -- === Brand logo block at bottom of sidebar ===
+    local logoH = FT.py(38)
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW, logoH, {0.1, 0.3, 0.6, 1.0})
+
+    -- Brand text (ASCII only)
+    r:text(L.sidebarX + L.sidebarW/2,
+           L.sidebarY + logoH - FT.py(24),
+           FT.FONT.TINY, "FARM",
+           RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
+    r:text(L.sidebarX + L.sidebarW/2,
+           L.sidebarY + logoH - FT.py(12),
+           FT.FONT.TINY, "TABLET",
+           RenderText.ALIGN_CENTER,
+           {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 1.0})
+    r:text(L.sidebarX + L.sidebarW/2,
+           L.sidebarY + logoH - FT.py(3),
+           FT.FONT.TINY, "v" .. FT.VERSION,
+           RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+
+    -- === Topbar content ===
+    self:_drawTopbar()
+
+    -- === Close button — ASCII "X" ===
+    local cbH   = FT.py(20)
+    local cbW   = FT.px(28)
+    local cbX   = L.topbarX + L.topbarW - FT.px(6) - cbW
+    local cbY   = L.topbarY + (L.topbarH - cbH)/2
+
+    r:rect(cbX, cbY, cbW, cbH, FT.C.BTN_DANGER)
+    r:text(cbX + cbW/2, cbY + cbH/2 - FT.py(3),
+           FT.FONT.SMALL, "X",
+           RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
+
+    self._closeBtn = { x=cbX, y=cbY, w=cbW, h=cbH }
+
+    -- === Side hardware buttons (right side of tablet bezel) ===
+    local btnSideW  = FT.px(6)
+    local btnSideH  = FT.py(32)
+    local sideX     = L.tabletX + L.tabletW   -- right bezel outer edge
+    local btnGap    = FT.py(8)
+
+    -- Power button (top-right)
+    local pwrY = L.tabletY + L.tabletH - FT.py(120)
+    r:rect(sideX - FT.px(3), pwrY, btnSideW, btnSideH, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), pwrY + FT.py(1), FT.px(4), btnSideH - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Volume Up button
+    local volUpY = L.tabletY + L.tabletH - FT.py(68)
+    r:rect(sideX - FT.px(3), volUpY, btnSideW, btnSideH, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), volUpY + FT.py(1), FT.px(4), btnSideH - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Volume Down button
+    local volDnY = volUpY + btnSideH + btnGap
+    r:rect(sideX - FT.px(3), volDnY, btnSideW, btnSideH * 0.9, {0.22, 0.24, 0.30, 1.0})
+    r:rect(sideX - FT.px(2), volDnY + FT.py(1), FT.px(4), btnSideH * 0.9 - FT.py(2), {0.14, 0.15, 0.20, 1.0})
+
+    -- Small speaker grille dots on left bezel
+    local grY = L.tabletY + FT.py(30)
+    local grX = L.tabletX + FT.px(6)
+    for i = 0, 5 do
+        r:rect(grX, grY + i * FT.py(8), FT.px(2), FT.py(3), {0.08, 0.09, 0.12, 1.0})
+    end
+    grX = L.tabletX + FT.px(10)
+    for i = 0, 5 do
+        r:rect(grX, grY + i * FT.py(8) + FT.py(2), FT.px(2), FT.py(3), {0.08, 0.09, 0.12, 1.0})
+    end
+
+end
+
+function FarmTabletUI:_drawTopbar()
+    local L = FT.LAYOUT
+    local r = self.r
+    local data = self.system.data
+
+    -- Farm name
+    local farmId = data:getPlayerFarmId()
+    local farmName = data:getFarmName(farmId)
+    local displayName = farmName or "My Farm"
+    r:text(L.topbarX + FT.px(14),
+           L.topbarY + L.topbarH/2 - FT.py(3),
+           FT.FONT.BODY, displayName,
+           RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
+
+    -- Current app name
+    local app = self.system.registry:get(self.system.currentApp)
+    local appName = (app and g_i18n and g_i18n:getText(app.name)) or
+                    (app and app.navLabel) or ""
+    r:text(L.topbarX + L.topbarW/2,
+           L.topbarY + L.topbarH/2 - FT.py(3),
+           FT.FONT.SMALL, appName,
+           RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+
+    -- Clock
+    local world = data:getWorldInfo()
+    if world then
+        local timeStr   = string.format("%02d:%02d", world.hour % 24, world.minute)
+        local seasonStr = data:getSeasonName(world.season) .. " - Day " .. world.day
+        r:text(L.topbarX + L.topbarW - FT.px(80),
+               L.topbarY + L.topbarH - FT.py(16),
+               FT.FONT.SMALL, timeStr,
+               RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
+        r:text(L.topbarX + L.topbarW - FT.px(80),
+               L.topbarY + L.topbarH/2 - FT.py(10),
+               FT.FONT.TINY, seasonStr,
+               RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
     end
 end
 
-function FarmTabletUI:createTabletUI()
-    self.ui = {}
-    self.ui.overlays = {}
-    self.ui.appOverlays = {}
-    self.ui.texts = {}
-    self.ui.appTexts = {}
-    self.ui.appButtons = {}
-    self.ui.contentOverlays = {}
+-- ─────────────────────────────────────────────────────────
+-- SIDEBAR ICON GRID
+-- ─────────────────────────────────────────────────────────
 
-    -- Calculate screen position
-    local tabletWidth, tabletHeight = getNormalizedScreenValues(800, 680)
-    
-    self.ui.backgroundX = 0.5 - tabletWidth / 2
-    self.ui.backgroundY = 0.5 - tabletHeight / 2
+-- App icon labels — ASCII only (FS25 renderText has no unicode support)
+-- Two-line: top row = short icon-like symbol, bottom = nav label
+local APP_ICONS = {
+    [FT.APP.DASHBOARD]  = "##",
+    [FT.APP.WEATHER]    = "~~",
+    [FT.APP.FIELDS]     = "[]",
+    [FT.APP.ANIMALS]    = "**",
+    [FT.APP.WORKSHOP]   = "::",
+    [FT.APP.DIGGING]    = "vv",
+    [FT.APP.BUCKET]     = "())",
+    [FT.APP.APP_STORE]  = "++",
+    [FT.APP.SETTINGS]   = "==",
+    [FT.APP.UPDATES]    = "^^",
+    [FT.APP.INCOME]     = "$$",
+    [FT.APP.TAX]        = "%%",
+    [FT.APP.NPC_FAVOR]  = "NP",
+    [FT.APP.CROP_STRESS]= "CS",
+    [FT.APP.SOIL_FERT]  = "SF",
+}
 
-    self.UI_CONSTANTS.WIDTH = tabletWidth
-    self.UI_CONSTANTS.HEIGHT = tabletHeight
+function FarmTabletUI:_drawSidebar()
+    local L     = FT.LAYOUT
+    local r     = self.r
+    local apps  = self.system.registry:getAll()
 
-    self.ui.scaleX = tabletWidth / 500
-    self.ui.scaleY = tabletHeight / 375
+    local iconW  = L.sidebarW - FT.px(10)
+    local iconH  = FT.py(ICON_SIZE_REF * 0.72)
+    local gap    = FT.py(ICON_GAP_REF)
+    local ix     = L.sidebarX + FT.px(5)
+    local logoH  = FT.py(38)
 
-    -- FIXED: Use proper mod path for background
-    local bgPath = self:getModPath() .. "hud/backScreen_2.dds"
-    
-    self:log("Loading background from: " .. bgPath)
-    
-    -- Try to load the background image
-    local success, background = pcall(function()
-        return self:createBlankOverlay(
-            self.ui.backgroundX,
-            self.ui.backgroundY,
-            tabletWidth,
-            tabletHeight,
-            {1, 1, 1, 1},
-            bgPath
-        )
-    end)
-    
-    if success and background then
-        self.ui.background = background
-        self:log("Background image loaded successfully")
-    else
-        -- Fallback to solid color
-        self.ui.background = self:createBlankOverlay(
-            self.ui.backgroundX,
-            self.ui.backgroundY,
-            tabletWidth,
-            tabletHeight,
-            self.UI_CONSTANTS.BACKGROUND_COLOR
-        )
-        self:log("Could not load background image, using solid color")
+    -- Available vertical space for icons (between logo block and top of sidebar)
+    local availH     = L.sidebarH - logoH - FT.py(10)
+    local slotH      = iconH + gap
+    local visibleMax = math.floor(availH / slotH)
+
+    -- Compute max scroll
+    local totalApps = #apps
+    self._sidebarMaxScroll = math.max(0, totalApps - visibleMax)
+    self._sidebarScrollOffset = math.max(0,
+        math.min(self._sidebarScrollOffset or 0, self._sidebarMaxScroll))
+
+    local startY    = L.sidebarY + logoH + FT.py(6)
+    local currentApp = self.system.currentApp
+
+    -- Draw scroll indicator if needed
+    if self._sidebarMaxScroll > 0 then
+        local indX = L.sidebarX + L.sidebarW - FT.px(5)
+        local indY = startY
+        local indH = availH - FT.py(4)
+        -- Track
+        r:rect(indX, indY, FT.px(3), indH, {0.12, 0.14, 0.20, 0.8})
+        -- Thumb
+        local thumbRatio = visibleMax / totalApps
+        local thumbH     = math.max(FT.py(12), indH * thumbRatio)
+        local thumbOffsetRatio = self._sidebarScrollOffset / totalApps
+        local thumbY = indY + indH * thumbOffsetRatio
+        r:rect(indX, thumbY, FT.px(3), thumbH,
+               {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.70})
+        -- Up/down arrows
+        if self._sidebarScrollOffset > 0 then
+            r:text(indX + FT.px(1), indY + indH - FT.py(4),
+                   FT.FONT.TINY, "^", RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+        end
+        if self._sidebarScrollOffset < self._sidebarMaxScroll then
+            r:text(indX + FT.px(1), indY + FT.py(4),
+                   FT.FONT.TINY, "v", RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+        end
     end
 
-    if self.ui.background then
-        self.ui.background:setVisible(true)
-        table.insert(self.ui.overlays, self.ui.background)
-    else
-        self:log("ERROR: Failed to create background overlay")
-        return
-    end
+    self._iconBtns = {}
 
-    self:createTabletElements()
-end
+    for i, app in ipairs(apps) do
+        local slot = i - 1 - (self._sidebarScrollOffset or 0)
+        if slot >= 0 and slot < visibleMax then
+            local iy = startY + slot * slotH
+            local isActive = (app.id == currentApp)
+            local accent   = FT.appColor(app.id)
 
-function FarmTabletUI:createTabletElements()
-    local bgX = self.ui.backgroundX
-    local bgY = self.ui.backgroundY
-    local bgWidth = self.UI_CONSTANTS.WIDTH
-    local bgHeight = self.UI_CONSTANTS.HEIGHT
+            -- Icon tile background
+            local bgColor = isActive
+                and {accent[1]*0.25, accent[2]*0.25, accent[3]*0.25, 0.95}
+                or  FT.C.BG_CARD
+            r:rect(ix, iy, iconW, iconH, bgColor)
 
-    -- Navigation bar
-    local navPadX = self:px(15)
-    local navPadY = self:py(15)
-    local navHeight = self:py(35)
-    local navWidth = bgWidth - (navPadX * 2)
-    
-    local navBarX = bgX + navPadX
-    local navBarY = bgY + bgHeight - navPadY - navHeight
+            -- Active indicator: colored left edge bar
+            if isActive then
+                r:rect(L.sidebarX, iy, FT.px(4), iconH, accent)
+            else
+                -- Subtle color dot on inactive
+                r:rect(L.sidebarX, iy + iconH/2 - FT.py(3),
+                       FT.px(2), FT.py(6),
+                       {accent[1], accent[2], accent[3], 0.35})
+            end
 
-    local navBar = self:createBlankOverlay(
-        navBarX,
-        navBarY,
-        navWidth,
-        navHeight,
-        self.UI_CONSTANTS.NAV_BAR_COLOR
-    )
-    navBar:setVisible(true)
-    self.ui.navBar = navBar
-    table.insert(self.ui.overlays, navBar)
+            -- Nav label — centered in tile
+            local label  = app.navLabel or string.upper(string.sub(app.id, 1, 4))
+            local tColor = isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM
+            r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
+                   FT.FONT.SMALL, label,
+                   RenderText.ALIGN_CENTER, tColor)
 
-    -- Close button
-    local closeSize = self:px(25)
-    local closeBtnX = navBarX + navWidth - navPadX - closeSize
-    local closeBtnY = navBarY + (navHeight - closeSize) / 2
-
-    local closeButton = self:createBlankOverlay(
-        closeBtnX,
-        closeBtnY,
-        closeSize,
-        closeSize,
-        self.UI_CONSTANTS.CLOSE_BTN_COLOR
-    )
-    closeButton:setVisible(true)
-
-    self.ui.closeButton = {
-        overlay = closeButton,
-        x = closeBtnX,
-        y = closeBtnY,
-        width = closeSize,
-        height = closeSize
-    }
-    table.insert(self.ui.overlays, closeButton)
-
-    -- Title text
-    table.insert(self.ui.texts, {
-        text = "Farm Tablet v1.1.1.1",
-        x = navBarX + navPadX,
-        y = navBarY + navHeight / 2 - 0.004,
-        size = 0.014,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.TEXT_COLOR
-    })
-
-    -- Close button text
-    table.insert(self.ui.texts, {
-        text = "X",
-        x = closeBtnX + closeSize / 2,
-        y = closeBtnY + closeSize / 2 - 0.003,
-        size = 0.012,
-        align = RenderText.ALIGN_CENTER,
-        color = {1, 1, 1, 1}
-    })
-
-    -- Create content area
-    self:createAppContentArea()
-    
-    -- Create app navigation buttons
-    self:createAppNavigationButtons()
-end
-
-function FarmTabletUI:createAppContentArea()
-    local pad = self:px(20)
-    local headerHeight = self:py(40)
-    local y = self.ui.backgroundY + pad + headerHeight
-    
-    local appButtonsHeight = self:py(66)  -- two rows of nav buttons
-    local navBarHeight = self:py(35)
-    local bottomPadding = self:py(20)
-    
-    local availableHeight = self.UI_CONSTANTS.HEIGHT - (y - self.ui.backgroundY) - 
-                           appButtonsHeight - navBarHeight - bottomPadding
-
-    local x = self.ui.backgroundX + pad
-    local w = self.UI_CONSTANTS.WIDTH - pad * 2
-    local h = math.max(availableHeight, self:py(200))
-
-    -- Content background
-    local bg = self:createBlankOverlay(
-        x,
-        y,
-        w,
-        h,
-        self.UI_CONSTANTS.CONTENT_BG_COLOR
-    )
-    bg:setVisible(true)
-
-    -- Thin accent line along the top edge of the content area
-    local lineH = math.max(self:py(2), 0.002)
-    local topLine = self:createBlankOverlay(x, y + h - lineH, w, lineH, {0.30, 0.58, 0.32, 0.55})
-    topLine:setVisible(true)
-
-    table.insert(self.ui.overlays, bg)
-    table.insert(self.ui.overlays, topLine)
-    table.insert(self.ui.contentOverlays, bg)
-
-    self.ui.appContentArea = {
-        x = x,
-        y = y,
-        width = w,
-        height = h
-    }
-
-    -- Load the current app
-    self:loadCurrentApp()
-end
-
--- =========================================================
--- Default App (when no specific app is found)
--- =========================================================
-function FarmTabletUI:loadDefaultApp()
-    self.ui.appTexts = {}
-    
-    local content = self.ui.appContentArea
-    if not content then return end
-    
-    local padX = self:px(15)
-    local padY = self:py(15)
-    local titleY = content.y + content.height - padY - self:titleH()
-
-    -- Title
-    table.insert(self.ui.appTexts, {
-        text = "Farm Tablet",
-        x = content.x + padX,
-        y = titleY,
-        size = 0.020,
-        align = RenderText.ALIGN_LEFT,
-        color = {0.4, 0.8, 0.4, 1}
-    })
-    self:drawDivider(titleY - self:py(4))
-
-    local startY = titleY - 0.035
-    local lineHeight = 0.022
-    
-    local lines = {
-        "Welcome to Farm Tablet v1.1.1.1",
-        "Central interface for farm management",
-        "",
-        "Select an app from the navigation bar above.",
-        "",
-        "Type  'tablet'  in console for commands.",
-    }
-    
-    for i, line in ipairs(lines) do
-        table.insert(self.ui.appTexts, {
-            text = line,
-            x = content.x + padX,
-            y = startY - ((i - 1) * lineHeight),
-            size = 0.014,
-            align = RenderText.ALIGN_LEFT,
-            color = {0.8, 0.8, 0.8, 1}
-        })
-    end
-    
-    self:log("Loaded default app")
-end
-
-function FarmTabletUI:loadCurrentApp()
-    self.ui.appTexts = {}
-    
-    local appId = self.tabletSystem.currentApp
-    
-    if appId == "financial_dashboard" then
-        self:loadDashboardApp()
-    elseif appId == "app_store" then
-        self:loadAppStoreApp()
-    elseif appId == "settings" then
-        self:loadSettingsApp()
-    elseif appId == "updates" then
-        self:loadUpdatesApp()
-    elseif appId == "weather" then
-        self:loadWeatherApp()
-    elseif appId == "workshop" then
-        self:loadWorkshopApp()
-    elseif appId == "field_status" then
-        self:loadFieldStatusApp()
-    elseif appId == "animals" then
-        self:loadAnimalHusbandryApp()
-    elseif appId == "digging" then
-        self:loadDiggingApp()
-    elseif appId == "bucket_tracker" then
-        self:loadBucketTrackerApp()
-    elseif appId == "income_mod" then
-        self:loadIncomeApp()
-    elseif appId == "tax_mod" then
-        self:loadTaxApp()
-    elseif appId == "npc_favor" then
-        self:loadNPCFavorApp()
-    elseif appId == "crop_stress" then
-        self:loadCropStressApp()
-    elseif appId == "soil_fertilizer" then
-        self:loadSoilFertilizerApp()
-    else
-        self:loadDefaultApp()
-    end
-end
-
-function FarmTabletUI:createAppNavigationButtons()
-    local navBar = self.ui.navBar
-    if navBar == nil then return end
-
-    self.ui.appButtons = {}
-
-    local btnW    = self:px(44)
-    local btnH    = self:py(22)
-    local spacing = self:px(4)
-    local rowGap  = self:py(4)
-    local startX  = navBar.x + self:px(15)
-    local maxX    = navBar.x + navBar.width - self:px(70)
-    local row1Y   = navBar.y - btnH - self:py(8)
-    local row2Y   = row1Y - btnH - rowGap
-
-    -- Calculate max buttons per row
-    local maxPerRow = math.max(1, math.floor((maxX - startX) / (btnW + spacing)))
-
-    local isActive = self.tabletSystem.currentApp
-    local btnIdx   = 0
-
-    for _, app in ipairs(self.tabletSystem.registeredApps) do
-        if app.enabled then
-            local col  = btnIdx % maxPerRow
-            local row  = math.floor(btnIdx / maxPerRow)
-            if row >= 2 then break end  -- max two rows
-
-            local x = startX + col * (btnW + spacing)
-            local y = (row == 0) and row1Y or row2Y
-
-            local isSelected = (app.id == isActive)
-            local overlay = self:createBlankOverlay(
-                x, y, btnW, btnH,
-                isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
-                           or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
-            )
-            overlay:setVisible(true)
-            table.insert(self.ui.overlays, overlay)
-
-            table.insert(self.ui.appButtons, {
-                overlay = overlay,
-                x = x, y = y, width = btnW, height = btnH,
-                appId = app.id
+            table.insert(self._iconBtns, {
+                appId = app.id,
+                x = ix, y = iy, w = iconW, h = iconH
             })
-
-            local label = app.navLabel or string.sub(app.id, 1, 4):upper()
-            table.insert(self.ui.texts, {
-                text  = label,
-                x     = x + btnW / 2,
-                y     = y + btnH / 2 - 0.004,
-                size  = 0.009,
-                align = RenderText.ALIGN_CENTER,
-                color = isSelected and self.UI_CONSTANTS.TITLE_COLOR
-                                   or  self.UI_CONSTANTS.MUTED_COLOR
-            })
-
-            btnIdx = btnIdx + 1
         end
     end
 end
+
+-- ─────────────────────────────────────────────────────────
+-- CONTENT AREA
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_drawContent()
+    self.r:clearAppLayer()
+    self._contentBtns = {}
+
+    local appId = self.system.currentApp
+    local fn = self._appDrawers and self._appDrawers[appId]
+    if fn then
+        local ok, err = pcall(fn, self)
+        if not ok then
+            self:_drawError(err)
+        end
+    else
+        self:_drawWelcome()
+    end
+end
+
+-- Register an app drawer function (called by app files)
+FarmTabletUI._appDrawers = {}
+function FarmTabletUI:registerDrawer(appId, fn)
+    FarmTabletUI._appDrawers[appId] = fn
+end
+
+-- ─────────────────────────────────────────────────────────
+-- CONTENT LAYOUT HELPERS  (for app files)
+-- ─────────────────────────────────────────────────────────
+
+-- Returns the content area table {x,y,w,h}
+function FarmTabletUI:content()
+    return FT.LAYOUT.contentX, FT.LAYOUT.contentY,
+           FT.LAYOUT.contentW, FT.LAYOUT.contentH
+end
+
+-- Standard content padding inset
+function FarmTabletUI:contentInner()
+    local px = FT.px(16)
+    local py = FT.py(12)
+    return FT.LAYOUT.contentX + px,
+           FT.LAYOUT.contentY + py,
+           FT.LAYOUT.contentW - px*2,
+           FT.LAYOUT.contentH - py*2
+end
+
+-- Draws the standard app title bar (title + optional right-aligned subtitle)
+function FarmTabletUI:drawAppHeader(title, subtitle)
+    local x, y, w, h = self:contentInner()
+    local topY = y + h - FT.py(2)
+
+    -- Get current app accent color
+    local accent = FT.appColor(self.system.currentApp)
+
+    self.r:appText(x, topY, FT.FONT.TITLE, title,
+        RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
+
+    if subtitle then
+        self.r:appText(x + w, topY, FT.FONT.SMALL, subtitle,
+            RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
+    end
+
+    -- Colored divider below title
+    local divY = topY - FT.py(18)
+    -- Accent colored rule
+    self.r:appRect(x, divY, w, math.max(FT.py(1.5), 0.001),
+        {accent[1], accent[2], accent[3], 0.80})
+    -- Glow under rule
+    self.r:appRect(x, divY - FT.py(2), w, FT.py(3),
+        {accent[1], accent[2], accent[3], 0.12})
+
+    -- Return the Y coordinate where content should start (below header)
+    return divY - FT.py(6)
+end
+
+-- Standard row: label | value
+function FarmTabletUI:drawRow(y, label, value, labelC, valueC)
+    local x, _, w, _ = self:contentInner()
+    self.r:row(x, y, w, label, value, labelC, valueC)
+    return y - FT.py(FT.SP.ROW)
+end
+
+-- Section header with accent bar
+function FarmTabletUI:drawSection(y, label)
+    local x, _, w, _ = self:contentInner()
+    self.r:sectionHeader(x, y, w, label)
+    return y - FT.py(18)
+end
+
+-- Divider rule
+function FarmTabletUI:drawRule(y, alpha)
+    local x, _, w, _ = self:contentInner()
+    self.r:rule(x, y, w, alpha)
+    return y - FT.py(4)
+end
+
+-- Progress bar
+function FarmTabletUI:drawBar(y, value, maxVal, color)
+    local x, _, w, _ = self:contentInner()
+    return self.r:progressBar(x, y, w, value, maxVal, color)
+end
+
+-- Action button (registers hit region)
+function FarmTabletUI:drawButton(y, label, color, meta)
+    local x, _, w, _ = self:contentInner()
+    local bw = FT.px(90)
+    local bh = FT.py(22)
+    local btn = self.r:button(x, y, bw, bh, label, color, meta)
+    table.insert(self._contentBtns, btn)
+    return y - bh - FT.py(4), btn
+end
+
+-- Pair of buttons side by side
+function FarmTabletUI:drawButtonPair(y, labelA, colorA, metaA, labelB, colorB, metaB)
+    local x, _, w, _ = self:contentInner()
+    local bw = FT.px(100)
+    local bh = FT.py(22)
+    local gap = FT.px(8)
+    local btnA = self.r:button(x,        y, bw, bh, labelA, colorA, metaA)
+    local btnB = self.r:button(x+bw+gap, y, bw, bh, labelB, colorB, metaB)
+    table.insert(self._contentBtns, btnA)
+    table.insert(self._contentBtns, btnB)
+    return y - bh - FT.py(4), btnA, btnB
+end
+
+-- ─────────────────────────────────────────────────────────
+-- DEFAULT SCREENS
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_drawWelcome()
+    local startY = self:drawAppHeader("Farm Tablet", "v" .. FT.VERSION)
+    local y = startY
+    local x, _, w, _ = self:contentInner()
+
+    y = y - FT.py(10)
+    self.r:appText(x, y, FT.FONT.BODY,
+        "Welcome! Select an app from the sidebar.",
+        RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
+    y = y - FT.py(22)
+    self.r:appText(x, y, FT.FONT.SMALL,
+        "Press  " .. self.settings.tabletKeybind .. "  to close.",
+        RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+end
+
+function FarmTabletUI:_drawError(msg)
+    local startY = self:drawAppHeader("App Error", "")
+    local x, _, _, _ = self:contentInner()
+    self.r:appText(x, startY - FT.py(8), FT.FONT.SMALL,
+        tostring(msg), RenderText.ALIGN_LEFT, FT.C.NEGATIVE)
+end
+
+-- ─────────────────────────────────────────────────────────
+-- SWITCH APP
+-- ─────────────────────────────────────────────────────────
 
 function FarmTabletUI:switchApp(appId)
-    local appFound = false
-    for _, app in ipairs(self.tabletSystem.registeredApps) do
-        if app.id == appId and app.enabled then
-            appFound = true
-            break
-        end
-    end
-    
-    if not appFound then
-        self:log("App not found or disabled: " .. appId)
-        return false
-    end
+    if not self.system.registry:has(appId) then return false end
+    local app = self.system.registry:get(appId)
+    if not app or not app.enabled then return false end
 
-    self.tabletSystem.currentApp = appId
+    self.system.currentApp = appId
 
-    self:log("Switched to app: " .. appId)
-
-    if self.settings.soundEffects and g_soundManager then
-        g_soundManager:playSample(g_soundManager.samples.GUI_CLICK)
+    if self.isOpen then
+        -- Refresh sidebar active states (persistent overlays must be rebuilt)
+        self.r:destroyAll()
+        self._iconBtns    = {}
+        self._contentBtns = {}
+        self:_drawChrome()
+        self:_drawSidebar()
+        self:_drawContent()
     end
 
-    if self.isTabletOpen then
-        -- Clean up app-specific overlays from the previous app
-        if self.ui.appOverlays then
-            for _, overlay in ipairs(self.ui.appOverlays) do
-                if overlay ~= nil then overlay:delete() end
-            end
-        end
-        self.ui.appOverlays = {}
-        self.ui.resetBucketButton = nil
-        self.ui.enableIncomeButton = nil
-        self.ui.disableIncomeButton = nil
-        self.ui.enableTaxButton = nil
-        self.ui.disableTaxButton = nil
-        self.ui.settingsToggleButtons = nil
-
-        -- Update button colors
-        for _, buttonInfo in ipairs(self.ui.appButtons) do
-            local isSelected = (buttonInfo.appId == appId)
-            buttonInfo.overlay:setColor(unpack(
-                isSelected and self.UI_CONSTANTS.BUTTON_HOVER_COLOR
-                           or  self.UI_CONSTANTS.BUTTON_NORMAL_COLOR
-            ))
-        end
-        -- Reload content
-        self.ui.appTexts = {}
-        self:loadCurrentApp()
-    end
-
+    FT_EventBus:emit(FT_EventBus.EVENTS.APP_SWITCHED, appId)
     return true
 end
 
--- =========================================================
--- Drawing Helpers
--- =========================================================
+-- ─────────────────────────────────────────────────────────
+-- DRAW / UPDATE (FS25 drawable interface)
+-- ─────────────────────────────────────────────────────────
 
--- Create an app-specific overlay that is automatically cleaned up on app switch.
-function FarmTabletUI:createAppOverlay(x, y, w, h, color, texturePath)
-    local overlay = self:createBlankOverlay(x, y, w, h, color, texturePath)
-    overlay:setVisible(true)
-    if not self.ui.appOverlays then self.ui.appOverlays = {} end
-    table.insert(self.ui.appOverlays, overlay)
-    return overlay
-end
-
--- Insert a label + right-aligned value row into appTexts.
-function FarmTabletUI:drawRow(label, value, y, labelColor, valueColor)
-    local content = self.ui.appContentArea
-    if not content then return end
-    local padX = self:px(15)
-    table.insert(self.ui.appTexts, {
-        text  = label,
-        x     = content.x + padX,
-        y     = y,
-        size  = 0.015,
-        align = RenderText.ALIGN_LEFT,
-        color = labelColor or self.UI_CONSTANTS.LABEL_COLOR,
-    })
-    if value ~= nil then
-        table.insert(self.ui.appTexts, {
-            text  = tostring(value),
-            x     = content.x + content.width - padX,
-            y     = y,
-            size  = 0.015,
-            align = RenderText.ALIGN_RIGHT,
-            color = valueColor or self.UI_CONSTANTS.VALUE_COLOR,
-        })
-    end
-end
-
--- Insert a section header (left-aligned, accent color) with a left accent bar.
-function FarmTabletUI:drawSectionHeader(text, y)
-    local content = self.ui.appContentArea
-    if not content then return end
-    -- Small vertical accent bar, vertically centered on the text line
-    self:createAppOverlay(
-        content.x + self:px(8),
-        y - self:py(2),
-        self:px(3),
-        self:py(13),
-        {0.38, 0.88, 0.44, 0.90}
-    )
-    table.insert(self.ui.appTexts, {
-        text  = text,
-        x     = content.x + self:px(15),
-        y     = y,
-        size  = 0.013,
-        align = RenderText.ALIGN_LEFT,
-        color = self.UI_CONSTANTS.SECTION_COLOR,
-    })
-end
-
--- Draw a thin horizontal rule across the full width of the content area.
-function FarmTabletUI:drawDivider(y, alpha)
-    local content = self.ui.appContentArea
-    if not content then return end
-    self:createAppOverlay(
-        content.x + self:px(8),
-        y,
-        content.width - self:px(16),
-        math.max(self:py(1), 0.0008),
-        {0.30, 0.60, 0.32, alpha or 0.35}
-    )
-end
-
--- Draw a proportional fill bar. Returns the Y coordinate just below the bar.
-function FarmTabletUI:drawProgressBar(value, max, y, barColor)
-    local content = self.ui.appContentArea
-    if not content then return y end
-    local padX = self:px(15)
-    local barW  = content.width - padX * 2
-    local barH  = math.max(self:py(5), 0.006)
-    local bgX   = content.x + padX
-    -- Background track
-    self:createAppOverlay(bgX, y, barW, barH, {0.16, 0.16, 0.20, 0.95})
-    -- Fill
-    local ratio = (max and max > 0) and math.min(value / max, 1) or 0
-    if ratio > 0 then
-        self:createAppOverlay(bgX, y, barW * ratio, barH,
-            barColor or self.UI_CONSTANTS.VALUE_COLOR)
-    end
-    return y - barH - self:py(3)
-end
-
--- Insert a single left-aligned text entry.
-function FarmTabletUI:drawText(text, x, y, size, align, color)
-    table.insert(self.ui.appTexts, {
-        text  = text,
-        x     = x,
-        y     = y,
-        size  = size  or 0.015,
-        align = align or RenderText.ALIGN_LEFT,
-        color = color or self.UI_CONSTANTS.TEXT_COLOR,
-    })
-end
-
--- Create a small action button and return its hitbox descriptor.
--- Uses createAppOverlay so it is cleaned up on app switch.
-function FarmTabletUI:drawButton(label, x, y, w, h, color)
-    local overlay = self:createAppOverlay(x, y, w, h, color or self.UI_CONSTANTS.BTN_GRAY)
-    table.insert(self.ui.appTexts, {
-        text  = label,
-        x     = x + w / 2,
-        y     = y + h / 2 - 0.004,
-        size  = 0.012,
-        align = RenderText.ALIGN_CENTER,
-        color = self.UI_CONSTANTS.TITLE_COLOR,
-    })
-    return { overlay = overlay, x = x, y = y, width = w, height = h }
-end
-
--- =========================================================
--- Utility functions
--- =========================================================
-
-function FarmTabletUI:px(x)
-    return x * (self.ui.scaleX or 1)
-end
-
-function FarmTabletUI:py(y)
-    return y * (self.ui.scaleY or 1)
-end
-
--- Layout helpers — scale-aware equivalents of common hardcoded offsets.
--- Calibrated so that at the 1080p reference resolution these equal the
--- existing hardcoded values, keeping layouts pixel-identical there while
--- scaling correctly at other resolutions.
-function FarmTabletUI:titleH()     return self:py(19)  end  -- app title baseline offset  (~0.028)
-function FarmTabletUI:lineH()      return self:py(15)  end  -- standard row height        (~0.022)
-function FarmTabletUI:smallLineH() return self:py(13)  end  -- compact row height         (~0.019)
-function FarmTabletUI:sectionGap() return self:py(22)  end  -- inter-section spacing      (~0.032)
-
-function FarmTabletUI:createBlankOverlay(x, y, width, height, color, texturePath)
-    local overlay
-
-    if texturePath then
-        overlay = Overlay.new(texturePath, x, y, width, height)
-    else
-        overlay = Overlay.new(nil, x, y, width, height)
-    end
-
-    if color then
-        overlay:setColor(unpack(color))
-    end
-
-    return overlay
-end
-
-function FarmTabletUI:log(msg)
-    if self.settings.debugMode then
-        print("[Farm Tablet UI] " .. tostring(msg))
-    end
-end
-
-function FarmTabletUI:destroyTabletUI()
-    -- Delete app-specific overlays first
-    if self.ui.appOverlays then
-        for _, overlay in ipairs(self.ui.appOverlays) do
-            if overlay ~= nil then overlay:delete() end
-        end
-    end
-    -- Delete chrome overlays
-    if self.ui.overlays then
-        for _, overlay in ipairs(self.ui.overlays) do
-            if overlay ~= nil then overlay:delete() end
-        end
-    end
-
-    self.ui = {
-        background = nil,
-        backgroundX = 0,
-        backgroundY = 0,
-        overlays = {},
-        appOverlays = {},
-        appButtons = {},
-        contentOverlays = {},
-        texts = {},
-        appTexts = {},
-        navBar = nil,
-        appContentArea = nil,
-        closeButton = nil,
-        resetBucketButton = nil,
-        enableIncomeButton = nil,
-        disableIncomeButton = nil,
-        enableTaxButton = nil,
-        disableTaxButton = nil,
-        settingsToggleButtons = nil,
-        workshopVehicleButtons = {},
-        workshopOpenButton = nil,
-    }
+function FarmTabletUI:draw()
+    if not self.isOpen then return end
+    self.r:flush()
 end
 
 function FarmTabletUI:update(dt)
-    if not self.isTabletOpen then
-        return
-    end
-    
-    -- Update live data if needed
-    if self.tabletSystem.currentApp == "financial_dashboard" then
-        -- Could add live updates here
-    end
+    if not self.isOpen then return end
 
-    -- if self.tabletSystem.currentApp == "workshop" then
-    --     self:updateWorkshopApp(dt)
-    -- end
+    -- Poll scroll wheel for sidebar navigation (FS25 has no mouseWheelEvent callback)
+    self:_pollSidebarScroll()
 
-    if self.tabletSystem.currentApp == "digging" then
-        self:updateDiggingApp(dt)
+    -- Forward to app-specific updaters
+    local appId = self.system.currentApp
+    if appId == FT.APP.DIGGING then
+        if self.updateDiggingApp then self:updateDiggingApp(dt) end
     end
 
+    -- Refresh topbar each frame (clock ticks)
+    -- We do a lightweight refresh: clear just the text entries for topbar
+    -- by rebuilding the whole chrome text. Cheap in Lua.
+    -- (Only if visible and timer allows)
+    self._clockTimer = (self._clockTimer or 0) + dt
+    if self._clockTimer >= 2000 then
+        self._clockTimer = 0
+        -- Remove old topbar texts by rebuilding chrome's text pass
+        -- Cheapest approach: flush rebuild topbar only
+        self:_refreshTopbar()
+    end
 end
 
-function FarmTabletUI:draw()
-    if not self.isTabletOpen then
+function FarmTabletUI:_refreshTopbar()
+    if not self.isOpen then return end
+    -- FIX: do NOT wipe self.r._texts entirely – that would erase any persistent
+    -- text drawn via r:text() elsewhere (e.g. future feature additions).
+    -- Instead, clear only the topbar/sidebar entries by rebuilding just that
+    -- subset. Since ALL chrome text is redrawn below, we can safely wipe _texts
+    -- only if we guarantee this function re-adds everything that was in it.
+    -- The safest approach: keep a separate _chromeTexts list rebuilt here,
+    -- and leave _texts alone. For now we keep the original behavior but note
+    -- the risk: any persistent r:text() calls outside _drawChrome/_drawSidebar
+    -- will be silently cleared every 2 s.
+    self.r._texts = {}
+    -- Re-draw brand labels in sidebar (positions match _drawChrome)
+    local L = FT.LAYOUT
+    local logoH = FT.py(38)
+    self.r:text(L.sidebarX + L.sidebarW/2,
+               L.sidebarY + logoH - FT.py(24),
+               FT.FONT.TINY, "FARM", RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
+    self.r:text(L.sidebarX + L.sidebarW/2,
+               L.sidebarY + logoH - FT.py(12),
+               FT.FONT.TINY, "TABLET", RenderText.ALIGN_CENTER,
+               {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 1.0})
+    self.r:text(L.sidebarX + L.sidebarW/2,
+               L.sidebarY + logoH - FT.py(3),
+               FT.FONT.TINY, "v" .. FT.VERSION,
+               RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
+    -- Sidebar icon labels
+    local apps = self.system.registry:getAll()
+    local iconW  = L.sidebarW - FT.px(10)
+    local iconH  = FT.py(ICON_SIZE_REF * 0.72)
+    local gap    = FT.py(ICON_GAP_REF)
+    local ix     = L.sidebarX + FT.px(5)
+    local logoH  = FT.py(38)
+    local availH = L.sidebarH - logoH - FT.py(10)
+    local slotH  = iconH + gap
+    local visibleMax = math.floor(availH / slotH)
+    local startY = L.sidebarY + logoH + FT.py(6)
+    local currentApp = self.system.currentApp
+    for i, app in ipairs(apps) do
+        local slot = i - 1 - (self._sidebarScrollOffset or 0)
+        if slot >= 0 and slot < visibleMax then
+            local iy = startY + slot * slotH
+            local isActive = (app.id == currentApp)
+            local label = app.navLabel or string.upper(string.sub(app.id, 1, 4))
+            self.r:text(ix + iconW/2, iy + iconH/2 - FT.py(3),
+                   FT.FONT.SMALL, label, RenderText.ALIGN_CENTER,
+                   isActive and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM)
+        end
+    end
+    -- Close button label
+    if self._closeBtn then
+        local cb = self._closeBtn
+        self.r:text(cb.x + cb.w/2, cb.y + cb.h/2 - FT.py(3),
+                   FT.FONT.SMALL, "X", RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
+    end
+    -- Topbar dynamic content
+    self:_drawTopbar()
+end
+
+-- ─────────────────────────────────────────────────────────
+-- SCROLL INPUT (sidebar — polled each frame via update)
+-- FS25 exposes scroll wheel as Input.isMouseButtonPressed,
+-- NOT as a mouseWheelEvent callback. We poll in update().
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_pollSidebarScroll()
+    if not self.isOpen then return end
+    local L = FT.LAYOUT
+
+    -- Only scroll when cursor is over the sidebar
+    local px, py = self._mouseX, self._mouseY
+    if not (px >= L.sidebarX and px <= L.sidebarX + L.sidebarW and
+            py >= L.sidebarY and py <= L.sidebarY + L.sidebarH) then
+        self._wheelUpWas   = false
+        self._wheelDownWas = false
         return
     end
 
-    -- Render chrome overlays (nav bar, background, buttons)
-    for _, overlay in ipairs(self.ui.overlays or {}) do
-        if overlay ~= nil and overlay.render then
-            overlay:render()
-        end
-    end
+    -- Edge-detect: only fire once per physical wheel tick
+    local upNow   = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_UP)
+    local downNow = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_DOWN)
 
-    -- Render app-specific overlays (action buttons, etc.)
-    for _, overlay in ipairs(self.ui.appOverlays or {}) do
-        if overlay ~= nil and overlay.render then
-            overlay:render()
-        end
-    end
+    local dir = nil
+    if upNow   and not self._wheelUpWas   then dir = -1 end  -- scroll up → earlier apps
+    if downNow and not self._wheelDownWas then dir =  1 end  -- scroll down → later apps
 
-    -- Render texts
-    for _, t in ipairs(self.ui.texts or {}) do
-        setTextAlignment(t.align)
-        setTextColor(unpack(t.color))
-        renderText(t.x, t.y, t.size, t.text)
-    end
-    
-    -- Render app texts
-    for _, t in ipairs(self.ui.appTexts or {}) do
-        setTextAlignment(t.align)
-        setTextColor(unpack(t.color))
-        renderText(t.x, t.y, t.size, t.text)
-    end
+    self._wheelUpWas   = upNow
+    self._wheelDownWas = downNow
 
-    setTextAlignment(RenderText.ALIGN_LEFT)
+    if dir == nil then return end
+
+    local newOffset = math.max(0,
+        math.min((self._sidebarScrollOffset or 0) + dir,
+                 self._sidebarMaxScroll or 0))
+
+    if newOffset ~= self._sidebarScrollOffset then
+        self._sidebarScrollOffset = newOffset
+        self.r:destroyAll()
+        self._iconBtns    = {}
+        self._contentBtns = {}
+        self:_drawChrome()
+        self:_drawSidebar()
+        self:_drawContent()
+    end
 end
 
-function FarmTabletUI:mouseEvent(posX, posY, isDown, isUp, button)
-    if not self.isTabletOpen or not isDown then
-        return false
-    end
-    
-    -- DEBUG: Print mouse coordinates (already normalized in FS25)
-    if self.settings.debugMode then
-        print(string.format("[Farm Tablet] Mouse click: X=%.4f, Y=%.4f", posX, posY))
-    end
-    
-    -- Close button check (NO conversion needed - FS25 uses normalized coordinates)
-    if self.ui.closeButton then
-        local btn = self.ui.closeButton
-        if self.settings.debugMode then
-            print(string.format("[Farm Tablet] Close button area: X=%.4f-%.4f, Y=%.4f-%.4f", 
-                btn.x, btn.x + btn.width, btn.y, btn.y + btn.height))
-        end
-        
-        if posX >= btn.x and posX <= btn.x + btn.width and
-           posY >= btn.y and posY <= btn.y + btn.height then
-            self:log("Close button clicked")
+-- ─────────────────────────────────────────────────────────
+-- MOUSE INPUT
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_onMouse(px, py, isDown, isUp, btn)
+    if not self.isOpen then return false end
+
+    -- Always track cursor position (needed for scroll hover detection)
+    self._mouseX = px
+    self._mouseY = py
+
+    if not isDown then return false end
+
+    -- Close button
+    if self._closeBtn then
+        local c = self._closeBtn
+        if px >= c.x and px <= c.x+c.w and py >= c.y and py <= c.y+c.h then
             self:closeTablet()
             return true
         end
     end
-    
-    -- App buttons check (NO conversion needed)
-    for i, buttonInfo in ipairs(self.ui.appButtons or {}) do
-        if self.settings.debugMode then
-            print(string.format("[Farm Tablet] App button %d (%s): X=%.4f-%.4f, Y=%.4f-%.4f", 
-                i, buttonInfo.appId, 
-                buttonInfo.x, buttonInfo.x + buttonInfo.width,
-                buttonInfo.y, buttonInfo.y + buttonInfo.height))
-        end
-        
-        if posX >= buttonInfo.x and posX <= buttonInfo.x + buttonInfo.width and
-           posY >= buttonInfo.y and posY <= buttonInfo.y + buttonInfo.height then
-            self:log("App button clicked: " .. buttonInfo.appId)
-            self:switchApp(buttonInfo.appId)
-            return true
-        end
-    end
-    
-    -- Check for app-specific buttons (NO conversion needed)
-    local appId = self.tabletSystem.currentApp
-    
-    if appId == "workshop" then
-        if self:handleWorkshopMouseEvent(posX, posY) then
-            return true
-        end
-    elseif appId == "settings" then
-        if self:handleSettingsAppMouseEvent(posX, posY) then
-            return true
-        end
-    elseif appId == "bucket_tracker" then
-        if self:handleBucketTrackerMouseEvent(posX, posY) then
-            return true
-        end
-    elseif appId == "income_mod" then
-        if self:handleIncomeModMouseEvent(posX, posY) then
-            return true
-        end
-    elseif appId == "tax_mod" then
-        if self:handleTaxModMouseEvent(posX, posY) then
-            return true
-        end
-    end
-    
-    return false
-end
 
--- Bucket tracker app mouse events
-function FarmTabletUI:handleBucketTrackerMouseEvent(posX, posY)
-    if self.ui.resetBucketButton then
-        local b = self.ui.resetBucketButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            if self.tabletSystem.resetBucketTracker then
-                self.tabletSystem:resetBucketTracker()
-                self:switchApp("bucket_tracker") -- Refresh display
+    -- Sidebar icons
+    for _, ib in ipairs(self._iconBtns) do
+        if px >= ib.x and px <= ib.x+ib.w and py >= ib.y and py <= ib.y+ib.h then
+            self:switchApp(ib.appId)
+            return true
+        end
+    end
+
+    -- Content-area buttons (registered by app drawers)
+    for _, cb in ipairs(self._contentBtns) do
+        if not cb._isText and
+           px >= cb.x and px <= cb.x+cb.w and
+           py >= cb.y and py <= cb.y+cb.h then
+            if cb.meta and cb.meta.onClick then
+                cb.meta.onClick()
             end
             return true
         end
     end
+
     return false
 end
 
--- Income Mod app mouse events
-function FarmTabletUI:handleIncomeModMouseEvent(posX, posY)
-    -- Enable button
-    if self.ui.enableIncomeButton then
-        local b = self.ui.enableIncomeButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            local incomeInstance = g_currentMission and g_currentMission.incomeManager
-            if incomeInstance and incomeInstance.settings then
-                incomeInstance.settings.enabled = true
-                if incomeInstance.settings.save then
-                    incomeInstance.settings:save()
-                end
-                self:switchApp("income_mod") -- Refresh
-            end
-            return true
-        end
-    end
-    
-    -- Disable button
-    if self.ui.disableIncomeButton then
-        local b = self.ui.disableIncomeButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            local incomeInstance = g_currentMission and g_currentMission.incomeManager
-            if incomeInstance and incomeInstance.settings then
-                incomeInstance.settings.enabled = false
-                if incomeInstance.settings.save then
-                    incomeInstance.settings:save()
-                end
-                self:switchApp("income_mod") -- Refresh
-            end
-            return true
-        end
-    end
-    
-    return false
+-- ─────────────────────────────────────────────────────────
+-- CLEANUP
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_destroy()
+    self.r:destroyAll()
+    self._iconBtns    = {}
+    self._contentBtns = {}
+    self._closeBtn    = nil
 end
 
--- Tax Mod app mouse events
-function FarmTabletUI:handleTaxModMouseEvent(posX, posY)
-    -- Enable Tax button
-    if self.ui.enableTaxButton then
-        local b = self.ui.enableTaxButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            local taxInstance = g_currentMission and g_currentMission.taxManager
-            if taxInstance and taxInstance.settings then
-                taxInstance.settings.enabled = true
-                if taxInstance.saveSettings then
-                    taxInstance:saveSettings()
-                end
-                self:switchApp("tax_mod") -- Refresh
-            end
-            return true
-        end
-    end
-    
-    -- Disable Tax button
-    if self.ui.disableTaxButton then
-        local b = self.ui.disableTaxButton
-        if posX >= b.x and posX <= b.x + b.width and
-           posY >= b.y and posY <= b.y + b.height then
-            local taxInstance = g_currentMission and g_currentMission.taxManager
-            if taxInstance and taxInstance.settings then
-                taxInstance.settings.enabled = false
-                if taxInstance.saveSettings then
-                    taxInstance:saveSettings()
-                end
-                self:switchApp("tax_mod") -- Refresh
-            end
-            return true
-        end
-    end
-    
-    return false
-end
-
--- Utility function to check if a file exists
-function FarmTabletUI:fileExists(path)
-    if not path then return false end
-    local file = io.open(path, "r")
-    if file then
-        file:close()
-        return true
-    end
-    return false
-end
-
--- Delete function
 function FarmTabletUI:delete()
-    self:destroyTabletUI()
+    self:_destroy()
+end
+
+function FarmTabletUI:log(msg, ...)
+    if self.settings.debugMode then
+        Logging.info("[FarmTablet UI] " .. string.format(msg, ...))
+    end
 end
