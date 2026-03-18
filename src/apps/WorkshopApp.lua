@@ -178,7 +178,8 @@ FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
                         local ok = pcall(function() ws:repairVehicle(sel) end)
                         if ok then repaired = true end
                     end
-                    if not repaired or g_server == nil then
+                    if not repaired or not g_currentMission:getIsServer() then
+                        -- We are a pure client (or repair didn't apply locally): send to server
                         if VehicleRepairEvent ~= nil then
                             pcall(function()
                                 local evt = VehicleRepairEvent.new(sel)

@@ -85,10 +85,10 @@ function SettingsUI:_doInject()
     
     -- Startup app option
     local startupOptions = {
-        getTextSafe("ft_startupapp_1"),
-        getTextSafe("ft_startupapp_2"),
-        getTextSafe("ft_startupapp_3"),
-        getTextSafe("ft_startupapp_4")
+        getTextSafe("ft_ui_startupapp_1"),
+        getTextSafe("ft_ui_startupapp_2"),
+        getTextSafe("ft_ui_startupapp_3"),
+        getTextSafe("ft_ui_startupapp_4")
     }
     
     local startupOpt = UIHelper.createMultiOption(
@@ -186,7 +186,7 @@ function SettingsUI:ensureResetButton(settingsFrame)
     if not self._resetButton then
         self._resetButton = {
             inputAction = InputAction.MENU_EXTRA_1, -- X button
-            text = g_i18n:getText("ft_reset") or "Reset Settings",
+            text = g_i18n:getText("ft_ui_reset") or "Reset Settings",
             callback = function()
                 if g_FarmTablet and g_FarmTablet.settings then
                     g_FarmTablet.settings:resetToDefaults()

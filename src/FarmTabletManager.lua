@@ -18,14 +18,15 @@ function FarmTabletManager.new(mission, modDirectory, modName)
     self.settings        = Settings.new(self.settingsManager)
     self.settings:load()
 
-    -- Core systems
+    -- Core systems — FarmTabletSystem is safe on all contexts (pure data).
+    -- FarmTabletUI and InputHandler are client-only (rendering + keyboard input).
     self.system = FarmTabletSystem.new(self.settings)
-    self.ui     = FarmTabletUI.new(self.settings, self.system, modDirectory)
+    if mission:getIsClient() then
+        self.ui           = FarmTabletUI.new(self.settings, self.system, modDirectory)
+        self.inputHandler = InputHandler.new(self)
+    end
 
-    -- Input
-    self.inputHandler = InputHandler.new(self)
-
-    -- Settings UI (pause menu injection)
+    -- Settings UI (pause menu injection) — client only
     if mission:getIsClient() and g_gui then
         self.settingsUI = SettingsUI.new(self.settings)
         InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(
@@ -69,21 +70,31 @@ function FarmTabletManager.new(mission, modDirectory, modName)
         end
     end
 
-    -- Console commands GUI
-    self.settingsGUI = SettingsGUI.new()
-    self.settingsGUI:registerConsoleCommands()
+    -- Console commands — only register on the local client, not on a remote/server peer.
+    -- On a listen-server (host who also plays) getIsClient() is true, so commands appear.
+    -- On a pure dedicated server the g_dedicatedServer guard in main.lua prevents us from
+    -- ever reaching this constructor, so this check is a secondary safety net.
+    if mission:getIsClient() then
+        self.settingsGUI = SettingsGUI.new()
+        self.settingsGUI:registerConsoleCommands()
+    end
 
     return self
 end
 
 function FarmTabletManager:onMissionLoaded()
     self.system:initialize()
-    self.inputHandler:registerKeyBinding()
 
-    if self.settings.enabled and self.settings.showTabletNotifications then
-        local title = (g_i18n and g_i18n:getText("ft_welcome_title")) or "Farm Tablet v2"
+    -- inputHandler and UI only exist on clients (see constructor)
+    if self.inputHandler then
+        self.inputHandler:registerKeyBinding()
+    end
+
+    -- Welcome notification: client-only (HUD does not exist on server peers)
+    if self.mission:getIsClient() and self.settings.enabled and self.settings.showTabletNotifications then
+        local title = (g_i18n and g_i18n:getText("ft_ui_welcome_title")) or "Farm Tablet v2"
         local msg   = string.format(
-            (g_i18n and g_i18n:getText("ft_welcome_message")) or "Press %s to open",
+            (g_i18n and g_i18n:getText("ft_ui_welcome_message")) or "Press %s to open",
             self.settings.tabletKeybind
         )
         self:showNotification(title, msg)
@@ -116,6 +127,8 @@ end
 
 function FarmTabletManager:showNotification(title, message)
     if not self.mission or not self.settings.showTabletNotifications then return end
+    -- HUD only exists on client peers; skip silently on listen-server-only context
+    if not self.mission:getIsClient() then return end
     if self.mission.hud and self.mission.hud.showBlinkingWarning then
         self.mission.hud:showBlinkingWarning(title .. ": " .. message, 4000)
     end
