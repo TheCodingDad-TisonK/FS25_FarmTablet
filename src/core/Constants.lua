@@ -4,7 +4,7 @@
 -- =========================================================
 FT = FT or {}
 
-FT.VERSION = "2.1.0.0"
+FT.VERSION = "2.1.1.0"
 
 -- ── Design Tokens ─────────────────────────────────────────
 -- Reference dimensions (at 1080p; scaled at runtime)

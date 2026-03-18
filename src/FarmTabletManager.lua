@@ -36,6 +36,37 @@ function FarmTabletManager.new(mission, modDirectory, modName)
             InGameMenuSettingsFrame.updateButtons,
             function(frame) self.settingsUI:ensureResetButton(frame) end
         )
+
+        -- Help panel sound: play paging sound when the in-game help section opens or closes
+        -- InGameMenuHelpFrame is the help/manual page inside the pause menu
+        if InGameMenuHelpFrame then
+            InGameMenuHelpFrame.onFrameOpen = Utils.appendedFunction(
+                InGameMenuHelpFrame.onFrameOpen,
+                function()
+                    local s = self.settings
+                    if s and s.soundEffects and s.soundOnHelpOpen then
+                        pcall(function()
+                            if g_gui and g_gui.guiSoundPlayer then
+                                g_gui.guiSoundPlayer:playSample(GuiSoundPlayer.SOUND_SAMPLES.PAGING)
+                            end
+                        end)
+                    end
+                end
+            )
+            InGameMenuHelpFrame.onFrameClose = Utils.appendedFunction(
+                InGameMenuHelpFrame.onFrameClose,
+                function()
+                    local s = self.settings
+                    if s and s.soundEffects and s.soundOnHelpOpen then
+                        pcall(function()
+                            if g_gui and g_gui.guiSoundPlayer then
+                                g_gui.guiSoundPlayer:playSample(GuiSoundPlayer.SOUND_SAMPLES.PAGING)
+                            end
+                        end)
+                    end
+                end
+            )
+        end
     end
 
     -- Console commands GUI
