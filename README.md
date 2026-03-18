@@ -35,7 +35,7 @@
 
 ## What Is Farm Tablet?
 
-Farm Tablet is a **heads-up command centre** for Farming Simulator 25. Everything you'd normally hunt through menus to find is surfaced in a clean, full-screen tablet — instant to open, instant to close, and never in the way.
+Farm Tablet is a **heads-up command centre** for Farming Simulator 25. Everything you normally hunt through menus to find is surfaced in a clean, full-screen tablet — instant to open, instant to close, and never in the way.
 
 **The core philosophy:** Information should serve you, not slow you down. Open the tablet, check what you need, get back in the cab. No menus stacked four deep. No pause screens. No alt-tabbing.
 
