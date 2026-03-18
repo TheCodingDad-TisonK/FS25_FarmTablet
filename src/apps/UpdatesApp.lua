@@ -4,6 +4,27 @@
 
 local CHANGELOG = {
     {
+        version = "2.1.2.1",
+        date    = "2025",
+        changes = {
+            "Fix: app name translation keys in AppRegistry",
+            "Fix: remove broken texture atlas causing overlay warnings on every open",
+            "Fix: use getfenv(0) to detect cross-mod globals in autoDetect()",
+            "Fix: updated the UpdateApp to latest changelogs",
+        },
+    },
+    {
+        version = "2.1.2.0",
+        date    = "2025",
+        changes = {
+            "Added translations for 26 languages",
+            "Added info icon per app (bottom right corner)",
+            "Added help section to pause menu",
+            "Added multiplayer support",
+            "Added dedicated server support",
+        },
+    },
+    {
         version = "2.1.0.0",
         date    = "2025",
         changes = {
