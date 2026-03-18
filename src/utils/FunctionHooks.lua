@@ -1,8 +1,9 @@
 -- =========================================================
--- Function Hooks Utility
--- =========================================================
--- Utility for hooking into existing functions (prepend/append/overwrite)
--- Based on MobileWorkshopUtil by Rockstar
+-- FarmTablet v2 – FunctionHooks  (legacy utility)
+-- General-purpose function hook helpers (prepend/append/
+-- overwrite). Retained for third-party companion mods that
+-- may depend on it. The v2 core uses Utils.appendedFunction
+-- and Utils.prependedFunction directly instead.
 -- =========================================================
 
 FunctionHooks = {}
@@ -14,15 +15,15 @@ FunctionHooks = {}
 --- @param newFunc string The name of the new function
 function FunctionHooks.prependFunction(oldTarget, oldFunc, newTarget, newFunc)
     if oldTarget == nil or oldFunc == nil or newTarget == nil or newFunc == nil then
-        print("[FunctionHooks ERROR] Missing parameters for prependFunction")
+        Logging.warning("[FunctionHooks] Missing parameters for prependFunction")
         return false
     end
     
     local superFunc = oldTarget[oldFunc]
     
     if superFunc == nil then
-        print(string.format("[FunctionHooks WARNING] Function %s.%s does not exist", 
-            tostring(oldTarget), oldFunc))
+        Logging.warning(string.format("[FunctionHooks] Function %s does not exist",
+            tostring(oldFunc)))
         return false
     end
     
@@ -41,15 +42,15 @@ end
 --- @param newFunc string The name of the new function
 function FunctionHooks.appendFunction(oldTarget, oldFunc, newTarget, newFunc)
     if oldTarget == nil or oldFunc == nil or newTarget == nil or newFunc == nil then
-        print("[FunctionHooks ERROR] Missing parameters for appendFunction")
+        Logging.warning("[FunctionHooks] Missing parameters for appendFunction")
         return false
     end
     
     local superFunc = oldTarget[oldFunc]
     
     if superFunc == nil then
-        print(string.format("[FunctionHooks WARNING] Function %s.%s does not exist", 
-            tostring(oldTarget), oldFunc))
+        Logging.warning(string.format("[FunctionHooks] Function %s does not exist",
+            tostring(oldFunc)))
         return false
     end
     
@@ -70,7 +71,7 @@ end
 --- @param isStatic boolean Whether the function is static (no self parameter)
 function FunctionHooks.overwriteFunction(oldTarget, oldFunc, newTarget, newFunc, isStatic)
     if oldTarget == nil or oldFunc == nil or newTarget == nil or newFunc == nil then
-        print("[FunctionHooks ERROR] Missing parameters for overwriteFunction")
+        Logging.warning("[FunctionHooks] Missing parameters for overwriteFunction")
         return false
     end
     
@@ -110,8 +111,8 @@ function FunctionHooks.safeHook(hookType, oldTarget, oldFunc, newTarget, newFunc
     end)
     
     if not success then
-        print(string.format("[FunctionHooks ERROR] Failed to hook %s.%s: %s", 
-            tostring(oldTarget), oldFunc, errorMsg))
+        Logging.error(string.format("[FunctionHooks] Failed to hook %s: %s",
+            tostring(oldFunc), errorMsg))
         return false
     end
     
@@ -139,7 +140,7 @@ end
 function FunctionHooks.hookClassMethod(className, methodName, hookType, hookTarget, hookFunc)
     local class = _G[className]
     if class == nil then
-        print(string.format("[FunctionHooks ERROR] Class '%s' not found", className))
+        Logging.warning(string.format("[FunctionHooks] Class '%s' not found", className))
         return false
     end
     
@@ -153,7 +154,7 @@ end
 --- @param originalFunc function The original function to restore
 function FunctionHooks.removeHook(oldTarget, oldFunc, originalFunc)
     if oldTarget == nil or oldFunc == nil or originalFunc == nil then
-        print("[FunctionHooks ERROR] Missing parameters for removeHook")
+        Logging.warning("[FunctionHooks] Missing parameters for removeHook")
         return false
     end
     
@@ -166,4 +167,4 @@ if g_functionHooks == nil then
     g_functionHooks = FunctionHooks
 end
 
-print("[FunctionHooks] Utility loaded")
+Logging.info("[FunctionHooks] Utility loaded")

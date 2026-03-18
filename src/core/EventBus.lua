@@ -1,6 +1,9 @@
 -- =========================================================
 -- FarmTablet v2 – EventBus
--- Lightweight publish/subscribe for mod-wide events
+-- Lightweight publish/subscribe for mod-wide events.
+-- FT_EventBus is a singleton — _listeners is a single shared
+-- table. Listeners registered with :on() persist for the
+-- lifetime of the game session; call :off() to unsubscribe.
 -- =========================================================
 FT_EventBus = {}
 FT_EventBus._listeners = {}

@@ -1,1 +1,7 @@
--- This app's drawer is registered in IncomeApp.lua (mod integration bundle)
+-- =========================================================
+-- FarmTablet v2 – NPCFavorApp  (stub)
+-- The NPC Favor drawer is registered in IncomeApp.lua
+-- alongside the other companion-mod integration apps.
+-- This file exists as a named placeholder so the source()
+-- ordering in main.lua remains self-documenting.
+-- =========================================================

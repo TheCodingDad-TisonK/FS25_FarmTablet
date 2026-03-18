@@ -134,7 +134,7 @@ function FarmTabletUI:closeTablet()
     self.system.isTabletOpen = false
     self:_destroy()
 
-    -- FIX: notify system so it can reset stale state (e.g. workshop selection)
+    -- notify system so it can reset stale state (e.g. workshop selection)
     if self.system.onTabletClosed then
         self.system:onTabletClosed()
     end
@@ -565,10 +565,14 @@ function FarmTabletUI:registerDrawer(appId, fn)
 end
 
 -- ─────────────────────────────────────────────────────────
--- CONTENT LAYOUT HELPERS  (for app files)
+-- CONTENT LAYOUT HELPERS  (for app drawer functions)
+-- All coordinates are in FS25 normalised screen space (0–1).
+-- Y increases upward (bottom = 0, top = 1).
 -- ─────────────────────────────────────────────────────────
 
--- Returns the current content scroll offset (apps subtract this from their Y values)
+--- Returns the current content scroll offset in normalised units.
+--- App drawers add this to their starting Y so scrolled content
+--- moves upward as the user scrolls down.
 function FarmTabletUI:getContentScrollY()
     return self._contentScrollY or 0
 end
@@ -577,15 +581,16 @@ end
 -- SHARED INFO ICON + HELP PAGE HELPERS
 -- ─────────────────────────────────────────────────────────
 
--- Draws a small "i" icon in the bottom-right corner of the content area.
--- stateKey  : string key on self used to store the open/closed boolean,
---             e.g. "_dashHelpOpen".  Must be unique per app.
--- accentColor : {r,g,b,a} table matching the app accent – defaults to FT.C.BRAND.
--- Returns the registered button descriptor (already inserted into _contentBtns).
+--- Draws a small "i" icon button in the bottom-right corner of the content area.
+--- Clicking it sets self[stateKey] = true and re-switches to the current app,
+--- which will then route through drawHelpPage() and render the help overlay.
+---
+---@param stateKey    string  A unique key on self (e.g. "_dashHelpOpen").
+---                           Must be distinct per app to avoid state collisions.
+---@param accentColor table?  RGBA color matching the app accent; defaults to FT.C.BRAND.
+---@return table  The registered button descriptor (already in _contentBtns).
 function FarmTabletUI:drawInfoIcon(stateKey, accentColor)
-    local _, contentY, w, _ = self:contentInner()
-    local x = (self:contentInner())   -- need x separately
-    x = FT.LAYOUT.contentX + FT.px(16)
+    local x, contentY, w, _ = self:contentInner()
     local ac = accentColor or FT.C.BRAND
 
     local iSz = FT.px(18)
@@ -631,14 +636,20 @@ function FarmTabletUI:drawInfoIcon(stateKey, accentColor)
     return btn
 end
 
--- Renders a full help sub-page for an app.
--- stateKey    : same key passed to drawInfoIcon.
--- appId       : FT.APP.xxx constant so BACK button returns to the right app.
--- headerTitle : main title string shown in drawAppHeader.
--- accentColor : {r,g,b,a} table for tinted entry bars.
--- entries     : array of { title=string, body=string } tables.
---               Body supports "\n" for multiple lines.
--- Returns true when the help page was rendered (caller should `return` after).
+--- Renders a full-screen help sub-page for an app.
+--- Call this at the TOP of a drawer function, before any other drawing.
+--- If self[stateKey] is false the function returns false immediately and
+--- the caller should fall through to its normal render path.
+--- If self[stateKey] is true the help page is rendered and the function
+--- returns true — the caller should `return` immediately after.
+---
+---@param stateKey    string  Same key passed to drawInfoIcon.
+---@param appId       string  FT.APP.xxx constant — used by the BACK button to return.
+---@param headerTitle string  Title shown in the app header.
+---@param accentColor table   RGBA accent color for entry title bars.
+---@param entries     table   Array of { title=string, body=string } tables.
+---                           Body supports "\n" for multiple lines.
+---@return boolean  true when the help page was rendered (caller must return).
 function FarmTabletUI:drawHelpPage(stateKey, appId, headerTitle, accentColor, entries)
     if not self[stateKey] then return false end
 
@@ -685,24 +696,28 @@ function FarmTabletUI:drawHelpPage(stateKey, appId, headerTitle, accentColor, en
     return true
 end
 
--- Apps call this after drawing to tell the system how tall their content is.
--- totalH = the Y distance from the top of the content to the lowest element drawn.
--- The system computes how much of that overflows and enables scrolling.
+--- Registers the total rendered height of a scrollable app so the system
+--- can compute how much overflow exists and enable the scroll wheel.
+--- Call this at the end of a drawer function that renders more content
+--- than the content area can display at once.
+---@param totalH number  Distance from content top to the lowest drawn element (normalised units)
 function FarmTabletUI:setContentHeight(totalH)
     local _, _, _, ch = self:contentInner()
     self._contentScrollMax  = math.max(0, totalH - ch)
     self._contentScrollStep = FT.py(22)
-    -- Clamp current scroll in case content shrank
+    -- Clamp current scroll in case content shrank (e.g. after a filter change)
     self._contentScrollY = math.min(self._contentScrollY or 0, self._contentScrollMax)
 end
 
--- Returns the content area table {x,y,w,h}
+--- Returns the raw content area (x, y, w, h) with no padding applied.
 function FarmTabletUI:content()
     return FT.LAYOUT.contentX, FT.LAYOUT.contentY,
            FT.LAYOUT.contentW, FT.LAYOUT.contentH
 end
 
--- Standard content padding inset
+--- Returns the content area inset by the standard padding (x, y, w, h).
+--- App drawers should use this rather than FT.LAYOUT directly so padding
+--- stays consistent across all apps.
 function FarmTabletUI:contentInner()
     local px = FT.px(16)
     local py = FT.py(12)
@@ -712,12 +727,15 @@ function FarmTabletUI:contentInner()
            FT.LAYOUT.contentH - py*2
 end
 
--- Draws the standard app title bar (title + optional right-aligned subtitle)
+--- Draws the standard two-line app title bar (title + optional right-aligned subtitle)
+--- with a coloured divider below it.
+--- Returns the Y coordinate where scrollable content should begin (just below the divider).
+---@param title    string  Primary app title
+---@param subtitle string? Optional right-aligned secondary label
 function FarmTabletUI:drawAppHeader(title, subtitle)
     local x, y, w, h = self:contentInner()
     local topY = y + h - FT.py(2)
 
-    -- Get current app accent color
     local accent = FT.appColor(self.system.currentApp)
 
     self.r:appText(x, topY, FT.FONT.TITLE, title,
@@ -728,47 +746,62 @@ function FarmTabletUI:drawAppHeader(title, subtitle)
             RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
     end
 
-    -- Colored divider below title
+    -- Coloured divider line
     local divY = topY - FT.py(18)
-    -- Accent colored rule
     self.r:appRect(x, divY, w, math.max(FT.py(1.5), 0.001),
         {accent[1], accent[2], accent[3], 0.80})
-    -- Glow under rule
+    -- Soft glow beneath the divider
     self.r:appRect(x, divY - FT.py(2), w, FT.py(3),
         {accent[1], accent[2], accent[3], 0.12})
 
-    -- Return the Y coordinate where content should start (below header)
     return divY - FT.py(6)
 end
 
--- Standard row: label | value
+--- Draws a label/value row and returns the next Y below it.
+---@param y       number   Starting Y coordinate
+---@param label   string   Left-aligned label text
+---@param value   string   Right-aligned value text
+---@param labelC  table?   RGBA color for label  (default: FT.C.TEXT_NORMAL)
+---@param valueC  table?   RGBA color for value  (default: FT.C.TEXT_ACCENT)
 function FarmTabletUI:drawRow(y, label, value, labelC, valueC)
     local x, _, w, _ = self:contentInner()
     self.r:row(x, y, w, label, value, labelC, valueC)
     return y - FT.py(FT.SP.ROW)
 end
 
--- Section header with accent bar
+--- Draws a section header with a coloured left accent bar.
+--- Returns the next Y below the header.
 function FarmTabletUI:drawSection(y, label)
     local x, _, w, _ = self:contentInner()
     self.r:sectionHeader(x, y, w, label)
     return y - FT.py(18)
 end
 
--- Divider rule
+--- Draws a thin horizontal divider rule.
+--- Returns the next Y below the rule.
+---@param alpha number? Opacity (default 0.6)
 function FarmTabletUI:drawRule(y, alpha)
     local x, _, w, _ = self:contentInner()
     self.r:rule(x, y, w, alpha)
     return y - FT.py(4)
 end
 
--- Progress bar
+--- Draws a horizontal progress bar spanning the full content width.
+--- Returns the next Y below the bar.
+---@param value  number  Current value
+---@param maxVal number  Maximum value
+---@param color  table?  RGBA bar fill color (default: FT.C.BRAND)
 function FarmTabletUI:drawBar(y, value, maxVal, color)
     local x, _, w, _ = self:contentInner()
     return self.r:progressBar(x, y, w, value, maxVal, color)
 end
 
--- Action button (registers hit region)
+--- Draws a single action button and registers it for click handling.
+--- Returns (nextY, buttonDescriptor).
+---@param y     number  Y coordinate for the button top
+---@param label string  Button label text
+---@param color table   Background RGBA color
+---@param meta  table   Table with onClick callback: { onClick = function() ... end }
 function FarmTabletUI:drawButton(y, label, color, meta)
     local x, _, w, _ = self:contentInner()
     local bw = FT.px(90)
@@ -778,7 +811,8 @@ function FarmTabletUI:drawButton(y, label, color, meta)
     return y - bh - FT.py(4), btn
 end
 
--- Pair of buttons side by side
+--- Draws two action buttons side by side and registers both for click handling.
+--- Returns (nextY, btnA, btnB).
 function FarmTabletUI:drawButtonPair(y, labelA, colorA, metaA, labelB, colorB, metaB)
     local x, _, w, _ = self:contentInner()
     local bw = FT.px(100)
@@ -898,15 +932,11 @@ end
 
 function FarmTabletUI:_refreshTopbar()
     if not self.isOpen then return end
-    -- FIX: do NOT wipe self.r._texts entirely – that would erase any persistent
-    -- text drawn via r:text() elsewhere (e.g. future feature additions).
-    -- Instead, clear only the topbar/sidebar entries by rebuilding just that
-    -- subset. Since ALL chrome text is redrawn below, we can safely wipe _texts
-    -- only if we guarantee this function re-adds everything that was in it.
-    -- The safest approach: keep a separate _chromeTexts list rebuilt here,
-    -- and leave _texts alone. For now we keep the original behavior but note
-    -- the risk: any persistent r:text() calls outside _drawChrome/_drawSidebar
-    -- will be silently cleared every 2 s.
+    -- NOTE: This wipes ALL persistent text (self.r._texts) and re-adds only the chrome
+    -- text entries. Any persistent r:text() calls made outside of _drawChrome() /
+    -- _drawSidebar() will be silently lost until the next full rebuild.
+    -- This is intentional and acceptable because the only persistent text is chrome text.
+    -- Do NOT add permanent r:text() calls in app drawers — use r:appText() instead.
     self.r._texts = {}
     -- Re-draw brand labels in sidebar (positions match _drawChrome)
     local L = FT.LAYOUT

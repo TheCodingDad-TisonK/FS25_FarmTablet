@@ -1,14 +1,7 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – SettingsGUI
+-- Registers all developer console commands for the tablet.
+-- Only active on the local client (never on dedicated server).
 -- =========================================================
 ---@class SettingsGUI
 

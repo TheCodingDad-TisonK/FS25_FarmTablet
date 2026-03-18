@@ -1,9 +1,8 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
+-- FarmTablet v2 – InputHandler
+-- Polls keyboard state each frame to toggle the tablet.
+-- Key constants are resolved once at registerKeyBinding()
+-- and cached for zero-cost per-frame lookup.
 -- =========================================================
 ---@class InputHandler
 InputHandler = {}

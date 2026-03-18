@@ -1,7 +1,15 @@
 -- =========================================================
--- FarmTablet v2 – DataProvider  (FIXED)
--- Single access point for all FS25 game data queries.
--- Includes a simple time-based cache to avoid per-frame lookups.
+-- FarmTablet v2 – DataProvider
+-- Single access point for all FS25 game-data queries.
+-- All public methods are cached with a per-key TTL so the
+-- underlying FS25 APIs are not polled every frame.
+--
+-- Cache contract:
+--   • Data is refreshed when (now - entry.t) >= TTL.
+--   • "now" is g_currentMission.time (milliseconds since
+--     mission start), so TTL values are in milliseconds.
+--   • Call :invalidate() to flush all entries immediately
+--     (used on tablet close and after repairs).
 -- =========================================================
 ---@class FT_DataProvider
 FT_DataProvider = {}
@@ -28,6 +36,9 @@ end
 
 -- ── Farm / Finance ────────────────────────────────────────
 
+--- Returns the farm ID that the local player belongs to.
+--- Falls back to 1 (the default single-player farm) if the player object
+--- is not yet available or does not expose getFarmId().
 function FT_DataProvider:getPlayerFarmId()
     if g_currentMission and g_currentMission.player then
         local p = g_currentMission.player
@@ -40,7 +51,7 @@ function FT_DataProvider:getBalance(farmId)
     return self:_cached("balance_"..farmId, 1000, function()
         if g_farmManager then
             local farm = g_farmManager:getFarmById(farmId)
-            -- FIX: farm:getBalance() is the proven API (confirmed in AIJob.lua reference)
+            -- farm:getBalance() is the authoritative FS25 API (confirmed in AIJob.lua)
             if farm and farm.getBalance then
                 return math.floor(farm:getBalance() or 0)
             elseif farm and farm.balance then
@@ -69,8 +80,9 @@ function FT_DataProvider:getFarmName(farmId)
     return nil
 end
 
--- FIX: FS25 does NOT expose a statsItems list on g_currentMission.statistics.
--- Income/expenses come from farm.stats – a key/value table updated by the game.
+-- FS25 does not expose a statsItems list on g_currentMission.statistics.
+-- Income and expense totals come from farm.stats — a key/value table
+-- updated by the game engine each session.
 function FT_DataProvider:getIncome(farmId)
     return self:_cached("income_"..farmId, 3000, function()
         if not g_farmManager then return 0 end
@@ -115,7 +127,7 @@ end
 
 -- ── Farm Stats ────────────────────────────────────────────
 
--- FIX: Farmland.field is the single Field linked to a farmland (not a fieldIds array).
+-- Each Farmland links to one Field via farmland.field (set by FieldManager).
 -- g_fieldManager.farmlandIdFieldMapping[farmlandId] is the authoritative lookup.
 function FT_DataProvider:getActiveFieldCount(farmId)
     return self:_cached("fieldcount_"..farmId, 5000, function()
@@ -139,7 +151,7 @@ function FT_DataProvider:getVehicleCount(farmId)
         local count = 0
         if g_currentMission and g_currentMission.vehicles then
             for _, v in pairs(g_currentMission.vehicles) do
-                -- FIX: use getOwnerFarmId() only – it is the authoritative method
+                -- use getOwnerFarmId() only – it is the authoritative method
                 if v.spec_motorized and v.getOwnerFarmId then
                     if v:getOwnerFarmId() == farmId then count = count + 1 end
                 end
@@ -157,7 +169,7 @@ function FT_DataProvider:getWorldInfo()
             return nil
         end
         local env = g_currentMission.environment
-        -- FIX: FS25 uses env.dayTime (ms within the day, 0–86400000).
+        -- FS25 uses env.dayTime (ms within the day, 0–86400000).
         -- Seasons mod adds currentSeason; guard with nil check.
         local dayTimeMs  = env.dayTime or 0
         local totalHours = dayTimeMs / 3600000
@@ -319,7 +331,7 @@ local GROWTH_STATES = {
     [8]  = { name = "Harvested",  color = FT.C.MUTED     },
 }
 
--- FIX: Each Farmland links to ONE Field via farmland.field (set by FieldManager).
+-- Each Farmland links to ONE Field via farmland.field (set by FieldManager).
 -- Crop/growth state must be queried via FieldState:update(cx, cz), not from field directly.
 function FT_DataProvider:getOwnedFields(farmId)
     return self:_cached("fields_"..farmId, 4000, function()
@@ -387,7 +399,7 @@ end
 
 -- ── Animals ───────────────────────────────────────────────
 
--- FIX: Animal pens are Placeables with spec_husbandry.
+-- Animal pens are Placeables with spec_husbandry.
 -- Counts:  placeable:getNumOfAnimals() / getMaxNumOfAnimals()
 -- Food:    placeable:getTotalFood()    / getFoodCapacity()
 -- Water:   placeable:getHusbandryFillLevel(FillType.WATER) / getHusbandryCapacity(FillType.WATER)
@@ -520,7 +532,7 @@ function FT_DataProvider:getNearbyVehicles(radiusM)
                     end
                 end
 
-                -- FIX: operatingTime is on the vehicle root table in milliseconds
+                -- operatingTime is on the vehicle root table in milliseconds
                 local opHours = 0
                 if v.operatingTime then
                     opHours = math.floor(v.operatingTime / 3600000)
@@ -545,6 +557,10 @@ end
 
 -- ── Helpers ───────────────────────────────────────────────
 
+--- Formats an integer money amount using the game's locale-aware formatter.
+--- Falls back to a simple "$amount" string if g_i18n is unavailable.
+---@param amount number
+---@return string
 function FT_DataProvider:formatMoney(amount)
     if g_i18n then
         return g_i18n:formatMoney(amount, 0, true, true) or ("$"..amount)
@@ -552,13 +568,18 @@ function FT_DataProvider:formatMoney(amount)
     return string.format("$%d", amount or 0)
 end
 
--- FIX: guard against nil season (base game has no seasons mod)
+-- guard against nil season (base game has no seasons mod)
+--- Returns the display name for a season index (0=Spring … 3=Winter).
+--- Returns nil if seasonIdx is nil (base game has no seasons).
 local SEASON_NAMES = {"Spring","Summer","Autumn","Winter"}
 function FT_DataProvider:getSeasonName(seasonIdx)
     if seasonIdx == nil then return nil end
     return SEASON_NAMES[seasonIdx + 1] or "Unknown"
 end
 
+--- Flushes all cached data immediately.
+--- Call this after any action that changes game state (repairs, tablet close, etc.)
+--- so the next draw cycle picks up fresh values.
 function FT_DataProvider:invalidate()
     self._cache = {}
 end

@@ -1,14 +1,8 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – SettingsUI
+-- Injects Farm Tablet options into the FS25 pause-menu
+-- settings page (InGameMenuSettingsFrame / generalSettingsLayout).
+-- Also adds a reset button to the frame footer.
 -- =========================================================
 ---@class SettingsUI
 SettingsUI = {}
@@ -83,22 +77,30 @@ function SettingsUI:_doInject()
         end
     )
     
-    -- Startup app option
+    -- Startup app option — UIHelper.createMultiOption uses 1-based numeric indices;
+    -- Settings.startupApp is now a string ID. We map between them here.
+    local startupIdMap = { "dashboard", "app_store", "weather", "digging" }
+    local startupIdxMap = {}
+    for i, id in ipairs(startupIdMap) do startupIdxMap[id] = i end
+
     local startupOptions = {
         getTextSafe("ft_ui_startupapp_1"),
         getTextSafe("ft_ui_startupapp_2"),
         getTextSafe("ft_ui_startupapp_3"),
         getTextSafe("ft_ui_startupapp_4")
     }
-    
+
+    local startupState = startupIdxMap[self.settings.startupApp] or 1
+
     local startupOpt = UIHelper.createMultiOption(
         layout,
         "ft_startupapp",
         "ft_startupapp",
         startupOptions,
-        self.settings.startupApp,
+        startupState,
         function(val)
-            self.settings.startupApp = val
+            -- val is the 1-based numeric index chosen by the UI element
+            self.settings.startupApp = startupIdMap[val] or "dashboard"
             self.settings:save()
             Logging.info("Farm Tablet: Startup app set to " .. self.settings:getStartupAppName())
         end
@@ -159,7 +161,10 @@ function SettingsUI:refreshUI()
     end
     
     if self.startupOption and self.startupOption.setState then
-        self.startupOption:setState(self.settings.startupApp)
+        -- Map string app ID back to 1-based numeric index for the UI element
+        local startupIdxMap = { dashboard=1, app_store=2, weather=3, digging=4 }
+        local idx = startupIdxMap[self.settings.startupApp] or 1
+        self.startupOption:setState(idx)
     end
     
     if self.notificationsOption and self.notificationsOption.setIsChecked then

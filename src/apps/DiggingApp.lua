@@ -2,7 +2,10 @@
 -- FarmTablet v2 – Digging / Excavation App
 -- Real-time terrain scanner for excavation work
 -- =========================================================
-
+-- DiggingState is intentionally module-level (not per-instance)
+-- because only one FarmTabletUI exists per session. The timer
+-- persists across tablet open/close cycles so the interval
+-- stays consistent; it resets naturally each game load.
 local DiggingState = {
     isScanning = false,
     scanData   = nil,
@@ -115,6 +118,10 @@ function FarmTabletUI:updateDiggingApp(dt)
     DiggingState.lastScan = (DiggingState.lastScan or 0) + dt
     if DiggingState.lastScan >= 500 then
         DiggingState.lastScan = 0
-        self:switchApp(FT.APP.DIGGING)
+        -- Lightweight refresh: rebuild only the content layer to avoid
+        -- a full chrome+sidebar rebuild every 500 ms.
+        self.r:clearAppLayer()
+        self._contentBtns = {}
+        self:_drawContent()
     end
 end
