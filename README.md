@@ -23,20 +23,8 @@
 
 <div align="center">
 
-```
- ┌─────────────────────────────────────────────────────────┐
- │  FARM TABLET  v2.1.2.1   │  Green Valley Farm  │ 14:32  │
- ├──────────┬──────────────────────────────────────────────┤
- │  DASH    │  CURRENT BALANCE          $1,284,750          │
- │  WTH     │  ─────────────────────────────────────────── │
- │  FLD     │  Income      $248,300    Net P/L  +$184,200   │
- │  ANI     │  Expenses     $64,100                         │
- │  WRK     │  ─────────────────────────────────────────── │
- │  DIG     │  Active Fields    12      Vehicles   8        │
- │  BCK     │  Season        Spring     Day        47       │
- │  SET     │  Weather    Cloudy  18°C  Wind 12 km/h NW     │
- └──────────┴──────────────────────────────────────────────┘
-```
+<img width="234" height="345" alt="ft_dashboard" src="https://github.com/user-attachments/assets/79663aec-49ac-4ced-8bbe-b5e87be138e7" /> <img width="234" height="345" alt="ft_settings" src="https://github.com/user-attachments/assets/db08e9d1-30db-4007-b28c-4e77bdb29b94" /> <img width="234" height="345" alt="ft_npc" src="https://github.com/user-attachments/assets/f227f57a-0601-43dd-b8cf-80730d62b494" /> <img width="234" height="345" alt="ft_bt" src="https://github.com/user-attachments/assets/fc7442b3-2c39-4263-befc-5f6c71b0ab4f" />
+
 
 **🎯 Everything you need. Nothing you don't.**  
 <sub><em>Balance, weather, fields, animals, workshops, and more — one key press away</em></sub>
@@ -222,14 +210,9 @@ These apps appear in the sidebar the moment their companion mod is active. No to
 
 ### Customising the Tablet
 
-**Right-click** the open tablet to enter Edit Mode:
+Click **EDIT-MODE** inside the settings app to enter Edit Mode:
 
-```
-  Drag body      →  move anywhere on screen
-  Drag corners   →  scale the whole tablet (50–200%)
-  Drag edges     →  adjust width independently
-  Right-click    →  save and exit
-```
+<img width="334" height="445" alt="ft_hud" src="https://github.com/user-attachments/assets/14cc54bc-111e-4c6e-8f2f-5f6773444afa" />
 
 Position and scale are saved automatically. Reset anytime from **Settings → RESET POSITION & SCALE**.
 
