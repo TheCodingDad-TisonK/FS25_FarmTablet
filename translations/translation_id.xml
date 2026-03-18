@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Tablet Pertanian"/>
+        <text name="ft_ui_welcome_title" text="Tablet Pertanian v2"/>
+        <text name="ft_ui_welcome_message" text="Tekan %s untuk membuka"/>
+        <text name="ft_ui_enabled_short" text="Aktifkan Tablet"/>
+        <text name="ft_ui_enabled_long" text="Mengaktifkan atau menonaktifkan sistem tablet pertanian"/>
+        <text name="ft_ui_keybind_short" text="Buka Kunci"/>
+        <text name="ft_ui_keybind_long" text="Kunci untuk membuka/menutup tablet pertanian"/>
+        <text name="ft_ui_notifications_short" text="Pemberitahuan"/>
+        <text name="ft_ui_notifications_long" text="Tampilkan notifikasi tablet saat memuat game"/>
+        <text name="ft_ui_startupapp_short" text="Aplikasi Permulaan"/>
+        <text name="ft_ui_startupapp_long" text="Aplikasi bawaan saat membuka tablet"/>
+        <text name="ft_ui_startupapp_1" text="Dasbor"/>
+        <text name="ft_ui_startupapp_2" text="Toko Aplikasi"/>
+        <text name="ft_ui_startupapp_3" text="Cuaca"/>
+        <text name="ft_ui_startupapp_4" text="Penggalian"/>
+        <text name="ft_ui_soundeffects_short" text="Efek Suara"/>
+        <text name="ft_ui_soundeffects_long" text="Mainkan efek suara untuk interaksi tablet"/>
+        <text name="ft_ui_debug_short" text="Modus Debug"/>
+        <text name="ft_ui_debug_long" text="Aktifkan debug logging di konsol"/>
+        <text name="ft_ui_reset" text="Atur Ulang Pengaturan Tablet"/>
+        <text name="ft_ui_app_dashboard" text="Dasbor"/>
+        <text name="ft_ui_app_store" text="Toko Aplikasi"/>
+        <text name="ft_ui_app_updates" text="Pembaruan"/>
+        <text name="ft_ui_app_settings" text="Pengaturan"/>
+        <text name="ft_ui_app_workshop" text="Bengkel"/>
+        <text name="ft_ui_app_field_status" text="Manajer Lapangan"/>
+        <text name="ft_ui_app_animals" text="Hewan"/>
+        <text name="ft_ui_app_weather" text="Cuaca"/>
+        <text name="ft_ui_app_digging" text="Penggalian"/>
+        <text name="ft_ui_app_bucket_tracker" text="Pelacak Ember"/>
+        <text name="ft_ui_app_income_mod" text="Mod Pendapatan"/>
+        <text name="ft_ui_app_tax_mod" text="Modus Pajak"/>
+        <text name="ft_ui_app_npc_favor" text="Bantuan NPC"/>
+        <text name="ft_ui_app_crop_stress" text="Stres Tanaman"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Pupuk Tanah"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Memulai"/>
+        <text name="ft_help_cat_apps" text="Aplikasi Pertanian"/>
+        <text name="ft_help_cat_mods" text="Modifikasi Pendamping"/>
+        <text name="ft_help_cat_settings" text="Pengaturan &amp; Konsol"/>
+        <text name="ft_help_p1_title" text="Membuka &amp; Menavigasi"/>
+        <text name="ft_help_p1_open_title" text="Membuka Tablet"/>
+        <text name="ft_help_p1_open_text" text="Tekan T (dapat dikonfigurasi) kapan saja untuk membuka atau menutup Tablet Pertanian. Anda dapat mengubah kunci di aplikasi Pengaturan atau dengan mengetikkan TabletKeybind diikuti dengan huruf kunci di konsol pengembang."/>
+        <text name="ft_help_p1_nav_title" text="Navigasi Bilah Sisi"/>
+        <text name="ft_help_p1_nav_text" text="Sidebar kiri menampilkan satu ikon untuk setiap aplikasi yang diinstal. Klik ikon mana pun untuk berpindah aplikasi secara instan. Jika Anda memiliki banyak mod pendamping yang aktif, sidebar akan bergulir — gunakan roda mouse sambil mengarahkan kursor ke atasnya untuk menggulir ke atas dan ke bawah."/>
+        <text name="ft_help_p2_title" text="Memindahkan &amp; Mengubah Ukuran"/>
+        <text name="ft_help_p2_move_title" text="Modus Pengeditan"/>
+        <text name="ft_help_p2_move_text" text="Buka aplikasi Pengaturan dan klik ENTER EDIT MODE. Dalam mode edit, Anda dapat menyeret badan tablet untuk mengubah posisinya di mana saja pada layar, menyeret pegangan sudut mana pun untuk menskalakan keseluruhan tablet, atau menyeret tepi kiri atau kanan untuk menyesuaikan lebarnya saja. Klik kanan di mana saja untuk keluar dari mode edit. Posisi dan skala Anda disimpan secara otomatis."/>
+        <text name="ft_help_p2_key_title" text="Mengubah Kunci Terbuka"/>
+        <text name="ft_help_p2_key_text" text="Kunci defaultnya adalah T. Untuk mengubahnya, buka aplikasi Pengaturan dan temukan pengaturan Keybind, atau ketik TabletKeybind diikuti dengan nama kunci di konsol pengembang — misalnya TabletKeybind H menyetel kunci ke H. Huruf tunggal, tombol F, dan kunci umum seperti TAB dan ESC semuanya didukung."/>
+        <text name="ft_help_a1_title" text="Dasbor &amp; Cuaca"/>
+        <text name="ft_help_a1_dash_title" text="Dasbor"/>
+        <text name="ft_help_a1_dash_text" text="Dasbor adalah ringkasan sekilas pertanian Anda. Ini menunjukkan saldo Anda saat ini dalam kartu pahlawan besar di bagian atas, lalu pendapatan, pengeluaran, dan laba bersih untuk sesi di bawah. Statistik Pertanian mencantumkan berapa banyak ladang yang Anda miliki dan jumlah total kendaraan Anda. Bagian Dunia menunjukkan musim saat ini, hari, waktu, dan cuplikan cuaca langsung. Ketuk ikon info kecil di sudut kanan bawah Dasbor untuk penjelasan detail setiap nilai."/>
+        <text name="ft_help_a1_weather_title" text="Aplikasi Cuaca"/>
+        <text name="ft_help_a1_weather_text" text="Aplikasi Cuaca menampilkan prakiraan multi-hari terperinci dengan suhu, kemungkinan curah hujan, dan angin. Kondisi diberi kode warna: biru untuk hujan, oranye untuk badai, putih untuk langit cerah. Gunakan ini bersama dengan mod Crop Stress untuk memutuskan kapan menjadwalkan irigasi."/>
+        <text name="ft_help_a2_title" text="Ladang &amp; Hewan"/>
+        <text name="ft_help_a2_fields_title" text="Manajer Lapangan"/>
+        <text name="ft_help_a2_fields_text" text="Manajer Lapangan mencantumkan setiap bidang yang Anda miliki. Setiap baris menunjukkan jenis tanaman, fase pertumbuhan saat ini sebagai lencana (Ditabur, Tumbuh, Siap), dan titik status berkode warna. Hijau berarti lapangan tidak memerlukan perhatian. Kuning berarti membutuhkan sesuatu — pupuk, pembajakan, atau penggulungan. Merah berarti tanaman siap dipanen atau memerlukan tindakan segera."/>
+        <text name="ft_help_a2_animals_title" text="Hewan"/>
+        <text name="ft_help_a2_animals_text" text="Aplikasi Hewan menampilkan setiap pena yang Anda miliki dengan tiga bilah kemajuan: ketinggian makanan, ketinggian air, dan kebersihan. Bilah hijau tidak memerlukan tindakan apa pun. Bilah kuning harus segera diisi ulang. Bilah merah sangat penting dan akan memengaruhi produktivitas jika dibiarkan."/>
+        <text name="ft_help_a3_title" text="Lokakarya &amp; Pelacak Ember"/>
+        <text name="ft_help_a3_workshop_title" text="Bengkel"/>
+        <text name="ft_help_a3_workshop_text" text="Berjalanlah dalam jarak 25 meter dari kendaraan apa pun dan itu akan muncul secara otomatis di aplikasi Lokakarya. Setiap entri menunjukkan tingkat bahan bakar, persentase keausan, dan total jam pengoperasian. Klik PILIH pada kendaraan mana pun untuk menyematkannya — kendaraan yang disematkan tetap terlihat di aplikasi bahkan saat Anda berjalan jauh, sehingga memudahkan untuk memantau mesin yang bekerja di lapangan."/>
+        <text name="ft_help_a3_bucket_title" text="Pelacak Ember"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker aktif secara otomatis saat Anda mengemudikan wheel loader, excavator, atau material handler. Ini menghitung setiap siklus pembuangan dan menyimpan catatan jenis material dan perkiraan berat per muatan. Gunakan untuk melacak produktivitas pada pekerjaan tanah, penyebaran kotoran, atau pekerjaan penanganan material dalam jumlah besar."/>
+        <text name="ft_help_m1_title" text="Modifikasi Pendapatan &amp; Pajak"/>
+        <text name="ft_help_m1_income_title" text="Mod Pendapatan FS25"/>
+        <text name="ft_help_m1_income_text" text="Saat FS25_IncomeMod aktif di savegame Anda, aplikasi Pendapatan muncul di sidebar. Ini menunjukkan mode pembayaran saat ini, jumlah yang dijadwalkan, dan memungkinkan Anda mengaktifkan atau menonaktifkan mod tanpa meninggalkan tablet. Perubahan akan segera berlaku."/>
+        <text name="ft_help_m1_tax_title" text="Mod Pajak FS25"/>
+        <text name="ft_help_m1_tax_text" text="Ketika FS25_TaxMod aktif, aplikasi Pajak menunjukkan tarif pajak Anda saat ini, persentase pengembalian, dan total pajak yang dibayarkan pada sesi ini. Anda dapat mengaktifkan atau menonaktifkan mod dari tablet dan melihat sekilas persyaratan saldo minimum."/>
+        <text name="ft_help_m2_title" text="Stres Tanaman &amp; Pupuk Tanah"/>
+        <text name="ft_help_m2_cropstress_title" text="Stres Tanaman Musiman FS25"/>
+        <text name="ft_help_m2_cropstress_text" text="Saat FS25_SeasonalCropStress aktif, aplikasi Crop Stress mencantumkan setiap lahan dengan persentase kelembaban tanah saat ini dan akumulasi tekanan kekeringan. Bilah berkode warna sekilas menunjukkan kesehatan: hijau baik-baik saja, kuning adalah peringatan, merah berarti stres sudah meningkat dan penurunan hasil sudah dimulai. Instal mod itu dan buka bagian bantuannya sendiri untuk panduan irigasi lengkap."/>
+        <text name="ft_help_m2_soil_title" text="Pupuk Tanah FS25"/>
+        <text name="ft_help_m2_soil_text" text="Saat FS25_SoilFertilizer aktif, aplikasi Pupuk Tanah menunjukkan nitrogen, fosfor, kalium, pH, dan bahan organik per bidang. Pilih lahan mana saja dari daftar untuk melihat profil tanah secara lengkap dan apakah lahan tersebut memerlukan pemupukan. Kadar gizi diberi kode warna: hijau baik, kuning cukup, merah perlu perhatian."/>
+        <text name="ft_help_m3_title" text="Toko Aplikasi"/>
+        <text name="ft_help_m3_appstore_title" text="Menemukan Aplikasi yang Terinstal"/>
+        <text name="ft_help_m3_appstore_text" text="Aplikasi App Store mencantumkan setiap aplikasi yang terdaftar di tablet, termasuk aplikasi mod pendamping. Aplikasi yang memerlukan mod yang saat ini tidak aktif ditampilkan dalam keadaan redup sehingga Anda tahu bahwa mod tersebut tersedia setelah Anda mengaktifkan mod yang cocok. Tidak diperlukan konfigurasi — aplikasi pendamping muncul secara otomatis saat modnya dimuat."/>
+        <text name="ft_help_s1_title" text="Pengaturan Tablet"/>
+        <text name="ft_help_s1_settings_title" text="Apa yang Dapat Anda Ubah"/>
+        <text name="ft_help_s1_settings_text" text="Buka aplikasi Pengaturan dari sidebar untuk mengelola: posisi dan skala tablet (atau gunakan Mode Edit untuk menyeret secara visual), aplikasi startup yang ditampilkan saat Anda pertama kali membuka tablet, apakah akan menampilkan pemberitahuan selamat datang saat dimuat, dan debug logging untuk pemecahan masalah. Semua pengaturan disimpan secara otomatis saat Anda menutup permainan."/>
+        <text name="ft_help_s1_sound_title" text="Efek Suara"/>
+        <text name="ft_help_s1_sound_text" text="Efek suara diaktifkan secara default. Klik pemilihan aplikasi diputar saat Anda berpindah aplikasi. Suara paging diputar saat panel bantuan dalam game terbuka atau tertutup. Keduanya dapat diubah secara independen di aplikasi Pengaturan."/>
+        <text name="ft_help_s2_title" text="Perintah Konsol"/>
+        <text name="ft_help_s2_console_title" text="Perintah yang Tersedia"/>
+        <text name="ft_help_s2_console_text" text="Buka konsol pengembang dengan tombol tilde dan ketik tablet untuk melihat semua perintah yang tersedia. Contoh: TabletKeybind H mengubah kunci terbuka menjadi H. TabletSetStartupApp cuaca membuka aplikasi Cuaca secara default. TabletResetSettings mengembalikan semua pengaturan tablet ke defaultnya. TabletToggleDebug mengaktifkan atau menonaktifkan log masuk panjang."/>
+
+    </texts>
+</l10n>

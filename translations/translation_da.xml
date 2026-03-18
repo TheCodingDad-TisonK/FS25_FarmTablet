@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Farm Tablet"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Tryk på %s for at åbne"/>
+        <text name="ft_ui_enabled_short" text="Aktiver tablet"/>
+        <text name="ft_ui_enabled_long" text="Aktiver eller deaktiver farm tablet-systemet"/>
+        <text name="ft_ui_keybind_short" text="Åbn nøgle"/>
+        <text name="ft_ui_keybind_long" text="Nøgle til at åbne/lukke farm-tabletten"/>
+        <text name="ft_ui_notifications_short" text="Meddelelser"/>
+        <text name="ft_ui_notifications_long" text="Vis tabletmeddelelser ved spilindlæsning"/>
+        <text name="ft_ui_startupapp_short" text="Startup App"/>
+        <text name="ft_ui_startupapp_long" text="Standard app, når du åbner tabletten"/>
+        <text name="ft_ui_startupapp_1" text="Dashboard"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Vejr"/>
+        <text name="ft_ui_startupapp_4" text="Gravning"/>
+        <text name="ft_ui_soundeffects_short" text="Lydeffekter"/>
+        <text name="ft_ui_soundeffects_long" text="Afspil lydeffekter til tablet-interaktioner"/>
+        <text name="ft_ui_debug_short" text="Fejlretningstilstand"/>
+        <text name="ft_ui_debug_long" text="Aktiver fejlretningslogning i konsollen"/>
+        <text name="ft_ui_reset" text="Nulstil tabletindstillinger"/>
+        <text name="ft_ui_app_dashboard" text="Dashboard"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Opdateringer"/>
+        <text name="ft_ui_app_settings" text="Indstillinger"/>
+        <text name="ft_ui_app_workshop" text="Værksted"/>
+        <text name="ft_ui_app_field_status" text="Feltleder"/>
+        <text name="ft_ui_app_animals" text="Dyr"/>
+        <text name="ft_ui_app_weather" text="Vejr"/>
+        <text name="ft_ui_app_digging" text="Gravning"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Indkomst Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Skat Mod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="Afgrødestress"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Jordgødning"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Kom godt i gang"/>
+        <text name="ft_help_cat_apps" text="Farm Apps"/>
+        <text name="ft_help_cat_mods" text="Companion Mods"/>
+        <text name="ft_help_cat_settings" text="Indstillinger og konsol"/>
+        <text name="ft_help_p1_title" text="Åbning og navigation"/>
+        <text name="ft_help_p1_open_title" text="Åbning af tabletten"/>
+        <text name="ft_help_p1_open_text" text="Tryk på T (konfigurerbar) til enhver tid for at åbne eller lukke Farm Tablet. Du kan ændre nøglen i appen Indstillinger eller ved at skrive TabletKeybind efterfulgt af et nøglebogstav i udviklerkonsollen."/>
+        <text name="ft_help_p1_nav_title" text="Sidebar Navigation"/>
+        <text name="ft_help_p1_nav_text" text="Den venstre sidebjælke viser et ikon pr. installeret app. Klik på et ikon for at skifte apps med det samme. Hvis du har mange ledsagende mods aktive, vil sidebjælken rulle - brug musehjulet, mens du holder musemarkøren over det for at rulle op og ned."/>
+        <text name="ft_help_p2_title" text="Flytning &amp; Ændring af størrelse"/>
+        <text name="ft_help_p2_move_title" text="Redigeringstilstand"/>
+        <text name="ft_help_p2_move_text" text="Åbn appen Indstillinger, og klik på ANGIV REDIGER TILSTAND. I redigeringstilstand kan du trække tabletkroppen for at flytte den hvor som helst på skærmen, trække et hvilket som helst hjørnehåndtag for at skalere hele tabletten eller trække i venstre eller højre kant for kun at justere bredden. Højreklik hvor som helst for at afslutte redigeringstilstand. Din position og skala gemmes automatisk."/>
+        <text name="ft_help_p2_key_title" text="Ændring af åben nøgle"/>
+        <text name="ft_help_p2_key_text" text="Standardnøglen er T. For at ændre den skal du åbne appen Indstillinger og finde indstillingen Keybind, eller skriv TabletKeybind efterfulgt af et nøglenavn i udviklerkonsollen - for eksempel sætter TabletKeybind H nøglen til H. Enkelte bogstaver, F-taster og almindelige taster som TAB og ESC er alle understøttet."/>
+        <text name="ft_help_a1_title" text="Dashboard &amp; Vejr"/>
+        <text name="ft_help_a1_dash_title" text="Dashboard"/>
+        <text name="ft_help_a1_dash_text" text="Dashboardet er dit gårdresumé med et enkelt blik. Det viser din nuværende saldo i et stort heltekort øverst, derefter indtægter, udgifter og nettooverskud for sessionen nedenfor. Farm Stats viser, hvor mange marker du ejer, og dit samlede antal køretøjer. Verdenssektionen viser den aktuelle sæson, dag, tidspunkt på dagen og et øjebliksbillede af vejret. Tryk på det lille info-ikon i nederste højre hjørne af dashboardet for en detaljeret forklaring af hver værdi."/>
+        <text name="ft_help_a1_weather_title" text="Vejr app"/>
+        <text name="ft_help_a1_weather_text" text="Vejr-appen viser en detaljeret flerdagesudsigt med temperatur, nedbørssandsynlighed og vind. Betingelserne er farvekodede: blå for regn, orange for storme, hvid for klar himmel. Brug dette sammen med Crop Stress-moden til at beslutte, hvornår vanding skal planlægges."/>
+        <text name="ft_help_a2_title" text="Marker og dyr"/>
+        <text name="ft_help_a2_fields_title" text="Feltleder"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager viser alle felter, du ejer. Hver række viser afgrødetypen, den aktuelle vækstfase som et mærke (Sået, Voksende, Klar) og en farvekodet tilstandsprik. Grøn betyder, at feltet ikke behøver opmærksomhed. Gul betyder, at den har brug for noget - gødning, pløjning eller rulning. Rød betyder, at afgrøden er klar til at høste eller kræver akut handling."/>
+        <text name="ft_help_a2_animals_title" text="Dyr"/>
+        <text name="ft_help_a2_animals_text" text="Animals-appen viser hver kuglepen, du ejer, med tre statusbjælker: madniveau, vandniveau og renlighed. Grønne søjler behøver ingen handling. Gule søjler bør snart fyldes op. Røde bjælker er kritiske og vil påvirke produktiviteten, hvis de efterlades uden opsyn."/>
+        <text name="ft_help_a3_title" text="Værksted &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Værksted"/>
+        <text name="ft_help_a3_workshop_text" text="Walk within 25 metres of any vehicle and it will appear automatically in the Workshop app. Hver indtastning viser brændstofniveau, slidprocent og samlede driftstimer. Klik på VÆLG på et hvilket som helst køretøj for at fastgøre det - fastgjorte køretøjer forbliver synlige i appen, selv når du går væk, hvilket gør det nemt at overvåge maskiner, der arbejder i marken."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker aktiveres automatisk, når du kører en hjullæsser, gravemaskine eller materialehåndtering. Den tæller hver tømningscyklus og fører en løbende log over materialetype og estimeret vægt pr. last. Brug den til at spore produktiviteten ved jordarbejde, gødningsspredning eller håndtering af bulkmateriale."/>
+        <text name="ft_help_m1_title" text="Indkomst &amp; Skat Mods"/>
+        <text name="ft_help_m1_income_title" text="FS25 Indkomst Mod"/>
+        <text name="ft_help_m1_income_text" text="Når FS25_IncomeMod er aktiv i dit savegame, vises Income-appen i sidebjælken. Det viser den aktuelle betalingstilstand, det planlagte beløb, og lader dig aktivere eller deaktivere mod'et uden at forlade tabletten. Ændringer træder i kraft med det samme."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Skat Mod"/>
+        <text name="ft_help_m1_tax_text" text="Når FS25_TaxMod er aktiv viser Skat-appen din aktuelle skattesats, afkastprocenten og de samlede skatter, der er betalt denne session. Du kan slå mod'en til eller fra fra tabletten og se dit minimumsaldokrav med et øjeblik."/>
+        <text name="ft_help_m2_title" text="Afgrødestress og jordgødning"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Sæsonbestemt afgrødestress"/>
+        <text name="ft_help_m2_cropstress_text" text="Når FS25_SeasonalCropStress er aktiv, viser Crop Stress-appen hver mark med dens aktuelle jordfugtighedsprocent og akkumulerede tørkestress. En farvekodet bjælke viser sundhed på et øjeblik: grøn er fint, gul er en advarsel, rød betyder, at stress allerede er ved at opbygges, og udbyttetab er begyndt. Installer denne mod og åbn sin egen hjælpesektion for fuld vandingsvejledning."/>
+        <text name="ft_help_m2_soil_title" text="FS25 Jordgødning"/>
+        <text name="ft_help_m2_soil_text" text="Når FS25_SoilFertilizer er aktiv viser Soil Fertilizer-appen nitrogen, fosfor, kalium, pH og organisk stof pr. mark. Vælg en mark på listen for at se dens fulde jordprofil, og om den skal gødes. Næringsstofniveauer er farvekodede: grøn er godt, gul er fair, rød har brug for opmærksomhed."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Opdag installerede apps"/>
+        <text name="ft_help_m3_appstore_text" text="App Store-appen viser hver app, der er registreret med tabletten, inklusive ledsagende mod-apps. Apps, der kræver en mod, som ikke er aktiv i øjeblikket, vises i en nedtonet tilstand, så du ved, at de er tilgængelige, når du aktiverer den matchende mod. Ingen konfiguration er nødvendig - ledsagende apps vises automatisk, når deres mod er indlæst."/>
+        <text name="ft_help_s1_title" text="Tablet-indstillinger"/>
+        <text name="ft_help_s1_settings_title" text="Hvad du kan ændre"/>
+        <text name="ft_help_s1_settings_text" text="Åbn appen Indstillinger fra sidebjælken for at administrere: tabletposition og skala (eller brug redigeringstilstand til visuel træk), startappen, der vises, når du åbner tabletten første gang, om der skal vises en velkomstmeddelelse ved indlæsning, og fejlfinding af logning til fejlfinding. Alle indstillinger gemmes automatisk, når du lukker spillet."/>
+        <text name="ft_help_s1_sound_title" text="Lydeffekter"/>
+        <text name="ft_help_s1_sound_text" text="Lydeffekter er aktiveret som standard. App-vælg-klikket afspilles, når du skifter apps. Søgelyden afspilles, når hjælpepanelet i spillet åbner eller lukker. Begge kan skiftes uafhængigt i appen Indstillinger."/>
+        <text name="ft_help_s2_title" text="Konsol kommandoer"/>
+        <text name="ft_help_s2_console_title" text="Tilgængelige kommandoer"/>
+        <text name="ft_help_s2_console_text" text="Åbn udviklerkonsollen med tilde-tasten, og skriv tablet for at se alle tilgængelige kommandoer. Eksempler: TabletKeybind H ændrer åben-tasten til H. TabletSetStartupApp vejr åbner Weather-appen som standard. TabletResetSettings gendanner alle tabletindstillinger til deres standardindstillinger. TabletToggleDebug slår detaljeret logning til eller fra."/>
+
+    </texts>
+</l10n>

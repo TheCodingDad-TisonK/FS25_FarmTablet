@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Tableta Farm"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Apăsați pe %s pentru a deschide"/>
+        <text name="ft_ui_enabled_short" text="Activați tableta"/>
+        <text name="ft_ui_enabled_long" text="Activați sau dezactivați sistemul de tabletă fermă"/>
+        <text name="ft_ui_keybind_short" text="Cheie deschisă"/>
+        <text name="ft_ui_keybind_long" text="Cheie pentru deschiderea/închiderea tabletei fermei"/>
+        <text name="ft_ui_notifications_short" text="Notificări"/>
+        <text name="ft_ui_notifications_long" text="Afișează notificări pentru tabletă la încărcarea jocului"/>
+        <text name="ft_ui_startupapp_short" text="Aplicație de pornire"/>
+        <text name="ft_ui_startupapp_long" text="Aplicație implicită la deschiderea tabletei"/>
+        <text name="ft_ui_startupapp_1" text="Bord"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Vreme"/>
+        <text name="ft_ui_startupapp_4" text="Săpat"/>
+        <text name="ft_ui_soundeffects_short" text="Efecte de sunet"/>
+        <text name="ft_ui_soundeffects_long" text="Redați efecte sonore pentru interacțiunile cu tableta"/>
+        <text name="ft_ui_debug_short" text="Modul de depanare"/>
+        <text name="ft_ui_debug_long" text="Activați înregistrarea de depanare în consolă"/>
+        <text name="ft_ui_reset" text="Resetați setările tabletei"/>
+        <text name="ft_ui_app_dashboard" text="Bord"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Actualizări"/>
+        <text name="ft_ui_app_settings" text="Setări"/>
+        <text name="ft_ui_app_workshop" text="Atelier"/>
+        <text name="ft_ui_app_field_status" text="Manager de teren"/>
+        <text name="ft_ui_app_animals" text="Animale"/>
+        <text name="ft_ui_app_weather" text="Vreme"/>
+        <text name="ft_ui_app_digging" text="Săpat"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Venit Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Taxa Mod"/>
+        <text name="ft_ui_app_npc_favor" text="Favoare NPC"/>
+        <text name="ft_ui_app_crop_stress" text="Stresul culturilor"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Îngrășământ pentru sol"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Noțiuni de bază"/>
+        <text name="ft_help_cat_apps" text="Aplicații pentru fermă"/>
+        <text name="ft_help_cat_mods" text="Moduri însoțitoare"/>
+        <text name="ft_help_cat_settings" text="Setări și consolă"/>
+        <text name="ft_help_p1_title" text="Deschidere și navigare"/>
+        <text name="ft_help_p1_open_title" text="Deschiderea tabletei"/>
+        <text name="ft_help_p1_open_text" text="Apăsați T (configurabil) în orice moment pentru a deschide sau închide tableta Farm. Puteți schimba cheia în aplicația Setări sau tastând TabletKeybind urmată de o literă cheie în consola pentru dezvoltatori."/>
+        <text name="ft_help_p1_nav_title" text="Navigare în bara laterală"/>
+        <text name="ft_help_p1_nav_text" text="Bara laterală din stânga arată o pictogramă pentru fiecare aplicație instalată. Faceți clic pe orice pictogramă pentru a comuta instantaneu între aplicații. Dacă aveți multe mod-uri însoțitoare active, bara laterală se va derula - utilizați rotița mouse-ului în timp ce treceți cu mouse-ul peste ea pentru a derula în sus și în jos."/>
+        <text name="ft_help_p2_title" text="Mutare și redimensionare"/>
+        <text name="ft_help_p2_move_title" text="Mod Editare"/>
+        <text name="ft_help_p2_move_text" text="Deschideți aplicația Setări și faceți clic pe ENTER EDIT MODE. În modul de editare, puteți trage corpul tabletei pentru a-l repoziționa oriunde pe ecran, puteți trage orice mâner de colț pentru a scala întreaga tabletă sau puteți trage marginea din stânga sau din dreapta pentru a ajusta numai lățimea. Faceți clic dreapta oriunde pentru a ieși din modul de editare. Poziția și scara dvs. sunt salvate automat."/>
+        <text name="ft_help_p2_key_title" text="Schimbarea cheii de deschidere"/>
+        <text name="ft_help_p2_key_text" text="Tasta implicită este T. Pentru a o modifica, deschideți aplicația Setări și găsiți setarea Keybind sau tastați TabletKeybind urmat de un nume de cheie în consola dezvoltatorului - de exemplu TabletKeybind H setează cheia la H. Sunt acceptate litere simple, taste F și taste comune precum TAB și ESC."/>
+        <text name="ft_help_a1_title" text="Tabloul de bord și vremea"/>
+        <text name="ft_help_a1_dash_title" text="Bord"/>
+        <text name="ft_help_a1_dash_text" text="Tabloul de bord este rezumatul fermei dvs. dintr-o privire. Afișează soldul dvs. curent într-un card erou mare în partea de sus, apoi veniturile, cheltuielile și profitul net pentru sesiunea de mai jos. Farm Stats listează câte câmpuri dețineți și numărul total de vehicule. Secțiunea Lume arată sezonul curent, ziua, ora și un instantaneu live al vremii. Atingeți pictograma mică de informații din colțul din dreapta jos al tabloului de bord pentru o explicație detaliată a fiecărei valori."/>
+        <text name="ft_help_a1_weather_title" text="Aplicația meteo"/>
+        <text name="ft_help_a1_weather_text" text="Aplicația Meteo arată o prognoză detaliată pe mai multe zile cu temperatură, probabilitate de precipitații și vânt. Condițiile sunt codificate pe culori: albastru pentru ploaie, portocaliu pentru furtuni, alb pentru cer senin. Utilizați acest lucru împreună cu modulul Crop Stress pentru a decide când să programați irigarea."/>
+        <text name="ft_help_a2_title" text="Câmpuri și animale"/>
+        <text name="ft_help_a2_fields_title" text="Manager de teren"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager listează fiecare câmp pe care îl dețineți. Fiecare rând arată tipul de cultură, faza curentă de creștere sub formă de insignă (Semănat, În creștere, Gata) și un punct de stare codificat cu culori. Verde înseamnă că câmpul nu are nevoie de atenție. Galben înseamnă că are nevoie de ceva - îngrășământ, arătură sau rulare. Roșu înseamnă că recolta este pregătită pentru recoltare sau necesită acțiuni urgente."/>
+        <text name="ft_help_a2_animals_title" text="Animale"/>
+        <text name="ft_help_a2_animals_text" text="Aplicația Animals arată fiecare stilou pe care îl dețineți cu trei bare de progres: nivelul hranei, nivelul apei și curățenia. Barele verzi nu au nevoie de acțiune. Barele galbene ar trebui să fie completate în curând. Barele roșii sunt critice și vor afecta productivitatea dacă sunt lăsate nesupravegheate."/>
+        <text name="ft_help_a3_title" text="Workshop &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Atelier"/>
+        <text name="ft_help_a3_workshop_text" text="Mergeți la 25 de metri de orice vehicul și acesta va apărea automat în aplicația Workshop. Fiecare intrare arată nivelul de combustibil, procentul de uzură și orele totale de funcționare. Faceți clic pe SELECTARE pe orice vehicul pentru a-l fixa — vehiculele fixate rămân vizibile în aplicație chiar și atunci când plecați, ceea ce face ușoară monitorizarea mașinilor care lucrează pe teren."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker se activează automat atunci când conduceți un încărcător pe roți, un excavator sau un manipulator de materiale. Acesta numără fiecare ciclu de descărcare și păstrează un jurnal de rulare a tipului de material și a greutății estimate pe sarcină. Utilizați-l pentru a urmări productivitatea lucrărilor de terasament, împrăștiere a gunoiului de grajd sau lucrări de manipulare a materialelor în vrac."/>
+        <text name="ft_help_m1_title" text="Moduri de venit și impozite"/>
+        <text name="ft_help_m1_income_title" text="FS25 Venit Mod"/>
+        <text name="ft_help_m1_income_text" text="Când FS25_IncomeMod este activ în jocul tău de salvare, aplicația Income apare în bara laterală. Afișează modul de plată curent, suma programată și vă permite să activați sau să dezactivați modul fără a părăsi tableta. Modificările intră în vigoare imediat."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Taxa Mod"/>
+        <text name="ft_help_m1_tax_text" text="Când FS25_TaxMod este activ, aplicația Tax afișează rata de impozitare curentă, procentul de returnare și taxele totale plătite în această sesiune. Puteți activa sau dezactiva modul de pe tabletă și puteți vedea necesarul minim de sold dintr-o privire."/>
+        <text name="ft_help_m2_title" text="Stresul culturilor și îngrășământ pentru sol"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Stresul sezonier al culturilor"/>
+        <text name="ft_help_m2_cropstress_text" text="Când FS25_SeasonalCropStress este activ, aplicația Crop Stress listează fiecare câmp cu procentul actual de umiditate a solului și stresul acumulat de secetă. O bară cu coduri de culori arată starea de sănătate dintr-o privire: verdele este în regulă, galbenul este un avertisment, roșu înseamnă că stresul este deja în creștere și pierderea randamentului a început. Instalați acel mod și deschideți propria secțiune de ajutor pentru îndrumări complete pentru irigare."/>
+        <text name="ft_help_m2_soil_title" text="Îngrășământ pentru sol FS25"/>
+        <text name="ft_help_m2_soil_text" text="Când FS25_SoilFertilizer este activ, aplicația Soil Fertilizer afișează azotul, fosforul, potasiul, pH-ul și materia organică pe câmp. Selectați orice câmp din listă pentru a vedea profilul complet al solului și dacă are nevoie de fertilizare. Nivelurile de nutrienți sunt codificate prin culori: verdele este bun, galbenul este corect, roșul necesită atenție."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Descoperirea aplicațiilor instalate"/>
+        <text name="ft_help_m3_appstore_text" text="Aplicația App Store listează fiecare aplicație înregistrată pe tabletă, inclusiv aplicațiile modificate însoțitoare. Aplicațiile care necesită un mod care nu este activ în prezent sunt afișate într-o stare estompată, astfel încât să știți că sunt disponibile odată ce activați modul potrivit. Nu este necesară nicio configurare - aplicațiile însoțitoare apar automat când modul lor este încărcat."/>
+        <text name="ft_help_s1_title" text="Setări tabletă"/>
+        <text name="ft_help_s1_settings_title" text="Ce poți schimba"/>
+        <text name="ft_help_s1_settings_text" text="Deschideți aplicația Setări din bara laterală pentru a gestiona: poziția și scala tabletei (sau utilizați Modul Editare pentru tragerea vizuală), aplicația de pornire afișată la prima deschidere a tabletei, dacă să afișați o notificare de bun venit la încărcare și înregistrarea de depanare pentru depanare. Toate setările sunt salvate automat când închideți jocul."/>
+        <text name="ft_help_s1_sound_title" text="Efecte de sunet"/>
+        <text name="ft_help_s1_sound_text" text="Efectele sonore sunt activate în mod implicit. Clic-ul de selectare a aplicației se redă atunci când comutați între aplicații. Sunetul de paginare este redat atunci când panoul de ajutor din joc se deschide sau se închide. Ambele pot fi comutate independent în aplicația Setări."/>
+        <text name="ft_help_s2_title" text="Comenzi din consolă"/>
+        <text name="ft_help_s2_console_title" text="Comenzi disponibile"/>
+        <text name="ft_help_s2_console_text" text="Deschideți consola pentru dezvoltatori cu tasta tilde și tastați tabletă pentru a vedea toate comenzile disponibile. Exemple: TabletKeybind H schimbă tasta de deschidere în H. ​​TabletSetStartupApp vremea deschide aplicația Meteo în mod implicit. TabletResetSettings restabilește toate setările tabletei la valorile implicite. TabletToggleDebug activează sau dezactivează conectarea în mod verbos."/>
+
+    </texts>
+</l10n>

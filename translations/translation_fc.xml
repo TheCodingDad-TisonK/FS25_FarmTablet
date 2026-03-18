@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Tablette de ferme"/>
+        <text name="ft_ui_welcome_title" text="Tablette agricole v2"/>
+        <text name="ft_ui_welcome_message" text="Appuyez sur %s pour ouvrir"/>
+        <text name="ft_ui_enabled_short" text="Activer la tablette"/>
+        <text name="ft_ui_enabled_long" text="Activer ou désactiver le système de tablette de la ferme"/>
+        <text name="ft_ui_keybind_short" text="Clé ouverte"/>
+        <text name="ft_ui_keybind_long" text="Clé pour ouvrir/fermer la tablette de la ferme"/>
+        <text name="ft_ui_notifications_short" text="Notifications"/>
+        <text name="ft_ui_notifications_long" text="Afficher les notifications de la tablette lors du chargement du jeu"/>
+        <text name="ft_ui_startupapp_short" text="Application de démarrage"/>
+        <text name="ft_ui_startupapp_long" text="Application par défaut à l'ouverture de la tablette"/>
+        <text name="ft_ui_startupapp_1" text="Tableau de bord"/>
+        <text name="ft_ui_startupapp_2" text="Magasin d'applications"/>
+        <text name="ft_ui_startupapp_3" text="Météo"/>
+        <text name="ft_ui_startupapp_4" text="Creusement"/>
+        <text name="ft_ui_soundeffects_short" text="Bruitage"/>
+        <text name="ft_ui_soundeffects_long" text="Jouer des effets sonores pour les interactions avec la tablette"/>
+        <text name="ft_ui_debug_short" text="Mode débogage"/>
+        <text name="ft_ui_debug_long" text="Activer la journalisation du débogage dans la console"/>
+        <text name="ft_ui_reset" text="Réinitialiser les paramètres de la tablette"/>
+        <text name="ft_ui_app_dashboard" text="Tableau de bord"/>
+        <text name="ft_ui_app_store" text="Magasin d'applications"/>
+        <text name="ft_ui_app_updates" text="Mises à jour"/>
+        <text name="ft_ui_app_settings" text="Paramètres"/>
+        <text name="ft_ui_app_workshop" text="Atelier"/>
+        <text name="ft_ui_app_field_status" text="Responsable de terrain"/>
+        <text name="ft_ui_app_animals" text="Animaux"/>
+        <text name="ft_ui_app_weather" text="Météo"/>
+        <text name="ft_ui_app_digging" text="Creusement"/>
+        <text name="ft_ui_app_bucket_tracker" text="Suivi du seau"/>
+        <text name="ft_ui_app_income_mod" text="Mod de revenu"/>
+        <text name="ft_ui_app_tax_mod" text="Mod fiscal"/>
+        <text name="ft_ui_app_npc_favor" text="Faveur des PNJ"/>
+        <text name="ft_ui_app_crop_stress" text="Stress des cultures"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Engrais du sol"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Commencer"/>
+        <text name="ft_help_cat_apps" text="Applications agricoles"/>
+        <text name="ft_help_cat_mods" text="Mods compagnons"/>
+        <text name="ft_help_cat_settings" text="Paramètres et console"/>
+        <text name="ft_help_p1_title" text="Ouverture et navigation"/>
+        <text name="ft_help_p1_open_title" text="Ouverture de la tablette"/>
+        <text name="ft_help_p1_open_text" text="Appuyez sur T (configurable) à tout moment pour ouvrir ou fermer la Farm Tablet. Vous pouvez modifier la clé dans l'application Paramètres ou en tapant TabletKeybind suivi d'une lettre clé dans la console du développeur."/>
+        <text name="ft_help_p1_nav_title" text="Navigation dans la barre latérale"/>
+        <text name="ft_help_p1_nav_text" text="La barre latérale gauche affiche une icône par application installée. Cliquez sur n’importe quelle icône pour changer d’application instantanément. Si vous avez de nombreux mods compagnons actifs, la barre latérale défilera – utilisez la molette de la souris tout en la survolant pour faire défiler de haut en bas."/>
+        <text name="ft_help_p2_title" text="Déplacement et redimensionnement"/>
+        <text name="ft_help_p2_move_title" text="Mode édition"/>
+        <text name="ft_help_p2_move_text" text="Ouvrez l'application Paramètres et cliquez sur ENTRER LE MODE D'ÉDITION. En mode édition, vous pouvez faire glisser le corps de la tablette pour le repositionner n'importe où sur l'écran, faire glisser n'importe quelle poignée de coin pour redimensionner la tablette entière ou faire glisser le bord gauche ou droit pour ajuster uniquement la largeur. Cliquez avec le bouton droit n’importe où pour quitter le mode édition. Votre position et votre échelle sont enregistrées automatiquement."/>
+        <text name="ft_help_p2_key_title" text="Changer la clé ouverte"/>
+        <text name="ft_help_p2_key_text" text="La clé par défaut est T. Pour la modifier, ouvrez l'application Paramètres et recherchez le paramètre Keybind, ou tapez TabletKeybind suivi d'un nom de clé dans la console du développeur - par exemple TabletKeybind H définit la clé sur H. Les lettres simples, les touches F et les touches communes telles que TAB et ESC sont toutes prises en charge."/>
+        <text name="ft_help_a1_title" text="Tableau de bord et météo"/>
+        <text name="ft_help_a1_dash_title" text="Tableau de bord"/>
+        <text name="ft_help_a1_dash_text" text="Le tableau de bord est un résumé de votre ferme en un coup d'œil. Il affiche votre solde actuel sur une grande carte de héros en haut, puis les revenus, les dépenses et le bénéfice net de la session ci-dessous. Farm Stats indique le nombre de champs que vous possédez et le nombre total de véhicules. La section Monde affiche la saison en cours, le jour, l'heure et un aperçu météo en direct. Appuyez sur la petite icône d'information dans le coin inférieur droit du tableau de bord pour une explication détaillée de chaque valeur."/>
+        <text name="ft_help_a1_weather_title" text="Application Météo"/>
+        <text name="ft_help_a1_weather_text" text="L'application Météo affiche des prévisions détaillées sur plusieurs jours avec la température, la probabilité de précipitations et le vent. Les conditions sont codées par couleur : bleu pour la pluie, orange pour les tempêtes, blanc pour un ciel dégagé. Utilisez-le avec le mod Crop Stress pour décider quand programmer l’irrigation."/>
+        <text name="ft_help_a2_title" text="Champs et animaux"/>
+        <text name="ft_help_a2_fields_title" text="Responsable de terrain"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager répertorie tous les champs que vous possédez. Chaque ligne affiche le type de culture, la phase de croissance actuelle sous forme de badge (Semé, En croissance, Prêt) et un point d'état codé par couleur. Le vert signifie que le champ ne nécessite aucune attention. Le jaune signifie qu'il a besoin de quelque chose : d'engrais, de labour ou de roulage. Le rouge signifie que la récolte est prête à être récoltée ou nécessite une action urgente."/>
+        <text name="ft_help_a2_animals_title" text="Animaux"/>
+        <text name="ft_help_a2_animals_text" text="L'application Animaux affiche chaque enclos que vous possédez avec trois barres de progression : niveau de nourriture, niveau d'eau et propreté. Les barres vertes ne nécessitent aucune action. Les barres jaunes devraient bientôt être remplies. Les barres rouges sont critiques et affecteront la productivité si elles sont laissées sans surveillance."/>
+        <text name="ft_help_a3_title" text="Atelier et suivi du seau"/>
+        <text name="ft_help_a3_workshop_title" text="Atelier"/>
+        <text name="ft_help_a3_workshop_text" text="Marchez à moins de 25 mètres de n’importe quel véhicule et il apparaîtra automatiquement dans l’application Atelier. Chaque entrée indique le niveau de carburant, le pourcentage d'usure et le nombre total d'heures de fonctionnement. Cliquez sur SELECT sur n'importe quel véhicule pour l'épingler : les véhicules épinglés restent visibles dans l'application même lorsque vous vous éloignez, ce qui facilite la surveillance des machines travaillant sur le terrain."/>
+        <text name="ft_help_a3_bucket_title" text="Suivi du seau"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker s’active automatiquement lorsque vous conduisez une chargeuse sur pneus, une excavatrice ou une machine de manutention. Il compte chaque cycle de vidage et tient un journal du type de matériau et du poids estimé par charge. Utilisez-le pour suivre la productivité des travaux de terrassement, d’épandage de fumier ou de manutention de matériaux en vrac."/>
+        <text name="ft_help_m1_title" text="Mods de revenu et d'impôt"/>
+        <text name="ft_help_m1_income_title" text="Mod de revenu FS25"/>
+        <text name="ft_help_m1_income_text" text="Lorsque FS25_IncomeMod est actif dans votre sauvegarde, l'application Income apparaît dans la barre latérale. Il affiche le mode de paiement actuel, le montant prévu et vous permet d'activer ou de désactiver le mod sans quitter la tablette. Les modifications prennent effet immédiatement."/>
+        <text name="ft_help_m1_tax_title" text="Mod fiscal FS25"/>
+        <text name="ft_help_m1_tax_text" text="Lorsque FS25_TaxMod est actif, l'application Taxe affiche votre taux d'imposition actuel, le pourcentage de retour et le total des taxes payées pour cette session. Vous pouvez activer ou désactiver le mod depuis la tablette et voir votre solde minimum requis en un coup d'œil."/>
+        <text name="ft_help_m2_title" text="Stress des cultures et engrais du sol"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Stress saisonnier des cultures"/>
+        <text name="ft_help_m2_cropstress_text" text="Lorsque FS25_SeasonalCropStress est actif, l'application Crop Stress répertorie chaque champ avec son pourcentage actuel d'humidité du sol et le stress de sécheresse accumulé. Une barre de couleur indique l'état de santé d'un coup d'œil : le vert signifie que le jaune est un avertissement, le rouge signifie que le stress s'accumule déjà et que la perte de rendement a commencé. Installez ce mod et ouvrez sa propre section d'aide pour des conseils complets sur l'irrigation."/>
+        <text name="ft_help_m2_soil_title" text="Engrais du sol FS25"/>
+        <text name="ft_help_m2_soil_text" text="Lorsque FS25_SoilFertilizer est actif, l'application Soil Fertilizer affiche l'azote, le phosphore, le potassium, le pH et la matière organique par champ. Sélectionnez n’importe quel champ dans la liste pour voir son profil complet de sol et s’il a besoin d’être fertilisé. Les niveaux de nutriments sont codés par couleur : le vert est bon, le jaune est moyen, le rouge nécessite une attention particulière."/>
+        <text name="ft_help_m3_title" text="Magasin d'applications"/>
+        <text name="ft_help_m3_appstore_title" text="Découverte des applications installées"/>
+        <text name="ft_help_m3_appstore_text" text="L'application App Store répertorie toutes les applications enregistrées sur la tablette, y compris les applications mod associées. Les applications qui nécessitent un mod qui n'est pas actuellement actif sont affichées en grisé afin que vous sachiez qu'elles sont disponibles une fois que vous avez activé le mod correspondant. Aucune configuration n'est nécessaire : les applications compagnons apparaissent automatiquement lorsque leur mod est chargé."/>
+        <text name="ft_help_s1_title" text="Paramètres de la tablette"/>
+        <text name="ft_help_s1_settings_title" text="Ce que vous pouvez changer"/>
+        <text name="ft_help_s1_settings_text" text="Ouvrez l'application Paramètres dans la barre latérale pour gérer : la position et l'échelle de la tablette (ou utilisez le mode Édition pour le glissement visuel), l'application de démarrage affichée lorsque vous ouvrez la tablette pour la première fois, l'affichage ou non d'une notification de bienvenue lors du chargement et la journalisation du débogage pour le dépannage. Tous les paramètres sont automatiquement enregistrés lorsque vous fermez le jeu."/>
+        <text name="ft_help_s1_sound_title" text="Bruitage"/>
+        <text name="ft_help_s1_sound_text" text="Les effets sonores sont activés par défaut. Le clic de sélection d'application est lu lorsque vous changez d'application. Le son de la radiomessagerie est émis lorsque le panneau d'aide du jeu s'ouvre ou se ferme. Les deux peuvent être activés indépendamment dans l’application Paramètres."/>
+        <text name="ft_help_s2_title" text="Commandes de la console"/>
+        <text name="ft_help_s2_console_title" text="Commandes disponibles"/>
+        <text name="ft_help_s2_console_text" text="Ouvrez la console développeur avec la touche tilde et tapez tablette pour voir toutes les commandes disponibles. Exemples : TabletKeybind H modifie la clé d'ouverture en H. La météo TabletSetStartupApp ouvre l'application Météo par défaut. TabletResetSettings restaure tous les paramètres de la tablette à leurs valeurs par défaut. TabletToggleDebug active ou désactive la journalisation détaillée."/>
+
+    </texts>
+</l10n>

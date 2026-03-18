@@ -30,6 +30,43 @@ end
 -- ── drawer ────────────────────────────────────────────────
 
 FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
+    local AC = FT.appColor(FT.APP.SETTINGS)
+
+    if self:drawHelpPage("_settingsHelp", FT.APP.SETTINGS, "Settings", AC, {
+        { title = "DISPLAY — POSITION & SCALE",
+          body  = "Shows the current tablet position (X/Y) and scale.\n" ..
+                  "Use ENTER EDIT MODE for visual drag-and-resize,\n" ..
+                  "or RESET POSITION & SCALE to restore defaults." },
+        { title = "ENTER EDIT MODE",
+          body  = "Activates visual editing of the tablet.\n" ..
+                  "Drag the body to reposition it anywhere on screen.\n" ..
+                  "Drag a corner handle to scale the whole tablet.\n" ..
+                  "Drag left or right edge to adjust width only.\n" ..
+                  "Right-click or press Esc to exit." },
+        { title = "SOUND EFFECTS",
+          body  = "Master toggle for all tablet sounds.\n" ..
+                  "When off all sub-toggles are also silenced.\n" ..
+                  "App Select Sound: click when switching sidebar apps.\n" ..
+                  "Help Panel Sound: paging when the FS25 help opens.\n" ..
+                  "Tablet Open/Close Sound: plays on the T key." },
+        { title = "STARTUP APP",
+          body  = "The app shown first every time you open the tablet.\n" ..
+                  "Click the button to cycle through available options.\n" ..
+                  "Or set it via console: TabletSetStartupApp weather" },
+        { title = "NOTIFICATIONS",
+          body  = "Shows a welcome message in the top-left corner\n" ..
+                  "whenever a savegame loads. Turn off to keep things\n" ..
+                  "quiet if you already know the open key." },
+        { title = "DEBUG MODE",
+          body  = "Writes verbose diagnostic messages to the developer\n" ..
+                  "console. Useful for troubleshooting. Leave off during\n" ..
+                  "normal play to keep the console clean." },
+        { title = "RESET ALL TO DEFAULTS",
+          body  = "Restores every setting to its factory value,\n" ..
+                  "including position, scale, key, sounds, and startup\n" ..
+                  "app. Cannot be undone." },
+    }) then return end
+
     local s   = self.settings
 
     -- ── Layout ────────────────────────────────────────────
@@ -289,9 +326,11 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
     y = y - BTN_GAP
 
     -- ── Tell the system total content height so it can enable scrolling ──
-    -- totalH = distance from contentStartY down to the lowest item we drew
-    local totalH = contentStartY - y   -- both in normalized Y; contentStartY > y
+    local totalH = contentStartY - y
     self:setContentHeight(totalH)
+
+    -- Info icon (drawn outside scroll so it's always visible)
+    self:drawInfoIcon("_settingsHelp", FT.appColor(FT.APP.SETTINGS))
 
     -- ── Scroll indicator bar ──────────────────────────────
     local scrollMax = self._contentScrollMax or 0

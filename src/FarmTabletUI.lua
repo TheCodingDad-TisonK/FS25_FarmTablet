@@ -573,6 +573,118 @@ function FarmTabletUI:getContentScrollY()
     return self._contentScrollY or 0
 end
 
+-- ─────────────────────────────────────────────────────────
+-- SHARED INFO ICON + HELP PAGE HELPERS
+-- ─────────────────────────────────────────────────────────
+
+-- Draws a small "i" icon in the bottom-right corner of the content area.
+-- stateKey  : string key on self used to store the open/closed boolean,
+--             e.g. "_dashHelpOpen".  Must be unique per app.
+-- accentColor : {r,g,b,a} table matching the app accent – defaults to FT.C.BRAND.
+-- Returns the registered button descriptor (already inserted into _contentBtns).
+function FarmTabletUI:drawInfoIcon(stateKey, accentColor)
+    local _, contentY, w, _ = self:contentInner()
+    local x = (self:contentInner())   -- need x separately
+    x = FT.LAYOUT.contentX + FT.px(16)
+    local ac = accentColor or FT.C.BRAND
+
+    local iSz = FT.px(18)
+    local iX  = x + w - iSz
+    local iY  = contentY
+
+    -- Background tint
+    self.r:appRect(iX, iY, iSz, iSz, {ac[1], ac[2], ac[3], 0.18})
+
+    -- Border (four thin edge rects)
+    local bdr = FT.px(1.2)
+    local bc  = {ac[1], ac[2], ac[3], 0.65}
+    self.r:appRect(iX,             iY,              iSz, bdr, bc)
+    self.r:appRect(iX,             iY + iSz - bdr,  iSz, bdr, bc)
+    self.r:appRect(iX,             iY,              bdr, iSz, bc)
+    self.r:appRect(iX + iSz - bdr, iY,              bdr, iSz, bc)
+
+    -- "i" dot (small square near top)
+    local dotW = FT.px(3)
+    local dotH = FT.py(3)
+    self.r:appRect(iX + (iSz - dotW) * 0.5,
+                   iY + iSz - FT.py(5) - dotH,
+                   dotW, dotH, {ac[1], ac[2], ac[3], 1.00})
+
+    -- "i" stem (taller rect below dot)
+    local stW = FT.px(2.5)
+    local stH = FT.py(5.5)
+    self.r:appRect(iX + (iSz - stW) * 0.5,
+                   iY + FT.py(3.5),
+                   stW, stH, {ac[1], ac[2], ac[3], 1.00})
+
+    -- Clickable hit-box
+    local sk   = stateKey
+    local appId = self.system.currentApp
+    local btn = {
+        x = iX, y = iY, w = iSz, h = iSz,
+        meta = { onClick = function()
+            self[sk] = true
+            self:switchApp(appId)
+        end }
+    }
+    table.insert(self._contentBtns, btn)
+    return btn
+end
+
+-- Renders a full help sub-page for an app.
+-- stateKey    : same key passed to drawInfoIcon.
+-- appId       : FT.APP.xxx constant so BACK button returns to the right app.
+-- headerTitle : main title string shown in drawAppHeader.
+-- accentColor : {r,g,b,a} table for tinted entry bars.
+-- entries     : array of { title=string, body=string } tables.
+--               Body supports "\n" for multiple lines.
+-- Returns true when the help page was rendered (caller should `return` after).
+function FarmTabletUI:drawHelpPage(stateKey, appId, headerTitle, accentColor, entries)
+    if not self[stateKey] then return false end
+
+    local ac     = accentColor or FT.C.BRAND
+    local startY = self:drawAppHeader(headerTitle, "Help")
+    local x, contentY, w, _ = self:contentInner()
+    local y = startY
+
+    -- BACK button
+    local bw = FT.px(52)
+    local bh = FT.py(18)
+    local backBtn = self.r:button(
+        x + w - bw, startY + FT.py(2), bw, bh, "< BACK", FT.C.BTN_NEUTRAL,
+        { onClick = function()
+            self[stateKey] = false
+            self:switchApp(appId)
+        end }
+    )
+    table.insert(self._contentBtns, backBtn)
+
+    y = y - FT.py(10)
+
+    for _, entry in ipairs(entries) do
+        if y < contentY + FT.py(12) then break end
+
+        -- Tinted title bar
+        self.r:appRect(x - FT.px(4), y - FT.py(1),
+            w + FT.px(8), FT.py(14),
+            {ac[1], ac[2], ac[3], 0.12})
+        self.r:appText(x, y, FT.FONT.SMALL, entry.title,
+            RenderText.ALIGN_LEFT, FT.C.TEXT_ACCENT)
+        y = y - FT.py(16)
+
+        -- Body lines
+        for line in ((entry.body or "") .. "\n"):gmatch("([^\n]*)\n") do
+            if y < contentY + FT.py(8) then break end
+            self.r:appText(x + FT.px(8), y, FT.FONT.TINY,
+                line, RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
+            y = y - FT.py(13)
+        end
+        y = y - FT.py(5)
+    end
+
+    return true
+end
+
 -- Apps call this after drawing to tell the system how tall their content is.
 -- totalH = the Y distance from the top of the content to the lowest element drawn.
 -- The system computes how much of that overflows and enables scrolling.

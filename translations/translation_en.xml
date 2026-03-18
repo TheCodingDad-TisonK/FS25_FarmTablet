@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Farm Tablet"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Press %s to open"/>
+        <text name="ft_ui_enabled_short" text="Enable Tablet"/>
+        <text name="ft_ui_enabled_long" text="Enable or disable the farm tablet system"/>
+        <text name="ft_ui_keybind_short" text="Open Key"/>
+        <text name="ft_ui_keybind_long" text="Key to open/close the farm tablet"/>
+        <text name="ft_ui_notifications_short" text="Notifications"/>
+        <text name="ft_ui_notifications_long" text="Show tablet notifications on game load"/>
+        <text name="ft_ui_startupapp_short" text="Startup App"/>
+        <text name="ft_ui_startupapp_long" text="Default app when opening the tablet"/>
+        <text name="ft_ui_startupapp_1" text="Dashboard"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Weather"/>
+        <text name="ft_ui_startupapp_4" text="Digging"/>
+        <text name="ft_ui_soundeffects_short" text="Sound Effects"/>
+        <text name="ft_ui_soundeffects_long" text="Play sound effects for tablet interactions"/>
+        <text name="ft_ui_debug_short" text="Debug Mode"/>
+        <text name="ft_ui_debug_long" text="Enable debug logging in console"/>
+        <text name="ft_ui_reset" text="Reset Tablet Settings"/>
+        <text name="ft_ui_app_dashboard" text="Dashboard"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Updates"/>
+        <text name="ft_ui_app_settings" text="Settings"/>
+        <text name="ft_ui_app_workshop" text="Workshop"/>
+        <text name="ft_ui_app_field_status" text="Field Manager"/>
+        <text name="ft_ui_app_animals" text="Animals"/>
+        <text name="ft_ui_app_weather" text="Weather"/>
+        <text name="ft_ui_app_digging" text="Digging"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Income Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Tax Mod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="Crop Stress"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Soil Fertilizer"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Getting Started"/>
+        <text name="ft_help_cat_apps" text="Farm Apps"/>
+        <text name="ft_help_cat_mods" text="Companion Mods"/>
+        <text name="ft_help_cat_settings" text="Settings &amp; Console"/>
+        <text name="ft_help_p1_title" text="Opening &amp; Navigating"/>
+        <text name="ft_help_p1_open_title" text="Opening the Tablet"/>
+        <text name="ft_help_p1_open_text" text="Press T (configurable) at any time to open or close the Farm Tablet. You can change the key in the Settings app or by typing TabletKeybind followed by a key letter in the developer console."/>
+        <text name="ft_help_p1_nav_title" text="Sidebar Navigation"/>
+        <text name="ft_help_p1_nav_text" text="The left sidebar shows one icon per installed app. Click any icon to switch apps instantly. If you have many companion mods active the sidebar will scroll — use the mouse wheel while hovering over it to scroll up and down."/>
+        <text name="ft_help_p2_title" text="Moving &amp; Resizing"/>
+        <text name="ft_help_p2_move_title" text="Edit Mode"/>
+        <text name="ft_help_p2_move_text" text="Open the Settings app and click ENTER EDIT MODE. In edit mode you can drag the tablet body to reposition it anywhere on screen, drag any corner handle to scale the entire tablet, or drag the left or right edge to adjust only the width. Right-click anywhere to exit edit mode. Your position and scale are saved automatically."/>
+        <text name="ft_help_p2_key_title" text="Changing the Open Key"/>
+        <text name="ft_help_p2_key_text" text="The default key is T. To change it open the Settings app and find the Keybind setting, or type TabletKeybind followed by a key name in the developer console — for example TabletKeybind H sets the key to H. Single letters, F-keys, and common keys like TAB and ESC are all supported."/>
+        <text name="ft_help_a1_title" text="Dashboard &amp; Weather"/>
+        <text name="ft_help_a1_dash_title" text="Dashboard"/>
+        <text name="ft_help_a1_dash_text" text="The Dashboard is your at-a-glance farm summary. It shows your current balance in a large hero card at the top, then income, expenses, and net profit for the session below. Farm Stats lists how many fields you own and your total vehicle count. The World section shows current season, day, time of day, and a live weather snapshot. Tap the small info icon in the bottom-right corner of the Dashboard for a detailed explanation of every value."/>
+        <text name="ft_help_a1_weather_title" text="Weather App"/>
+        <text name="ft_help_a1_weather_text" text="The Weather app shows a detailed multi-day forecast with temperature, precipitation probability, and wind. Conditions are colour-coded: blue for rain, orange for storms, white for clear skies. Use this together with the Crop Stress mod to decide when to schedule irrigation."/>
+        <text name="ft_help_a2_title" text="Fields &amp; Animals"/>
+        <text name="ft_help_a2_fields_title" text="Field Manager"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager lists every field you own. Each row shows the crop type, the current growth phase as a badge (Sown, Growing, Ready), and a colour-coded state dot. Green means the field needs no attention. Yellow means it needs something — fertiliser, ploughing, or rolling. Red means the crop is ready to harvest or requires urgent action."/>
+        <text name="ft_help_a2_animals_title" text="Animals"/>
+        <text name="ft_help_a2_animals_text" text="The Animals app shows every pen you own with three progress bars: food level, water level, and cleanliness. Green bars need no action. Yellow bars should be topped up soon. Red bars are critical and will affect productivity if left unattended."/>
+        <text name="ft_help_a3_title" text="Workshop &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Workshop"/>
+        <text name="ft_help_a3_workshop_text" text="Walk within 25 metres of any vehicle and it will appear automatically in the Workshop app. Each entry shows fuel level, wear percentage, and total operating hours. Click SELECT on any vehicle to pin it — pinned vehicles stay visible in the app even when you walk away, making it easy to monitor machines working in the field."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker activates automatically when you drive a wheel loader, excavator, or material handler. It counts every dump cycle and keeps a running log of material type and estimated weight per load. Use it to track productivity on earthworks, manure spreading, or bulk material handling jobs."/>
+        <text name="ft_help_m1_title" text="Income &amp; Tax Mods"/>
+        <text name="ft_help_m1_income_title" text="FS25 Income Mod"/>
+        <text name="ft_help_m1_income_text" text="When FS25_IncomeMod is active in your savegame the Income app appears in the sidebar. It shows the current payment mode, the scheduled amount, and lets you enable or disable the mod without leaving the tablet. Changes take effect immediately."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Tax Mod"/>
+        <text name="ft_help_m1_tax_text" text="When FS25_TaxMod is active the Tax app shows your current tax rate, the return percentage, and the total taxes paid this session. You can toggle the mod on or off from the tablet and see your minimum balance requirement at a glance."/>
+        <text name="ft_help_m2_title" text="Crop Stress &amp; Soil Fertilizer"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Seasonal Crop Stress"/>
+        <text name="ft_help_m2_cropstress_text" text="When FS25_SeasonalCropStress is active the Crop Stress app lists every field with its current soil moisture percentage and accumulated drought stress. A colour-coded bar shows health at a glance: green is fine, yellow is a warning, red means stress is already building and yield loss has begun. Install that mod and open its own help section for full irrigation guidance."/>
+        <text name="ft_help_m2_soil_title" text="FS25 Soil Fertilizer"/>
+        <text name="ft_help_m2_soil_text" text="When FS25_SoilFertilizer is active the Soil Fertilizer app shows nitrogen, phosphorus, potassium, pH, and organic matter per field. Select any field from the list to see its full soil profile and whether it needs fertilisation. Nutrient levels are colour coded: green is good, yellow is fair, red needs attention."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Discovering Installed Apps"/>
+        <text name="ft_help_m3_appstore_text" text="The App Store app lists every app registered with the tablet, including companion mod apps. Apps that require a mod which is not currently active are shown in a dimmed state so you know they are available once you enable the matching mod. No configuration is needed — companion apps appear automatically when their mod is loaded."/>
+        <text name="ft_help_s1_title" text="Tablet Settings"/>
+        <text name="ft_help_s1_settings_title" text="What You Can Change"/>
+        <text name="ft_help_s1_settings_text" text="Open the Settings app from the sidebar to manage: tablet position and scale (or use Edit Mode for visual dragging), the startup app shown when you first open the tablet, whether to show a welcome notification on load, and debug logging for troubleshooting. All settings are saved automatically when you close the game."/>
+        <text name="ft_help_s1_sound_title" text="Sound Effects"/>
+        <text name="ft_help_s1_sound_text" text="Sound effects are on by default. The app-select click plays when you switch apps. The paging sound plays when the in-game help panel opens or closes. Both can be toggled independently in the Settings app."/>
+        <text name="ft_help_s2_title" text="Console Commands"/>
+        <text name="ft_help_s2_console_title" text="Available Commands"/>
+        <text name="ft_help_s2_console_text" text="Open the developer console with the tilde key and type tablet to see all available commands. Examples: TabletKeybind H changes the open key to H. TabletSetStartupApp weather opens the Weather app by default. TabletResetSettings restores all tablet settings to their defaults. TabletToggleDebug turns verbose logging on or off."/>
+
+    </texts>
+</l10n>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Farm Tablet"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Stisknutím %s otevřete"/>
+        <text name="ft_ui_enabled_short" text="Povolit tablet"/>
+        <text name="ft_ui_enabled_long" text="Povolte nebo zakažte systém farmářských tabletů"/>
+        <text name="ft_ui_keybind_short" text="Otevřít klíč"/>
+        <text name="ft_ui_keybind_long" text="Klíč pro otevření/zavření farmářského tabletu"/>
+        <text name="ft_ui_notifications_short" text="Oznámení"/>
+        <text name="ft_ui_notifications_long" text="Zobrazovat oznámení tabletu o načtení hry"/>
+        <text name="ft_ui_startupapp_short" text="Spouštěcí aplikace"/>
+        <text name="ft_ui_startupapp_long" text="Výchozí aplikace při otevření tabletu"/>
+        <text name="ft_ui_startupapp_1" text="Dashboard"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Počasí"/>
+        <text name="ft_ui_startupapp_4" text="Kopání"/>
+        <text name="ft_ui_soundeffects_short" text="Zvukové efekty"/>
+        <text name="ft_ui_soundeffects_long" text="Přehrávejte zvukové efekty pro interakce s tabletem"/>
+        <text name="ft_ui_debug_short" text="Režim ladění"/>
+        <text name="ft_ui_debug_long" text="Povolit protokolování ladění v konzole"/>
+        <text name="ft_ui_reset" text="Obnovit nastavení tabletu"/>
+        <text name="ft_ui_app_dashboard" text="Dashboard"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Aktualizace"/>
+        <text name="ft_ui_app_settings" text="Nastavení"/>
+        <text name="ft_ui_app_workshop" text="Dílna"/>
+        <text name="ft_ui_app_field_status" text="Správce pole"/>
+        <text name="ft_ui_app_animals" text="Zvířata"/>
+        <text name="ft_ui_app_weather" text="Počasí"/>
+        <text name="ft_ui_app_digging" text="Kopání"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Příjem Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Daňová mod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="Plodinový stres"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Půdní hnojivo"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Začínáme"/>
+        <text name="ft_help_cat_apps" text="Farmářské aplikace"/>
+        <text name="ft_help_cat_mods" text="Doprovodné mody"/>
+        <text name="ft_help_cat_settings" text="Nastavení a konzole"/>
+        <text name="ft_help_p1_title" text="Otevírání a navigace"/>
+        <text name="ft_help_p1_open_title" text="Otevření tabletu"/>
+        <text name="ft_help_p1_open_text" text="Stisknutím T (konfigurovatelné) kdykoli otevřete nebo zavřete Farm Tablet. Klíč můžete změnit v aplikaci Nastavení nebo zadáním TabletKeybind následovaného klíčovým písmenem ve vývojářské konzoli."/>
+        <text name="ft_help_p1_nav_title" text="Navigace na bočním panelu"/>
+        <text name="ft_help_p1_nav_text" text="Levý postranní panel zobrazuje jednu ikonu pro každou nainstalovanou aplikaci. Kliknutím na libovolnou ikonu přepnete aplikace okamžitě. Pokud máte aktivních mnoho doprovodných modů, postranní panel se bude posouvat – použijte kolečko myši, když na něj umístíte ukazatel myši, k posouvání nahoru a dolů."/>
+        <text name="ft_help_p2_title" text="Přesouvání a změna velikosti"/>
+        <text name="ft_help_p2_move_title" text="Režim úprav"/>
+        <text name="ft_help_p2_move_text" text="Otevřete aplikaci Nastavení a klikněte na ZADAT REŽIM ÚPRAV. V režimu úprav můžete přetažením těla tabletu přemístit kdekoli na obrazovce, přetažením libovolného rohového úchytu změníte velikost celého tabletu nebo přetažením levého nebo pravého okraje upravíte pouze šířku. Klepnutím pravým tlačítkem kamkoli ukončíte režim úprav. Vaše poloha a měřítko se automaticky uloží."/>
+        <text name="ft_help_p2_key_title" text="Změna klíče Open"/>
+        <text name="ft_help_p2_key_text" text="Výchozí klíč je T. Chcete-li jej změnit, otevřete aplikaci Nastavení a najděte nastavení Keybind, nebo ve vývojářské konzoli zadejte TabletKeybind následovaný názvem klíče – například TabletKeybind H nastaví klíč na H. Jsou podporována jednotlivá písmena, F-klávesy a běžné klávesy jako TAB a ESC."/>
+        <text name="ft_help_a1_title" text="Dashboard &amp; Weather"/>
+        <text name="ft_help_a1_dash_title" text="Dashboard"/>
+        <text name="ft_help_a1_dash_text" text="Dashboard je přehledné shrnutí farmy. Zobrazuje váš aktuální zůstatek na velké kartě hrdiny v horní části, poté příjmy, výdaje a čistý zisk za relaci níže. Farm Stats uvádí, kolik polí vlastníte a váš celkový počet vozidel. Sekce Svět zobrazuje aktuální roční období, den, denní dobu a aktuální stav počasí. Klepnutím na malou informační ikonu v pravém dolním rohu řídicího panelu zobrazíte podrobné vysvětlení každé hodnoty."/>
+        <text name="ft_help_a1_weather_title" text="Aplikace Počasí"/>
+        <text name="ft_help_a1_weather_text" text="Aplikace Počasí zobrazuje podrobnou vícedenní předpověď s teplotou, pravděpodobností srážek a větrem. Podmínky jsou barevně odlišeny: modrá pro déšť, oranžová pro bouřky, bílá pro jasnou oblohu. Použijte jej společně s modem Crop Stress k rozhodnutí, kdy naplánovat zavlažování."/>
+        <text name="ft_help_a2_title" text="Pole a zvířata"/>
+        <text name="ft_help_a2_fields_title" text="Správce pole"/>
+        <text name="ft_help_a2_fields_text" text="Správce polí uvádí všechna pole, která vlastníte. Každý řádek zobrazuje typ plodiny, aktuální fázi růstu jako odznak (Zaseto, Roste, Připraveno) a barevně označený stavový bod. Zelená znamená, že pole nevyžaduje žádnou pozornost. Žlutá znamená, že něco potřebuje – hnojivo, orbu nebo válení. Červená znamená, že plodina je připravena ke sklizni nebo vyžaduje naléhavou akci."/>
+        <text name="ft_help_a2_animals_title" text="Zvířata"/>
+        <text name="ft_help_a2_animals_text" text="Aplikace Zvířata zobrazuje každé pero, které vlastníte, se třemi ukazateli průběhu: hladina jídla, hladina vody a čistota. Zelené pruhy nevyžadují žádnou akci. Žluté pruhy by měly být brzy doplněny. Červené pruhy jsou kritické a ovlivní produktivitu, pokud zůstanou bez dozoru."/>
+        <text name="ft_help_a3_title" text="Workshop &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Dílna"/>
+        <text name="ft_help_a3_workshop_text" text="Jděte do 25 metrů od jakéhokoli vozidla a automaticky se zobrazí v aplikaci Workshop. Každý záznam zobrazuje hladinu paliva, procento opotřebení a celkové provozní hodiny. Kliknutím na VYBRAT na libovolné vozidlo jej připněte – připnutá vozidla zůstanou v aplikaci viditelná, i když odejdete, což usnadňuje sledování strojů pracujících v terénu."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker se aktivuje automaticky, když řídíte kolový nakladač, bagr nebo manipulátor s materiálem. Počítá každý cyklus vysypání a vede záznam o typu materiálu a odhadované hmotnosti na náklad. Použijte jej ke sledování produktivity při zemních pracích, rozmetání hnoje nebo manipulaci se sypkým materiálem."/>
+        <text name="ft_help_m1_title" text="Modifikace příjmů a daní"/>
+        <text name="ft_help_m1_income_title" text="FS25 Příjem Mod"/>
+        <text name="ft_help_m1_income_text" text="Když je ve vaší hře FS25_IncomeMod aktivní, aplikace Income se objeví na postranním panelu. Zobrazuje aktuální režim platby, plánovanou částku a umožňuje vám aktivovat nebo deaktivovat režim, aniž byste opustili tablet. Změny se projeví okamžitě."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Tax Mod"/>
+        <text name="ft_help_m1_tax_text" text="Když je FS25_TaxMod aktivní, aplikace Daň zobrazuje vaši aktuální daňovou sazbu, procento návratnosti a celkové daně zaplacené v této relaci. Mod můžete zapnout nebo vypnout z tabletu a na první pohled uvidíte požadavek na minimální zůstatek."/>
+        <text name="ft_help_m2_title" text="Půdní stres a půdní hnojivo"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Sezónní plodinový stres"/>
+        <text name="ft_help_m2_cropstress_text" text="Když je FS25_SeasonalCropStress aktivní, aplikace Crop Stress vypíše každé pole s aktuálním procentem vlhkosti půdy a nahromaděným stresem ze sucha. Barevně označený pruh ukazuje zdraví na první pohled: zelená je v pořádku, žlutá je varování, červená znamená, že stres již narůstá a ztráta výnosu začala. Nainstalujte tento mod a otevřete jeho vlastní sekci nápovědy pro úplné zavlažování."/>
+        <text name="ft_help_m2_soil_title" text="Půdní hnojivo FS25"/>
+        <text name="ft_help_m2_soil_text" text="Když je FS25_SoilFertilizer aktivní, aplikace Soil Fertilizer zobrazuje dusík, fosfor, draslík, pH a organickou hmotu na pole. Vyberte libovolné pole ze seznamu, abyste viděli jeho úplný půdní profil a zda potřebuje hnojení. Úrovně živin jsou barevně označeny: zelená je dobrá, žlutá je správná, červená vyžaduje pozornost."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Objevování nainstalovaných aplikací"/>
+        <text name="ft_help_m3_appstore_text" text="Aplikace App Store uvádí všechny aplikace registrované v tabletu, včetně doprovodných modových aplikací. Aplikace, které vyžadují mod, který není aktuálně aktivní, se zobrazují v šedě, takže víte, že jsou dostupné, jakmile povolíte odpovídající mod. Není potřeba žádná konfigurace – doprovodné aplikace se automaticky zobrazí po načtení jejich modu."/>
+        <text name="ft_help_s1_title" text="Nastavení tabletu"/>
+        <text name="ft_help_s1_settings_title" text="Co můžete změnit"/>
+        <text name="ft_help_s1_settings_text" text="Otevřete aplikaci Nastavení z postranního panelu, abyste mohli spravovat: polohu a měřítko tabletu (nebo použijte režim úprav pro vizuální přetažení), spouštěcí aplikaci zobrazenou při prvním otevření tabletu, zda se má zobrazit uvítací oznámení při načítání, a protokolování ladění pro řešení problémů. Všechna nastavení se automaticky uloží při zavření hry."/>
+        <text name="ft_help_s1_sound_title" text="Zvukové efekty"/>
+        <text name="ft_help_s1_sound_text" text="Zvukové efekty jsou ve výchozím nastavení zapnuté. Při přepínání aplikací se přehraje kliknutí na výběr aplikace. Zvuk stránkování se přehraje, když se otevře nebo zavře panel nápovědy ve hře. Oba lze nezávisle přepínat v aplikaci Nastavení."/>
+        <text name="ft_help_s2_title" text="Příkazy konzoly"/>
+        <text name="ft_help_s2_console_title" text="Dostupné příkazy"/>
+        <text name="ft_help_s2_console_text" text="Otevřete vývojářskou konzoli pomocí klávesy tilda a zadejte tablet, abyste viděli všechny dostupné příkazy. Příklady: TabletKeybind H změní klíč otevření na H. Počasí TabletSetStartupApp ve výchozím nastavení otevře aplikaci Počasí. TabletResetSettings obnoví všechna nastavení tabletu na výchozí hodnoty. TabletToggleDebug zapíná nebo vypíná podrobné protokolování."/>
+
+    </texts>
+</l10n>

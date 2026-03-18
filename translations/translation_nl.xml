@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Boerderij tablet"/>
+        <text name="ft_ui_welcome_title" text="Boerderijtablet v2"/>
+        <text name="ft_ui_welcome_message" text="Druk op %s om te openen"/>
+        <text name="ft_ui_enabled_short" text="Tablet inschakelen"/>
+        <text name="ft_ui_enabled_long" text="Schakel het boerderijtabletsysteem in of uit"/>
+        <text name="ft_ui_keybind_short" text="Open sleutel"/>
+        <text name="ft_ui_keybind_long" text="Sleutel om de boerderijtablet te openen/sluiten"/>
+        <text name="ft_ui_notifications_short" text="Meldingen"/>
+        <text name="ft_ui_notifications_long" text="Toon tabletmeldingen bij het laden van games"/>
+        <text name="ft_ui_startupapp_short" text="Opstart-app"/>
+        <text name="ft_ui_startupapp_long" text="Standaard app bij het openen van de tablet"/>
+        <text name="ft_ui_startupapp_1" text="Dashboard"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Weer"/>
+        <text name="ft_ui_startupapp_4" text="Graven"/>
+        <text name="ft_ui_soundeffects_short" text="Geluidseffecten"/>
+        <text name="ft_ui_soundeffects_long" text="Speel geluidseffecten af ​​voor tabletinteracties"/>
+        <text name="ft_ui_debug_short" text="Foutopsporingsmodus"/>
+        <text name="ft_ui_debug_long" text="Schakel logboekregistratie voor foutopsporing in de console in"/>
+        <text name="ft_ui_reset" text="Tabletinstellingen opnieuw instellen"/>
+        <text name="ft_ui_app_dashboard" text="Dashboard"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Updates"/>
+        <text name="ft_ui_app_settings" text="Instellingen"/>
+        <text name="ft_ui_app_workshop" text="Werkplaats"/>
+        <text name="ft_ui_app_field_status" text="Veldmanager"/>
+        <text name="ft_ui_app_animals" text="Dieren"/>
+        <text name="ft_ui_app_weather" text="Weer"/>
+        <text name="ft_ui_app_digging" text="Graven"/>
+        <text name="ft_ui_app_bucket_tracker" text="Emmer-tracker"/>
+        <text name="ft_ui_app_income_mod" text="Inkomen Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Belastingmod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC-gunst"/>
+        <text name="ft_ui_app_crop_stress" text="Gewasstress"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Bodemmeststof"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Aan de slag"/>
+        <text name="ft_help_cat_apps" text="Boerderij-apps"/>
+        <text name="ft_help_cat_mods" text="Companion-mods"/>
+        <text name="ft_help_cat_settings" text="Instellingen en console"/>
+        <text name="ft_help_p1_title" text="Openen en navigeren"/>
+        <text name="ft_help_p1_open_title" text="De tablet openen"/>
+        <text name="ft_help_p1_open_text" text="Druk op elk gewenst moment op T (configureerbaar) om de boerderijtablet te openen of te sluiten. U kunt de sleutel wijzigen in de app Instellingen of door TabletKeybind te typen, gevolgd door een sleutelletter in de ontwikkelaarsconsole."/>
+        <text name="ft_help_p1_nav_title" text="Zijbalknavigatie"/>
+        <text name="ft_help_p1_nav_text" text="De linkerzijbalk toont één pictogram per geïnstalleerde app. Klik op een pictogram om direct van app te wisselen. Als je veel begeleidende mods actief hebt, zal de zijbalk scrollen. Gebruik het muiswiel terwijl je erover beweegt om omhoog en omlaag te scrollen."/>
+        <text name="ft_help_p2_title" text="Verplaatsen en formaat wijzigen"/>
+        <text name="ft_help_p2_move_title" text="Bewerkingsmodus"/>
+        <text name="ft_help_p2_move_text" text="Open de app Instellingen en klik op ENTER EDIT MODE. In de bewerkingsmodus kunt u de tabletbehuizing slepen om deze ergens op het scherm te verplaatsen, een hoekgreep slepen om de hele tablet te schalen, of de linker- of rechterrand slepen om alleen de breedte aan te passen. Klik met de rechtermuisknop ergens om de bewerkingsmodus te verlaten. Uw positie en schaal worden automatisch opgeslagen."/>
+        <text name="ft_help_p2_key_title" text="De open sleutel wijzigen"/>
+        <text name="ft_help_p2_key_text" text="De standaardsleutel is T. Om deze te wijzigen, opent u de app Instellingen en zoekt u de Keybind-instelling, of typt u TabletKeybind gevolgd door een sleutelnaam in de ontwikkelaarsconsole. TabletKeybind H stelt de sleutel bijvoorbeeld in op H. Enkele letters, F-toetsen en algemene sleutels zoals TAB en ESC worden allemaal ondersteund."/>
+        <text name="ft_help_a1_title" text="Dashboard en weer"/>
+        <text name="ft_help_a1_dash_title" text="Dashboard"/>
+        <text name="ft_help_a1_dash_text" text="Het Dashboard is uw boerderijoverzicht in één oogopslag. Het toont je huidige saldo op een grote heldenkaart bovenaan, en vervolgens de inkomsten, uitgaven en nettowinst voor de onderstaande sessie. Boerderijstatistieken geven aan hoeveel percelen u bezit en het totale aantal voertuigen. Het gedeelte Wereld toont het huidige seizoen, de dag, het tijdstip en een live momentopname van het weer. Tik op het kleine infopictogram in de rechterbenedenhoek van het Dashboard voor een gedetailleerde uitleg van elke waarde."/>
+        <text name="ft_help_a1_weather_title" text="Weer-app"/>
+        <text name="ft_help_a1_weather_text" text="De Weer-app toont een gedetailleerde meerdaagse voorspelling met temperatuur, neerslagkans en wind. De omstandigheden zijn kleurgecodeerd: blauw voor regen, oranje voor storm, wit voor heldere lucht. Gebruik dit samen met de Crop Stress-mod om te beslissen wanneer de irrigatie moet worden gepland."/>
+        <text name="ft_help_a2_title" text="Velden en dieren"/>
+        <text name="ft_help_a2_fields_title" text="Veldmanager"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager vermeldt elk veld waarvan u eigenaar bent. Elke rij toont het gewastype, de huidige groeifase als een badge (Gezaaid, Groeiend, Klaar) en een kleurgecodeerde statusstip. Groen betekent dat het veld geen aandacht behoeft. Geel betekent dat het iets nodig heeft: kunstmest, ploegen of walsen. Rood betekent dat het gewas klaar is om te oogsten of dat er dringend actie moet worden ondernomen."/>
+        <text name="ft_help_a2_animals_title" text="Dieren"/>
+        <text name="ft_help_a2_animals_text" text="De Dieren-app toont elk hok dat u bezit met drie voortgangsbalken: voedselniveau, waterniveau en reinheid. Groene balken behoeven geen actie. Gele balken moeten binnenkort worden bijgevuld. Rode balken zijn van cruciaal belang en zullen de productiviteit beïnvloeden als ze onbeheerd worden achtergelaten."/>
+        <text name="ft_help_a3_title" text="Werkplaats- en baktracker"/>
+        <text name="ft_help_a3_workshop_title" text="Werkplaats"/>
+        <text name="ft_help_a3_workshop_text" text="Loop binnen 25 meter van een voertuig en het verschijnt automatisch in de Workshop-app. Elke invoer toont het brandstofniveau, het slijtagepercentage en het totale aantal bedrijfsuren. Klik op SELECTEREN op een voertuig om het vast te zetten. Vastgezette voertuigen blijven zichtbaar in de app, zelfs als u wegloopt, waardoor u eenvoudig machines kunt monitoren die in het veld aan het werk zijn."/>
+        <text name="ft_help_a3_bucket_title" text="Emmer-tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker wordt automatisch geactiveerd wanneer u met een wiellader, graafmachine of overslagmachine rijdt. Het telt elke stortcyclus en houdt een logboek bij van het materiaaltype en het geschatte gewicht per lading. Gebruik het om de productiviteit bij grondwerken, het verspreiden van mest of het verwerken van bulkmateriaal te volgen."/>
+        <text name="ft_help_m1_title" text="Inkomens- en belastingmods"/>
+        <text name="ft_help_m1_income_title" text="FS25 Inkomen Mod"/>
+        <text name="ft_help_m1_income_text" text="Wanneer FS25_IncomeMod actief is in je savegame, verschijnt de Income-app in de zijbalk. Het toont de huidige betalingsmodus en het geplande bedrag, en u kunt de mod in- of uitschakelen zonder de tablet te verlaten. Wijzigingen zijn onmiddellijk van kracht."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Belastingmod"/>
+        <text name="ft_help_m1_tax_text" text="Wanneer FS25_TaxMod actief is, toont de Belasting-app uw huidige belastingtarief, het retourpercentage en de totale belastingen die tijdens deze sessie zijn betaald. U kunt de mod vanaf de tablet in- of uitschakelen en in één oogopslag uw minimale saldovereiste zien."/>
+        <text name="ft_help_m2_title" text="Gewasstress en bodemmeststof"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Seizoensgebonden gewasstress"/>
+        <text name="ft_help_m2_cropstress_text" text="Wanneer FS25_SeasonalCropStress actief is, vermeldt de Crop Stress-app elk veld met het huidige bodemvochtpercentage en de geaccumuleerde droogtestress. Een kleurgecodeerde balk geeft in één oogopslag de gezondheid weer: groen is prima, geel is een waarschuwing, rood betekent dat de stress zich al opbouwt en het opbrengstverlies is begonnen. Installeer die mod en open zijn eigen helpsectie voor volledige irrigatiebegeleiding."/>
+        <text name="ft_help_m2_soil_title" text="FS25 Bodemmeststof"/>
+        <text name="ft_help_m2_soil_text" text="Wanneer FS25_SoilFertilizer actief is, toont de Bodemmeststof app stikstof, fosfor, kalium, pH en organische stof per perceel. Selecteer een perceel uit de lijst om het volledige bodemprofiel te bekijken en te zien of er bemesting nodig is. De voedingsstofniveaus zijn kleurgecodeerd: groen is goed, geel is redelijk, rood heeft aandacht nodig."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Geïnstalleerde apps ontdekken"/>
+        <text name="ft_help_m3_appstore_text" text="De App Store-app vermeldt elke app die op de tablet is geregistreerd, inclusief begeleidende mod-apps. Apps waarvoor een mod nodig is die momenteel niet actief is, worden gedimd weergegeven, zodat u weet dat ze beschikbaar zijn zodra u de overeenkomende mod inschakelt. Er is geen configuratie nodig: begeleidende apps verschijnen automatisch wanneer hun mod wordt geladen."/>
+        <text name="ft_help_s1_title" text="Tablet-instellingen"/>
+        <text name="ft_help_s1_settings_title" text="Wat je kunt veranderen"/>
+        <text name="ft_help_s1_settings_text" text="Open de app Instellingen vanuit de zijbalk om het volgende te beheren: de positie en schaal van de tablet (of gebruik de bewerkingsmodus voor visueel slepen), de opstartapp die wordt weergegeven wanneer u de tablet voor het eerst opent, of er een welkomstmelding moet worden weergegeven bij het laden, en logboekregistratie voor foutopsporing voor het oplossen van problemen. Alle instellingen worden automatisch opgeslagen als je het spel afsluit."/>
+        <text name="ft_help_s1_sound_title" text="Geluidseffecten"/>
+        <text name="ft_help_s1_sound_text" text="Geluidseffecten zijn standaard ingeschakeld. De app-selecteerklik wordt afgespeeld wanneer u van app wisselt. Het oproepgeluid wordt afgespeeld wanneer het Help-paneel in de game wordt geopend of gesloten. Beide kunnen onafhankelijk worden geschakeld in de app Instellingen."/>
+        <text name="ft_help_s2_title" text="Console-opdrachten"/>
+        <text name="ft_help_s2_console_title" text="Beschikbare opdrachten"/>
+        <text name="ft_help_s2_console_text" text="Open de ontwikkelaarsconsole met de tilde-toets en typ tablet om alle beschikbare opdrachten te zien. Voorbeelden: TabletKeybind H verandert de open sleutel in H. TabletSetStartupApp weer opent standaard de app Weer. TabletResetSettings herstelt alle tabletinstellingen naar hun standaardwaarden. TabletToggleDebug schakelt uitgebreide logboekregistratie in of uit."/>
+
+    </texts>
+</l10n>

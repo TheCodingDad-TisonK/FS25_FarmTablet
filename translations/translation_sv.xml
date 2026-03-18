@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Farm Tablet"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Tryck på %s för att öppna"/>
+        <text name="ft_ui_enabled_short" text="Aktivera surfplatta"/>
+        <text name="ft_ui_enabled_long" text="Aktivera eller inaktivera gårdens surfplatta"/>
+        <text name="ft_ui_keybind_short" text="Öppna nyckel"/>
+        <text name="ft_ui_keybind_long" text="Nyckel för att öppna/stänga gårdsplattan"/>
+        <text name="ft_ui_notifications_short" text="Aviseringar"/>
+        <text name="ft_ui_notifications_long" text="Visa surfplattaaviseringar när spelet laddas"/>
+        <text name="ft_ui_startupapp_short" text="Startapp"/>
+        <text name="ft_ui_startupapp_long" text="Standardapp när du öppnar surfplattan"/>
+        <text name="ft_ui_startupapp_1" text="Instrumentbräda"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Väder"/>
+        <text name="ft_ui_startupapp_4" text="Grävning"/>
+        <text name="ft_ui_soundeffects_short" text="Ljudeffekter"/>
+        <text name="ft_ui_soundeffects_long" text="Spela ljudeffekter för surfplattor"/>
+        <text name="ft_ui_debug_short" text="Felsökningsläge"/>
+        <text name="ft_ui_debug_long" text="Aktivera felsökningsloggning i konsolen"/>
+        <text name="ft_ui_reset" text="Återställ surfplattans inställningar"/>
+        <text name="ft_ui_app_dashboard" text="Instrumentbräda"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Uppdateringar"/>
+        <text name="ft_ui_app_settings" text="Inställningar"/>
+        <text name="ft_ui_app_workshop" text="Verkstad"/>
+        <text name="ft_ui_app_field_status" text="Fältchef"/>
+        <text name="ft_ui_app_animals" text="Djur"/>
+        <text name="ft_ui_app_weather" text="Väder"/>
+        <text name="ft_ui_app_digging" text="Grävning"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Inkomst Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Skatt Mod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC-favor"/>
+        <text name="ft_ui_app_crop_stress" text="Grödstress"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Jordgödselmedel"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Komma igång"/>
+        <text name="ft_help_cat_apps" text="Gårdsappar"/>
+        <text name="ft_help_cat_mods" text="Companion Mods"/>
+        <text name="ft_help_cat_settings" text="Inställningar och konsol"/>
+        <text name="ft_help_p1_title" text="Öppna &amp; navigera"/>
+        <text name="ft_help_p1_open_title" text="Öppnar surfplattan"/>
+        <text name="ft_help_p1_open_text" text="Tryck på T (konfigurerbar) när som helst för att öppna eller stänga Farm Tablet. Du kan ändra nyckeln i appen Inställningar eller genom att skriva TabletKeybind följt av en nyckelbokstav i utvecklarkonsolen."/>
+        <text name="ft_help_p1_nav_title" text="Sidofältsnavigering"/>
+        <text name="ft_help_p1_nav_text" text="Det vänstra sidofältet visar en ikon per installerad app. Klicka på valfri ikon för att byta app direkt. Om du har många följeslagare aktiva kommer sidofältet att rulla — använd mushjulet medan du håller muspekaren över det för att rulla upp och ner."/>
+        <text name="ft_help_p2_title" text="Flytta &amp; ändra storlek"/>
+        <text name="ft_help_p2_move_title" text="Redigera läge"/>
+        <text name="ft_help_p2_move_text" text="Öppna appen Inställningar och klicka på ENTER EDIT-LÄGE. I redigeringsläge kan du dra surfplattans kropp för att flytta den var som helst på skärmen, dra valfritt hörnhandtag för att skala hela surfplattan, eller dra i vänster eller höger kant för att bara justera bredden. Högerklicka var som helst för att avsluta redigeringsläget. Din position och skala sparas automatiskt."/>
+        <text name="ft_help_p2_key_title" text="Ändra Open Key"/>
+        <text name="ft_help_p2_key_text" text="Standardnyckeln är T. För att ändra den öppnar du appen Inställningar och hittar Keybind-inställningen, eller skriv TabletKeybind följt av ett nyckelnamn i utvecklarkonsolen — till exempel TabletKeybind H ställer in nyckeln till H. Enkla bokstäver, F-nycklar och vanliga nycklar som TAB och ESC stöds alla."/>
+        <text name="ft_help_a1_title" text="Instrumentpanel och väder"/>
+        <text name="ft_help_a1_dash_title" text="Instrumentbräda"/>
+        <text name="ft_help_a1_dash_text" text="Dashboarden är en översikt över gårdssammanfattningen. Den visar ditt nuvarande saldo i ett stort hjältekort överst, sedan inkomster, utgifter och nettovinst för sessionen nedan. Farm Stats listar hur många åkrar du äger och ditt totala antal fordon. Världssektionen visar aktuell säsong, dag, tid på dagen och en ögonblicksbild av väderleken. Tryck på den lilla infoikonen i det nedre högra hörnet av instrumentpanelen för en detaljerad förklaring av varje värde."/>
+        <text name="ft_help_a1_weather_title" text="Väder app"/>
+        <text name="ft_help_a1_weather_text" text="Väderappen visar en detaljerad flerdagarsprognos med temperatur, nederbördssannolikhet och vind. Förhållandena är färgkodade: blått för regn, orange för stormar, vitt för klar himmel. Använd detta tillsammans med Crop Stress-moden för att bestämma när bevattning ska planeras."/>
+        <text name="ft_help_a2_title" text="Åker &amp; djur"/>
+        <text name="ft_help_a2_fields_title" text="Fältchef"/>
+        <text name="ft_help_a2_fields_text" text="Fälthanteraren listar alla fält du äger. Varje rad visar gröda, den aktuella tillväxtfasen som ett märke (Sått, Växande, Klart) och en färgkodad tillståndsprick. Grönt betyder att fältet inte behöver uppmärksamhet. Gul betyder att den behöver något - gödning, plöjning eller rullning. Rött betyder att grödan är redo att skördas eller kräver brådskande åtgärder."/>
+        <text name="ft_help_a2_animals_title" text="Djur"/>
+        <text name="ft_help_a2_animals_text" text="Djur-appen visar varje penna du äger med tre förloppsindikatorer: matnivå, vattennivå och renlighet. Gröna staplar behöver ingen åtgärd. Gula staplar bör fyllas på snart. Röda staplar är kritiska och kommer att påverka produktiviteten om de lämnas utan tillsyn."/>
+        <text name="ft_help_a3_title" text="Verkstad &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Verkstad"/>
+        <text name="ft_help_a3_workshop_text" text="Gå inom 25 meter från vilket fordon som helst så visas det automatiskt i Workshop-appen. Varje post visar bränslenivå, slitageprocent och totala drifttimmar. Klicka på VÄLJ på valfritt fordon för att fästa det — fastnålda fordon förblir synliga i appen även när du går iväg, vilket gör det enkelt att övervaka maskiner som arbetar i fält."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker aktiveras automatiskt när du kör en hjullastare, grävmaskin eller materialhanterare. Den räknar varje tömningscykel och för en löpande logg över materialtyp och uppskattad vikt per last. Använd den för att spåra produktivitet vid markarbeten, gödselspridning eller hantering av bulkmaterial."/>
+        <text name="ft_help_m1_title" text="Mods för inkomst och skatt"/>
+        <text name="ft_help_m1_income_title" text="FS25 Inkomst Mod"/>
+        <text name="ft_help_m1_income_text" text="När FS25_IncomeMod är aktivt i ditt savegame visas Income-appen i sidofältet. Den visar det aktuella betalningsläget, det schemalagda beloppet och låter dig aktivera eller inaktivera modden utan att lämna surfplattan. Ändringar träder i kraft omedelbart."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Skattemod"/>
+        <text name="ft_help_m1_tax_text" text="När FS25_TaxMod är aktivt visar Tax-appen din nuvarande skattesats, avkastningsprocenten och den totala skatten som betalats denna session. Du kan slå på eller av modden från surfplattan och se ditt lägsta saldokrav med en blick."/>
+        <text name="ft_help_m2_title" text="Grödestress och jordgödsel"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Säsongsbetonad grödstress"/>
+        <text name="ft_help_m2_cropstress_text" text="När FS25_SeasonalCropStress är aktiv listar Crop Stress-appen varje fält med dess aktuella markfuktighetsprocent och ackumulerade torkastress. En färgkodad stapel visar hälsa på ett ögonkast: grönt är bra, gult är en varning, rött betyder att stressen redan håller på att byggas upp och avkastningsförlusten har börjat. Installera den moden och öppna sin egen hjälpsektion för fullständig bevattningsvägledning."/>
+        <text name="ft_help_m2_soil_title" text="FS25 Jordgödsel"/>
+        <text name="ft_help_m2_soil_text" text="När FS25_SoilFertilizer är aktivt visar Soil Fertilizer-appen kväve, fosfor, kalium, pH och organiskt material per åker. Välj valfritt fält från listan för att se dess fullständiga jordprofil och om det behöver gödslas. Näringshalterna är färgkodade: grönt är bra, gult är rättvist, rött behöver uppmärksamhet."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="Upptäcker installerade appar"/>
+        <text name="ft_help_m3_appstore_text" text="App Store-appen listar alla appar som är registrerade på surfplattan, inklusive appar för följeslagare. Appar som kräver en mod som för närvarande inte är aktiv visas i ett nedtonat tillstånd så att du vet att de är tillgängliga när du aktiverar den matchande moden. Ingen konfiguration behövs – medföljande appar visas automatiskt när deras mod laddas."/>
+        <text name="ft_help_s1_title" text="Inställningar för surfplatta"/>
+        <text name="ft_help_s1_settings_title" text="Vad du kan ändra"/>
+        <text name="ft_help_s1_settings_text" text="Öppna appen Inställningar från sidofältet för att hantera: surfplattans position och skala (eller använd redigeringsläge för visuell dragning), startappen som visas när du öppnar surfplattan första gången, om ett välkomstmeddelande ska visas vid laddning och felsökningsloggning för felsökning. Alla inställningar sparas automatiskt när du stänger spelet."/>
+        <text name="ft_help_s1_sound_title" text="Ljudeffekter"/>
+        <text name="ft_help_s1_sound_text" text="Ljudeffekter är på som standard. App-select-klicket spelas upp när du byter app. Sökningsljudet spelas upp när hjälppanelen i spelet öppnas eller stängs. Båda kan växlas oberoende av varandra i appen Inställningar."/>
+        <text name="ft_help_s2_title" text="Konsolkommandon"/>
+        <text name="ft_help_s2_console_title" text="Tillgängliga kommandon"/>
+        <text name="ft_help_s2_console_text" text="Öppna utvecklarkonsolen med tilde-tangenten och skriv surfplatta för att se alla tillgängliga kommandon. Exempel: TabletKeybind H ändrar öppningsnyckeln till H. TabletSetStartupApp väder öppnar Weather-appen som standard. TabletResetSettings återställer alla surfplattans inställningar till sina standardinställningar. TabletToggleDebug aktiverar eller inaktiverar utförlig inloggning."/>
+
+    </texts>
+</l10n>

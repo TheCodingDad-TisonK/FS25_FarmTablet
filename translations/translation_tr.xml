@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Çiftlik Tableti"/>
+        <text name="ft_ui_welcome_title" text="Çiftlik Tableti v2"/>
+        <text name="ft_ui_welcome_message" text="Açmak için %s tuşuna basın"/>
+        <text name="ft_ui_enabled_short" text="Tableti Etkinleştir"/>
+        <text name="ft_ui_enabled_long" text="Çiftlik tablet sistemini etkinleştirme veya devre dışı bırakma"/>
+        <text name="ft_ui_keybind_short" text="Anahtarı Aç"/>
+        <text name="ft_ui_keybind_long" text="Çiftlik tabletini açma/kapama anahtarı"/>
+        <text name="ft_ui_notifications_short" text="Bildirimler"/>
+        <text name="ft_ui_notifications_long" text="Oyun yüklendiğinde tablet bildirimlerini göster"/>
+        <text name="ft_ui_startupapp_short" text="Başlangıç ​​Uygulaması"/>
+        <text name="ft_ui_startupapp_long" text="Tableti açarken varsayılan uygulama"/>
+        <text name="ft_ui_startupapp_1" text="Kontrol Paneli"/>
+        <text name="ft_ui_startupapp_2" text="Uygulama Mağazası"/>
+        <text name="ft_ui_startupapp_3" text="Hava durumu"/>
+        <text name="ft_ui_startupapp_4" text="Kazma"/>
+        <text name="ft_ui_soundeffects_short" text="Ses efektleri"/>
+        <text name="ft_ui_soundeffects_long" text="Tablet etkileşimleri için ses efektleri çalın"/>
+        <text name="ft_ui_debug_short" text="Hata Ayıklama Modu"/>
+        <text name="ft_ui_debug_long" text="Konsolda hata ayıklama günlüğünü etkinleştir"/>
+        <text name="ft_ui_reset" text="Tablet Ayarlarını Sıfırla"/>
+        <text name="ft_ui_app_dashboard" text="Kontrol Paneli"/>
+        <text name="ft_ui_app_store" text="Uygulama Mağazası"/>
+        <text name="ft_ui_app_updates" text="Güncellemeler"/>
+        <text name="ft_ui_app_settings" text="Ayarlar"/>
+        <text name="ft_ui_app_workshop" text="Atölye"/>
+        <text name="ft_ui_app_field_status" text="Saha Müdürü"/>
+        <text name="ft_ui_app_animals" text="Hayvanlar"/>
+        <text name="ft_ui_app_weather" text="Hava durumu"/>
+        <text name="ft_ui_app_digging" text="Kazma"/>
+        <text name="ft_ui_app_bucket_tracker" text="Kova Takibi"/>
+        <text name="ft_ui_app_income_mod" text="Gelir Modu"/>
+        <text name="ft_ui_app_tax_mod" text="Vergi Modu"/>
+        <text name="ft_ui_app_npc_favor" text="NPC İyiliği"/>
+        <text name="ft_ui_app_crop_stress" text="Mahsul Stresi"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Toprak Gübresi"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Başlarken"/>
+        <text name="ft_help_cat_apps" text="Çiftlik Uygulamaları"/>
+        <text name="ft_help_cat_mods" text="Tamamlayıcı Modlar"/>
+        <text name="ft_help_cat_settings" text="Ayarlar ve Konsol"/>
+        <text name="ft_help_p1_title" text="Açma ve Gezinme"/>
+        <text name="ft_help_p1_open_title" text="Tableti Açma"/>
+        <text name="ft_help_p1_open_text" text="Farm Tablet'i açmak veya kapatmak için istediğiniz zaman T'ye (yapılandırılabilir) basın. Anahtarı Ayarlar uygulamasından veya geliştirici konsolunda TabletKeybind yazıp ardından bir anahtar harfi yazarak değiştirebilirsiniz."/>
+        <text name="ft_help_p1_nav_title" text="Kenar Çubuğu Gezintisi"/>
+        <text name="ft_help_p1_nav_text" text="Sol kenar çubuğu, yüklü uygulama başına bir simge gösterir. Uygulamaları anında değiştirmek için herhangi bir simgeye tıklayın. Çok sayıda etkin yardımcı modunuz varsa kenar çubuğu kayar; yukarı ve aşağı kaydırmak için fare tekerleğini üzerine getirirken kullanın."/>
+        <text name="ft_help_p2_title" text="Taşıma ve Yeniden Boyutlandırma"/>
+        <text name="ft_help_p2_move_title" text="Düzenleme Modu"/>
+        <text name="ft_help_p2_move_text" text="Ayarlar uygulamasını açın ve DÜZENLEME MODUNA GİRİN seçeneğine tıklayın. Düzenleme modunda, ekranın herhangi bir yerine yeniden konumlandırmak için tablet gövdesini sürükleyebilir, tabletin tamamını ölçeklendirmek için herhangi bir köşe tutamacını sürükleyebilir veya yalnızca genişliği ayarlamak için sol veya sağ kenarı sürükleyebilirsiniz. Düzenleme modundan çıkmak için herhangi bir yere sağ tıklayın. Konumunuz ve ölçeğiniz otomatik olarak kaydedilir."/>
+        <text name="ft_help_p2_key_title" text="Açma Anahtarını Değiştirme"/>
+        <text name="ft_help_p2_key_text" text="Varsayılan anahtar T'dir. Bunu değiştirmek için Ayarlar uygulamasını açın ve Keybind ayarını bulun veya geliştirici konsolunda TabletKeybind yazın ve ardından bir anahtar adı yazın; örneğin TabletKeybind H, anahtarı H olarak ayarlar. Tek harfler, F tuşları ve TAB ve ESC gibi ortak tuşların tümü desteklenir."/>
+        <text name="ft_help_a1_title" text="Kontrol Paneli ve Hava Durumu"/>
+        <text name="ft_help_a1_dash_title" text="Kontrol Paneli"/>
+        <text name="ft_help_a1_dash_text" text="Kontrol Paneli, bir bakışta çiftlik özetinizdir. En üstte büyük bir kahraman kartında mevcut bakiyenizi, ardından gelirinizi, giderlerinizi ve aşağıdaki oturuma ait net kârınızı gösterir. Çiftlik İstatistikleri, sahip olduğunuz tarla sayısını ve toplam araç sayınızı listeler. Dünya bölümü mevcut sezonu, günü, günün saatini ve canlı hava durumu anlık görüntüsünü gösterir. Her değerin ayrıntılı açıklaması için Kontrol Panelinin sağ alt köşesindeki küçük bilgi simgesine dokunun."/>
+        <text name="ft_help_a1_weather_title" text="Hava Durumu Uygulaması"/>
+        <text name="ft_help_a1_weather_text" text="Hava Durumu uygulaması sıcaklık, yağış olasılığı ve rüzgar ile birlikte çok günlük ayrıntılı bir tahmin gösterir. Koşullar renk kodludur: yağmur için mavi, fırtınalar için turuncu, açık gökyüzü için beyaz. Sulamayı ne zaman programlayacağınıza karar vermek için bunu Mahsul Stresi moduyla birlikte kullanın."/>
+        <text name="ft_help_a2_title" text="Tarlalar ve Hayvanlar"/>
+        <text name="ft_help_a2_fields_title" text="Saha Müdürü"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager, sahip olduğunuz her alanı listeler. Her satırda ürün türü, bir rozet (Ekim, Büyüyor, Hazır) olarak mevcut büyüme aşaması ve renk kodlu bir durum noktası gösterilir. Yeşil, alanın bakım gerektirmediği anlamına gelir. Sarı, bir şeye ihtiyacı olduğu anlamına gelir; gübre, çiftçilik veya yuvarlanma. Kırmızı, mahsulün hasada hazır olduğu veya acil eylem gerektirdiği anlamına gelir."/>
+        <text name="ft_help_a2_animals_title" text="Hayvanlar"/>
+        <text name="ft_help_a2_animals_text" text="Hayvanlar uygulaması, sahip olduğunuz her kalemi üç ilerleme çubuğuyla gösterir: yiyecek seviyesi, su seviyesi ve temizlik. Yeşil çubukların herhangi bir eyleme ihtiyacı yoktur. Sarı çubukların kısa sürede doldurulması gerekiyor. Kırmızı çubuklar kritik öneme sahiptir ve gözetimsiz bırakıldığında üretkenliği etkileyecektir."/>
+        <text name="ft_help_a3_title" text="Atölye ve Kova Takibi"/>
+        <text name="ft_help_a3_workshop_title" text="Atölye"/>
+        <text name="ft_help_a3_workshop_text" text="Herhangi bir araca 25 metre yaklaştığınızda otomatik olarak Atölye uygulamasında görünecektir. Her giriş yakıt seviyesini, aşınma yüzdesini ve toplam çalışma saatlerini gösterir. Sabitlemek için herhangi bir araç üzerinde SEÇ'e tıklayın; sabitlenmiş araçlar, siz uzaklaştığınızda bile uygulamada görünür kalır ve sahada çalışan makinelerin izlenmesini kolaylaştırır."/>
+        <text name="ft_help_a3_bucket_title" text="Kova Takibi"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker, bir tekerlekli yükleyiciyi, ekskavatörü veya malzeme taşıyıcıyı kullandığınızda otomatik olarak etkinleşir. Her boşaltma döngüsünü sayar ve malzeme türünün ve yük başına tahmini ağırlığın çalışan bir kaydını tutar. Hafriyat işleri, gübre serpme veya toplu malzeme taşıma işlerinde verimliliği izlemek için kullanın."/>
+        <text name="ft_help_m1_title" text="Gelir ve Vergi Modları"/>
+        <text name="ft_help_m1_income_title" text="FS25 Gelir Modu"/>
+        <text name="ft_help_m1_income_text" text="Kayıtlı oyununuzda FS25_IncomeMod etkin olduğunda, kenar çubuğunda Gelir uygulaması görünür. Geçerli ödeme modunu, planlanan tutarı gösterir ve tabletten ayrılmadan modu etkinleştirmenize veya devre dışı bırakmanıza olanak tanır. Değişiklikler hemen yürürlüğe girer."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Vergi Modu"/>
+        <text name="ft_help_m1_tax_text" text="FS25_TaxMod aktif olduğunda Vergi uygulaması mevcut vergi oranınızı, iade yüzdesini ve bu oturumda ödenen toplam vergiyi gösterir. Modu tabletten açıp kapatabilir ve minimum bakiye ihtiyacınızı bir bakışta görebilirsiniz."/>
+        <text name="ft_help_m2_title" text="Mahsul Stresi ve Toprak Gübresi"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 Mevsimsel Mahsul Stresi"/>
+        <text name="ft_help_m2_cropstress_text" text="FS25_SeasonalCropStress aktif olduğunda, Mahsul Stresi uygulaması her tarlayı mevcut toprak nem yüzdesi ve birikmiş kuraklık stresiyle birlikte listeler. Renk kodlu çubuk, sağlığı bir bakışta gösterir: yeşil iyidir, sarı bir uyarıdır, kırmızı ise stresin zaten oluştuğunu ve verim kaybının başladığını gösterir. Bu modu yükleyin ve tam sulama rehberliği için kendi yardım bölümünü açın."/>
+        <text name="ft_help_m2_soil_title" text="FS25 Toprak Gübresi"/>
+        <text name="ft_help_m2_soil_text" text="FS25_SoilFertilizer aktif olduğunda Toprak Gübre uygulaması tarla başına nitrojen, fosfor, potasyum, pH ve organik maddeyi gösterir. Tam toprak profilini ve gübrelemeye ihtiyaç duyup duymadığını görmek için listeden herhangi bir alanı seçin. Besin seviyeleri renk kodludur: yeşil iyidir, sarı ortadır, kırmızı dikkat gerektirir."/>
+        <text name="ft_help_m3_title" text="Uygulama Mağazası"/>
+        <text name="ft_help_m3_appstore_title" text="Yüklü Uygulamaları Keşfetmek"/>
+        <text name="ft_help_m3_appstore_text" text="App Store uygulaması, tamamlayıcı mod uygulamaları da dahil olmak üzere tablete kayıtlı her uygulamayı listeler. Şu anda etkin olmayan bir mod gerektiren uygulamalar soluk bir durumda gösterilir, böylece eşleşen modu etkinleştirdiğinizde bunların kullanılabilir olduğunu bilirsiniz. Hiçbir yapılandırmaya gerek yoktur; tamamlayıcı uygulamalar, modları yüklendiğinde otomatik olarak görünür."/>
+        <text name="ft_help_s1_title" text="Tablet Ayarları"/>
+        <text name="ft_help_s1_settings_title" text="Neleri Değiştirebilirsiniz"/>
+        <text name="ft_help_s1_settings_text" text="Şunları yönetmek için kenar çubuğundan Ayarlar uygulamasını açın: tablet konumu ve ölçeği (veya görsel sürükleme için Düzenleme Modunu kullanın), tableti ilk açtığınızda gösterilen başlangıç ​​uygulaması, yüklendiğinde bir karşılama bildirimi gösterilip gösterilmeyeceği ve sorun giderme için hata ayıklama günlüğü. Oyunu kapattığınızda tüm ayarlar otomatik olarak kaydedilir."/>
+        <text name="ft_help_s1_sound_title" text="Ses efektleri"/>
+        <text name="ft_help_s1_sound_text" text="Ses efektleri varsayılan olarak açıktır. Uygulama seçme tıklaması, uygulamaları değiştirdiğinizde oynatılır. Çağrı sesi, oyun içi yardım paneli açıldığında veya kapatıldığında çalınır. Her ikisi de Ayarlar uygulamasında bağımsız olarak değiştirilebilir."/>
+        <text name="ft_help_s2_title" text="Konsol Komutları"/>
+        <text name="ft_help_s2_console_title" text="Mevcut Komutlar"/>
+        <text name="ft_help_s2_console_text" text="Geliştirici konsolunu yaklaşık tuşuyla açın ve mevcut tüm komutları görmek için tablet yazın. Örnekler: TabletKeybind H, açma anahtarını H olarak değiştirir. TabletSetStartupApp hava durumu, Hava Durumu uygulamasını varsayılan olarak açar. TabletResetSettings, tüm tablet ayarlarını varsayılan değerlerine geri yükler. TabletToggleDebug ayrıntılı günlüğe kaydetmeyi açar veya kapatır."/>
+
+    </texts>
+</l10n>

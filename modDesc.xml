@@ -30,109 +30,129 @@
     </extraSourceFiles>
 
     <helpLines>
-        <helpLine>
-            <en>OPENING THE TABLET: Press T (configurable) to open or close the Farm Tablet at any time during gameplay. The key can be changed via the TabletKeybind console command or in the Settings app.</en>
-        </helpLine>
-        <helpLine>
-            <en>NAVIGATION: The left sidebar contains all app icons. Click any icon to switch apps. Scroll the mouse wheel over the sidebar to scroll if you have many apps installed.</en>
-        </helpLine>
-        <helpLine>
-            <en>MOVING &amp; RESIZING: While the tablet is open, open the Settings app and click ENTER EDIT MODE. Then drag the tablet body to reposition it, drag corners to scale it, or drag the left/right edges to adjust width. Right-click to exit edit mode. Position is saved automatically.</en>
-        </helpLine>
-        <helpLine>
-            <en>DASHBOARD: Shows your farm balance (hero card), income/expense summary, field count, vehicle count, current season and time, and a live weather snapshot.</en>
-        </helpLine>
-        <helpLine>
-            <en>WORKSHOP: Walk within 25m of any vehicle to see its fuel level, wear percentage and operating hours. Click SELECT to pin a vehicle for detailed diagnostics that stay visible as you walk away.</en>
-        </helpLine>
-        <helpLine>
-            <en>FIELD MANAGER: Lists all fields you own with their crop type, current growth phase badge, and a color-coded state indicator (fallow, seeded, growing, ready to harvest, needs work).</en>
-        </helpLine>
-        <helpLine>
-            <en>ANIMALS: Shows every animal pen with color-coded progress bars for food level, water level, and cleanliness. Green = good, yellow = attention needed, red = critical.</en>
-        </helpLine>
-        <helpLine>
-            <en>BUCKET TRACKER: Automatically detects when you are driving a wheel loader, excavator, or material handler and counts dump cycles. Shows a history of loads with material type and estimated weight per dump.</en>
-        </helpLine>
-        <helpLine>
-            <en>APP STORE: Browse all installed tablet apps. Companion mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer) appear here automatically when those mods are active in your savegame.</en>
-        </helpLine>
-        <helpLine>
-            <en>SETTINGS: Manage display position and scale, toggle sound effects (app-select click, help-panel paging), set the startup app, toggle notifications, and enable debug logging. Use the ENTER EDIT MODE button to drag and resize the tablet visually.</en>
-        </helpLine>
-        <helpLine>
-            <en>CONSOLE COMMANDS: Type  tablet  in the developer console (tilde key) for a list of all available commands. Examples: TabletKeybind H, TabletSetStartupApp weather, TabletResetSettings.</en>
-        </helpLine>
+
+        <!-- ── Category 1: Getting Started ──────────────────────── -->
+        <category title="$l10n_ft_help_cat_start">
+
+            <page title="$l10n_ft_help_p1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_p1_open_title" />
+                    <text  text="$l10n_ft_help_p1_open_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_p1_nav_title" />
+                    <text  text="$l10n_ft_help_p1_nav_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_p2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_p2_move_title" />
+                    <text  text="$l10n_ft_help_p2_move_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_p2_key_title" />
+                    <text  text="$l10n_ft_help_p2_key_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 2: Farm Apps ─────────────────────────────── -->
+        <category title="$l10n_ft_help_cat_apps">
+
+            <page title="$l10n_ft_help_a1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_a1_dash_title" />
+                    <text  text="$l10n_ft_help_a1_dash_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_a1_weather_title" />
+                    <text  text="$l10n_ft_help_a1_weather_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_a2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_a2_fields_title" />
+                    <text  text="$l10n_ft_help_a2_fields_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_a2_animals_title" />
+                    <text  text="$l10n_ft_help_a2_animals_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_a3_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_a3_workshop_title" />
+                    <text  text="$l10n_ft_help_a3_workshop_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_a3_bucket_title" />
+                    <text  text="$l10n_ft_help_a3_bucket_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 3: Companion Mod Apps ───────────────────── -->
+        <category title="$l10n_ft_help_cat_mods">
+
+            <page title="$l10n_ft_help_m1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_m1_income_title" />
+                    <text  text="$l10n_ft_help_m1_income_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_m1_tax_title" />
+                    <text  text="$l10n_ft_help_m1_tax_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_m2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_m2_cropstress_title" />
+                    <text  text="$l10n_ft_help_m2_cropstress_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_m2_soil_title" />
+                    <text  text="$l10n_ft_help_m2_soil_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_m3_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_m3_appstore_title" />
+                    <text  text="$l10n_ft_help_m3_appstore_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 4: Settings &amp; Console ───────────────── -->
+        <category title="$l10n_ft_help_cat_settings">
+
+            <page title="$l10n_ft_help_s1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_s1_settings_title" />
+                    <text  text="$l10n_ft_help_s1_settings_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_ft_help_s1_sound_title" />
+                    <text  text="$l10n_ft_help_s1_sound_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_ft_help_s2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_ft_help_s2_console_title" />
+                    <text  text="$l10n_ft_help_s2_console_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
     </helpLines>
-
-    <l10n>
-        <!-- Section header -->
-        <text name="ft_section">
-            <en>Farm Tablet</en>
-            <de>Farm-Tablet</de>
-            <fr>Tablette de Ferme</fr>
-            <pl>Tablet Farmowy</pl>
-            <es>Tablet Agrícola</es>
-            <it>Tablet Agricolo</it>
-            <cz>Farmářský Tablet</cz>
-            <br>Tablet Agrícola</br>
-            <uk>Фермерський планшет</uk>
-            <ru>Фермерский планшет</ru>
-            <cn>农场平板</cn>
-        </text>
-
-        <!-- Notification strings -->
-        <text name="ft_welcome_title">
-            <en>Farm Tablet v2</en>
-            <de>Farm Tablet v2</de>
-            <fr>Tablette de Ferme v2</fr>
-            <pl>Tablet Farmowy v2</pl>
-            <es>Tablet Agrícola v2</es>
-            <ru>Фермерский планшет v2</ru>
-        </text>
-        <text name="ft_welcome_message">
-            <en>Press %s to open</en>
-            <de>Drücke %s zum Öffnen</de>
-            <fr>Appuyez sur %s pour ouvrir</fr>
-            <pl>Naciśnij %s, aby otworzyć</pl>
-            <es>Pulsa %s para abrir</es>
-            <ru>Нажмите %s, чтобы открыть</ru>
-        </text>
-
-        <!-- Settings labels -->
-        <text name="ft_enabled_short"><en>Enable Tablet</en></text>
-        <text name="ft_enabled_long"><en>Enable or disable the farm tablet system</en></text>
-        <text name="ft_keybind_short"><en>Open Key</en></text>
-        <text name="ft_keybind_long"><en>Key to open/close the farm tablet</en></text>
-        <text name="ft_notifications_short"><en>Notifications</en></text>
-        <text name="ft_notifications_long"><en>Show tablet notifications on game load</en></text>
-        <text name="ft_startupapp_short"><en>Startup App</en></text>
-        <text name="ft_startupapp_long"><en>Default app when opening the tablet</en></text>
-        <text name="ft_startupapp_1"><en>Dashboard</en></text>
-        <text name="ft_startupapp_2"><en>App Store</en></text>
-        <text name="ft_startupapp_3"><en>Weather</en></text>
-        <text name="ft_startupapp_4"><en>Digging</en></text>
-        <text name="ft_soundeffects_short"><en>Sound Effects</en></text>
-        <text name="ft_soundeffects_long"><en>Play sound effects for tablet interactions</en></text>
-        <text name="ft_debug_short"><en>Debug Mode</en></text>
-        <text name="ft_debug_long"><en>Enable debug logging in console</en></text>
-        <text name="ft_reset"><en>Reset Tablet Settings</en></text>
-
-        <!-- App names (used in App Store + topbar) -->
-        <text name="ft_app_dashboard"><en>Dashboard</en></text>
-        <text name="ft_app_store"><en>App Store</en></text>
-        <text name="ft_app_updates"><en>Updates</en></text>
-        <text name="ft_app_settings"><en>Settings</en></text>
-        <text name="ft_app_workshop"><en>Workshop</en></text>
-        <text name="ft_app_field_status"><en>Field Manager</en></text>
-        <text name="ft_app_animals"><en>Animals</en></text>
-        <text name="ft_app_weather"><en>Weather</en></text>
-        <text name="ft_app_digging"><en>Digging</en></text>
-        <text name="ft_app_bucket_tracker"><en>Bucket Tracker</en></text>
-        <text name="ft_app_income_mod"><en>Income Mod</en></text>
-        <text name="ft_app_tax_mod"><en>Tax Mod</en></text>
-        <text name="ft_app_npc_favor"><en>NPC Favor</en></text>
-        <text name="ft_app_crop_stress"><en>Crop Stress</en></text>
-        <text name="ft_app_soil_fertilizer"><en>Soil Fertilizer</en></text>
-    </l10n>
+    <l10n filenamePrefix="translations/translation" defaultLanguage="en"/>
 </modDesc>
