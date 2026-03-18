@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Farm Tablet"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Nyomja meg a %s gombot a megnyitáshoz"/>
+        <text name="ft_ui_enabled_short" text="Táblagép engedélyezése"/>
+        <text name="ft_ui_enabled_long" text="Engedélyezze vagy tiltsa le a farm tablet rendszert"/>
+        <text name="ft_ui_keybind_short" text="Nyitott kulcs"/>
+        <text name="ft_ui_keybind_long" text="Kulcs a farm tablet kinyitásához/zárásához"/>
+        <text name="ft_ui_notifications_short" text="Értesítések"/>
+        <text name="ft_ui_notifications_long" text="Táblagépes értesítések megjelenítése a játék betöltésekor"/>
+        <text name="ft_ui_startupapp_short" text="Indító alkalmazás"/>
+        <text name="ft_ui_startupapp_long" text="Alapértelmezett alkalmazás a táblagép kinyitásakor"/>
+        <text name="ft_ui_startupapp_1" text="Műszerfal"/>
+        <text name="ft_ui_startupapp_2" text="App Store"/>
+        <text name="ft_ui_startupapp_3" text="Időjárás"/>
+        <text name="ft_ui_startupapp_4" text="Ásás"/>
+        <text name="ft_ui_soundeffects_short" text="Hangeffektusok"/>
+        <text name="ft_ui_soundeffects_long" text="Hangeffektusok lejátszása táblagépes interakciókhoz"/>
+        <text name="ft_ui_debug_short" text="Hibakeresési mód"/>
+        <text name="ft_ui_debug_long" text="Hibakeresési naplózás engedélyezése a konzolon"/>
+        <text name="ft_ui_reset" text="A táblagép beállításainak visszaállítása"/>
+        <text name="ft_ui_app_dashboard" text="Műszerfal"/>
+        <text name="ft_ui_app_store" text="App Store"/>
+        <text name="ft_ui_app_updates" text="Frissítések"/>
+        <text name="ft_ui_app_settings" text="Beállítások elemre"/>
+        <text name="ft_ui_app_workshop" text="Műhely"/>
+        <text name="ft_ui_app_field_status" text="Field Manager"/>
+        <text name="ft_ui_app_animals" text="Állatok"/>
+        <text name="ft_ui_app_weather" text="Időjárás"/>
+        <text name="ft_ui_app_digging" text="Ásás"/>
+        <text name="ft_ui_app_bucket_tracker" text="Bucket Tracker"/>
+        <text name="ft_ui_app_income_mod" text="Bevételi mód"/>
+        <text name="ft_ui_app_tax_mod" text="Adómód"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="Crop Stressz"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Talajműtrágya"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Kezdő lépések"/>
+        <text name="ft_help_cat_apps" text="Farm Apps"/>
+        <text name="ft_help_cat_mods" text="Companion Mods"/>
+        <text name="ft_help_cat_settings" text="Beállítások és konzol"/>
+        <text name="ft_help_p1_title" text="Megnyitás és navigáció"/>
+        <text name="ft_help_p1_open_title" text="A táblagép kinyitása"/>
+        <text name="ft_help_p1_open_text" text="Nyomja meg a T (konfigurálható) gombot bármikor a Farm Tablet megnyitásához vagy bezárásához. Módosíthatja a kulcsot a Beállítások alkalmazásban, vagy a TabletKeybind beírásával, majd egy kulcsbetűvel a fejlesztői konzolon."/>
+        <text name="ft_help_p1_nav_title" text="Oldalsáv Navigáció"/>
+        <text name="ft_help_p1_nav_text" text="A bal oldalsávon telepített alkalmazásonként egy ikon látható. Kattintson bármelyik ikonra az alkalmazások közötti azonnali váltáshoz. Ha sok kiegészítő mod van aktív, az oldalsáv gördülni fog – használja az egér görgőjét, miközben rámutat a felfelé és lefelé görgetéshez."/>
+        <text name="ft_help_p2_title" text="Áthelyezés és átméretezés"/>
+        <text name="ft_help_p2_move_title" text="Szerkesztés mód"/>
+        <text name="ft_help_p2_move_text" text="Nyissa meg a Beállítások alkalmazást, és kattintson a SZERKESZTÉSI MÓD BEJELENTKEZÉSÉRE. Szerkesztési módban húzással áthelyezheti a táblagép testét bárhová a képernyőn, bármely sarokfogantyú húzásával átméretezheti a teljes táblagépet, vagy a bal vagy jobb szélét húzva csak a szélességet módosíthatja. Kattintson a jobb gombbal bárhova a szerkesztési módból való kilépéshez. A pozíció és a lépték automatikusan mentésre kerülnek."/>
+        <text name="ft_help_p2_key_title" text="A nyitókulcs módosítása"/>
+        <text name="ft_help_p2_key_text" text="Az alapértelmezett kulcs a T. A módosításhoz nyissa meg a Beállítások alkalmazást, és keresse meg a Keybind beállítást, vagy írja be a TabletKeybind szót, majd egy kulcsnevet a fejlesztői konzolba – például a TabletKeybind H a ​​kulcsot H értékre állítja. Az egyes betűk, az F-billentyűk és az általános billentyűk, például a TAB és az ESC egyaránt támogatottak."/>
+        <text name="ft_help_a1_title" text="Irányítópult és időjárás"/>
+        <text name="ft_help_a1_dash_title" text="Műszerfal"/>
+        <text name="ft_help_a1_dash_text" text="Az Irányítópult a gazdaság összefoglalója egy pillantással. Megjeleníti az aktuális egyenlegedet egy nagy hőskártyán a tetején, majd az alábbi munkamenet bevételeit, kiadásait és nettó nyereségét. A Farm Stats felsorolja, hogy hány mezője van, és hány járműve van. A Világ rész az aktuális évszakot, a napot, a napszakot és az élő időjárási pillanatképet mutatja. Érintse meg a kis információs ikont az Irányítópult jobb alsó sarkában az egyes értékek részletes magyarázatához."/>
+        <text name="ft_help_a1_weather_title" text="Időjárás App"/>
+        <text name="ft_help_a1_weather_text" text="Az Időjárás alkalmazás részletes többnapos előrejelzést jelenít meg hőmérséklettel, csapadék valószínűséggel és széllel. A körülmények színkódolt: kék az eső, narancssárga a vihar, fehér a tiszta égbolt. Használja ezt a Crop Stress moddal együtt annak eldöntésére, hogy mikor ütemezze be az öntözést."/>
+        <text name="ft_help_a2_title" text="Mezők és állatok"/>
+        <text name="ft_help_a2_fields_title" text="Field Manager"/>
+        <text name="ft_help_a2_fields_text" text="A Field Manager felsorolja az összes birtokában lévő mezőt. Minden sorban látható a termés típusa, az aktuális növekedési fázis jelvényként (Vetett, Növekvő, Kész) és egy színkódolt állapotpont. A zöld azt jelenti, hogy a mezőnek nincs szüksége odafigyelésre. A sárga azt jelenti, hogy kell valami – műtrágya, szántás vagy hengerlés. A piros azt jelenti, hogy a termés készen áll a betakarításra, vagy sürgős beavatkozást igényel."/>
+        <text name="ft_help_a2_animals_title" text="Állatok"/>
+        <text name="ft_help_a2_animals_text" text="Az Animals alkalmazás három folyamatjelző sávval megjeleníti az összes karámot: táplálékszint, vízszint és tisztaság. A zöld sávok nem igényelnek semmit. A sárga sávokat hamarosan fel kell tölteni. A piros sávok kritikusak, és felügyelet nélkül hagyva befolyásolják a termelékenységet."/>
+        <text name="ft_help_a3_title" text="Workshop &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Műhely"/>
+        <text name="ft_help_a3_workshop_text" text="Sétáljon 25 méteren belül bármely járműtől, és az automatikusan megjelenik a Workshop alkalmazásban. Minden bejegyzés az üzemanyagszintet, a kopásszázalékot és az összes üzemórát mutatja. Kattints a KIVÁLASZTÁSRA bármelyik járműnél a rögzítéshez – a rögzített járművek akkor is láthatóak maradnak az alkalmazásban, amikor elsétálsz, így könnyen nyomon követheted a terepen dolgozó gépeket."/>
+        <text name="ft_help_a3_bucket_title" text="Bucket Tracker"/>
+        <text name="ft_help_a3_bucket_text" text="A Bucket Tracker automatikusan aktiválódik, amikor kerekes rakodót, kotrógépet vagy anyagmozgatót vezet. Minden lerakási ciklust számol, és naplót vezet az anyagtípusról és a rakományonkénti becsült tömegről. Használja a termelékenység nyomon követésére földmunkák, trágyaszóró vagy ömlesztett anyagmozgatási munkák során."/>
+        <text name="ft_help_m1_title" text="Jövedelem- és adómódszerek"/>
+        <text name="ft_help_m1_income_title" text="FS25 bevételi mód"/>
+        <text name="ft_help_m1_income_text" text="Amikor az FS25_IncomeMod aktív a mentett játékban, az Income alkalmazás megjelenik az oldalsávon. Megjeleníti az aktuális fizetési módot, az ütemezett összeget, és lehetővé teszi a mod engedélyezését vagy letiltását anélkül, hogy elhagyná a táblagépet. A változtatások azonnal életbe lépnek."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Tax Mod"/>
+        <text name="ft_help_m1_tax_text" text="Amikor az FS25_TaxMod aktív, az Adó alkalmazás megjeleníti az aktuális adókulcsot, a visszatérítési százalékot és a munkamenetben fizetett összes adót. A táblagépen be- vagy kikapcsolhatja a modot, és egy pillantással megtekintheti a minimális egyensúlyigényét."/>
+        <text name="ft_help_m2_title" text="Terménystressz és talajműtrágya"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 szezonális terménystressz"/>
+        <text name="ft_help_m2_cropstress_text" text="Amikor az FS25_SeasonalCropStress aktív, a Crop Stress alkalmazás minden táblát felsorol az aktuális talajnedvesség-százalékkal és a felhalmozott szárazságterheléssel. Egy színkóddal ellátott sáv egy pillantással mutatja az egészséget: a zöld rendben van, a sárga figyelmeztet, a piros azt jelenti, hogy a stressz már nő, és a terméscsökkenés megkezdődött. Telepítse a modot, és nyissa meg a saját súgó részét a teljes öntözési útmutatásért."/>
+        <text name="ft_help_m2_soil_title" text="FS25 talajműtrágya"/>
+        <text name="ft_help_m2_soil_text" text="Amikor az FS25_SoilFertilizer aktív, a Talajtrágya alkalmazás táblánként megjeleníti a nitrogént, a foszfort, a káliumot, a pH-t és a szerves anyagokat. Válasszon ki egy táblát a listából, hogy megtekinthesse annak teljes talajprofilját és azt, hogy szükséges-e műtrágyázás. A tápanyagszintek színkóddal vannak ellátva: a zöld jó, a sárga méltányos, a pirosra figyelni kell."/>
+        <text name="ft_help_m3_title" text="App Store"/>
+        <text name="ft_help_m3_appstore_title" text="A telepített alkalmazások felfedezése"/>
+        <text name="ft_help_m3_appstore_text" text="Az App Store alkalmazás felsorolja a táblagépen regisztrált összes alkalmazást, beleértve a kísérő modalkalmazásokat is. Azok az alkalmazások, amelyek jelenleg nem aktív modot igényelnek, halványan jelennek meg, így tudhatja, hogy elérhetők, ha engedélyezi a megfelelő modot. Nincs szükség konfigurációra – a kísérőalkalmazások automatikusan megjelennek a mod betöltésekor."/>
+        <text name="ft_help_s1_title" text="A táblagép beállításai"/>
+        <text name="ft_help_s1_settings_title" text="Amin változtathatsz"/>
+        <text name="ft_help_s1_settings_text" text="Nyissa meg a Beállítások alkalmazást az oldalsávról a következők kezeléséhez: táblagép pozíciója és méretaránya (vagy használja a Szerkesztés módot a vizuális húzáshoz), a táblagép első megnyitásakor megjelenő indítási alkalmazás, a betöltéskor megjelenő üdvözlő értesítés, valamint a hibakeresési naplózás a hibaelhárításhoz. A játék bezárásakor minden beállítás automatikusan mentésre kerül."/>
+        <text name="ft_help_s1_sound_title" text="Hangeffektusok"/>
+        <text name="ft_help_s1_sound_text" text="A hangeffektusok alapértelmezés szerint be vannak kapcsolva. Az alkalmazásválasztó kattintás akkor jelenik meg, amikor alkalmazást vált. A lapozóhang akkor szólal meg, amikor a játékon belüli súgópanel megnyílik vagy bezárul. Mindkettő egymástól függetlenül átkapcsolható a Beállítások alkalmazásban."/>
+        <text name="ft_help_s2_title" text="Konzolparancsok"/>
+        <text name="ft_help_s2_console_title" text="Elérhető parancsok"/>
+        <text name="ft_help_s2_console_text" text="Nyissa meg a fejlesztői konzolt a tilde billentyűvel, és írja be a tablet szót az összes elérhető parancs megtekintéséhez. Példák: A TabletKeybind H a ​​nyitókulcsot H-ra változtatja. A TabletSetStartupApp weather alapértelmezés szerint megnyitja az Időjárás alkalmazást. A TabletResetSettings visszaállítja a táblagép összes beállítását az alapértelmezett értékre. A TabletToggleDebug be- vagy kikapcsolja a részletes bejelentkezést."/>
+
+    </texts>
+</l10n>

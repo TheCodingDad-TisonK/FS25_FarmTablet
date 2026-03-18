@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="농장 태블릿"/>
+        <text name="ft_ui_welcome_title" text="농장 태블릿 v2"/>
+        <text name="ft_ui_welcome_message" text="열려면 %s 키를 누르세요."/>
+        <text name="ft_ui_enabled_short" text="태블릿 활성화"/>
+        <text name="ft_ui_enabled_long" text="팜 태블릿 시스템 활성화 또는 비활성화"/>
+        <text name="ft_ui_keybind_short" text="오픈 키"/>
+        <text name="ft_ui_keybind_long" text="팜 태블릿을 열고 닫는 열쇠"/>
+        <text name="ft_ui_notifications_short" text="알림"/>
+        <text name="ft_ui_notifications_long" text="게임 로드 시 태블릿 알림 표시"/>
+        <text name="ft_ui_startupapp_short" text="스타트업 앱"/>
+        <text name="ft_ui_startupapp_long" text="태블릿을 열 때 기본 앱"/>
+        <text name="ft_ui_startupapp_1" text="계기반"/>
+        <text name="ft_ui_startupapp_2" text="앱스토어"/>
+        <text name="ft_ui_startupapp_3" text="날씨"/>
+        <text name="ft_ui_startupapp_4" text="파기"/>
+        <text name="ft_ui_soundeffects_short" text="음향 효과"/>
+        <text name="ft_ui_soundeffects_long" text="태블릿 상호작용을 위한 음향 효과 재생"/>
+        <text name="ft_ui_debug_short" text="디버그 모드"/>
+        <text name="ft_ui_debug_long" text="콘솔에서 디버그 로깅 활성화"/>
+        <text name="ft_ui_reset" text="태블릿 설정 재설정"/>
+        <text name="ft_ui_app_dashboard" text="계기반"/>
+        <text name="ft_ui_app_store" text="앱스토어"/>
+        <text name="ft_ui_app_updates" text="업데이트"/>
+        <text name="ft_ui_app_settings" text="설정"/>
+        <text name="ft_ui_app_workshop" text="작업장"/>
+        <text name="ft_ui_app_field_status" text="현장 관리자"/>
+        <text name="ft_ui_app_animals" text="동물"/>
+        <text name="ft_ui_app_weather" text="날씨"/>
+        <text name="ft_ui_app_digging" text="파기"/>
+        <text name="ft_ui_app_bucket_tracker" text="버킷 추적기"/>
+        <text name="ft_ui_app_income_mod" text="소득 모드"/>
+        <text name="ft_ui_app_tax_mod" text="세금 모드"/>
+        <text name="ft_ui_app_npc_favor" text="NPC 호의"/>
+        <text name="ft_ui_app_crop_stress" text="작물 스트레스"/>
+        <text name="ft_ui_app_soil_fertilizer" text="토양 비료"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="시작하기"/>
+        <text name="ft_help_cat_apps" text="농장 앱"/>
+        <text name="ft_help_cat_mods" text="컴패니언 모드"/>
+        <text name="ft_help_cat_settings" text="설정 및 콘솔"/>
+        <text name="ft_help_p1_title" text="열기 및 탐색"/>
+        <text name="ft_help_p1_open_title" text="태블릿 열기"/>
+        <text name="ft_help_p1_open_text" text="Farm Tablet을 열거나 닫으려면 언제든지 T(구성 가능)를 누르세요. 설정 앱에서 키를 변경하거나 개발자 콘솔에서 TabletKeybind와 키 문자를 차례로 입력하여 변경할 수 있습니다."/>
+        <text name="ft_help_p1_nav_title" text="사이드바 탐색"/>
+        <text name="ft_help_p1_nav_text" text="왼쪽 사이드바에는 설치된 앱당 하나의 아이콘이 표시됩니다. 앱을 즉시 전환하려면 아이콘을 클릭하세요. 활성화된 컴패니언 모드가 많은 경우 사이드바가 스크롤됩니다. 사이드바 위로 마우스를 가져가면 마우스 휠을 사용하여 위아래로 스크롤할 수 있습니다."/>
+        <text name="ft_help_p2_title" text="이동 및 크기 조정"/>
+        <text name="ft_help_p2_move_title" text="편집 모드"/>
+        <text name="ft_help_p2_move_text" text="설정 앱을 열고 편집 모드 입력을 클릭하세요. 편집 모드에서는 타블렛 본체를 끌어 화면의 어느 위치로든 재배치할 수 있고, 모서리 핸들을 끌어 전체 타블렛의 크기를 조정하거나 왼쪽 또는 오른쪽 가장자리를 끌어 너비만 조정할 수 있습니다. 편집 모드를 종료하려면 아무 곳이나 마우스 오른쪽 버튼으로 클릭하세요. 위치와 규모는 자동으로 저장됩니다."/>
+        <text name="ft_help_p2_key_title" text="공개 키 변경"/>
+        <text name="ft_help_p2_key_text" text="기본 키는 T입니다. 이를 변경하려면 설정 앱을 열고 Keybind 설정을 찾거나 개발자 콘솔에서 TabletKeybind와 키 이름을 차례로 입력하세요. 예를 들어 TabletKeybind H는 키를 H로 설정합니다. 단일 문자, F 키 및 TAB 및 ESC와 같은 일반 키가 모두 지원됩니다."/>
+        <text name="ft_help_a1_title" text="대시보드 및 날씨"/>
+        <text name="ft_help_a1_dash_title" text="계기반"/>
+        <text name="ft_help_a1_dash_text" text="대시보드는 한눈에 볼 수 있는 팜 요약입니다. 상단의 큰 영웅 카드에 현재 잔액이 표시되고 아래 세션의 수입, 지출 및 순이익이 표시됩니다. 농장 통계에는 소유한 필드 수와 총 차량 수가 나열됩니다. 세계 섹션에는 현재 계절, 요일, 시간 및 실시간 날씨 스냅샷이 표시됩니다. 모든 값에 대한 자세한 설명을 보려면 대시보드 오른쪽 하단에 있는 작은 정보 아이콘을 탭하세요."/>
+        <text name="ft_help_a1_weather_title" text="날씨 앱"/>
+        <text name="ft_help_a1_weather_text" text="날씨 앱은 기온, 강수 확률, 바람 등을 포함한 상세한 며칠간의 일기예보를 보여줍니다. 날씨는 색상별로 구분되어 있습니다. 파란색은 비, 주황색은 폭풍, 흰색은 맑은 하늘입니다. 이를 작물 스트레스 모드와 함께 사용하여 언제 관개 일정을 정할지 결정하세요."/>
+        <text name="ft_help_a2_title" text="들판과 동물"/>
+        <text name="ft_help_a2_fields_title" text="현장 관리자"/>
+        <text name="ft_help_a2_fields_text" text="필드 관리자는 귀하가 소유한 모든 필드를 나열합니다. 각 행에는 작물 유형, 현재 성장 단계를 배지(파종, 성장, 준비) 및 색상으로 구분된 상태 점이 표시됩니다. 녹색은 해당 필드에 주의가 필요하지 않음을 의미합니다. 노란색은 비료, 쟁기질, 굴리기 등 무언가가 필요하다는 의미입니다. 빨간색은 작물이 수확할 준비가 되었거나 긴급 조치가 필요함을 의미합니다."/>
+        <text name="ft_help_a2_animals_title" text="동물"/>
+        <text name="ft_help_a2_animals_text" text="Animals 앱은 귀하가 소유한 모든 펜을 세 가지 진행률 표시줄(음식 수위, 물 수위, 청결도)로 표시합니다. 녹색 막대에는 조치가 필요하지 않습니다. 노란색 막대는 곧 채워져야 합니다. 빨간색 막대는 매우 중요하며 방치할 경우 생산성에 영향을 미칩니다."/>
+        <text name="ft_help_a3_title" text="워크샵 및 버킷 추적기"/>
+        <text name="ft_help_a3_workshop_title" text="작업장"/>
+        <text name="ft_help_a3_workshop_text" text="차량으로부터 25미터 이내로 걸어가면 워크샵 앱에 자동으로 표시됩니다. 각 항목에는 연료 수준, 마모율 및 총 작동 시간이 표시됩니다. 고정하려면 차량에서 선택을 클릭하세요. 고정된 차량은 자리를 비울 때에도 앱에 계속 표시되므로 현장에서 작동하는 기계를 쉽게 모니터링할 수 있습니다."/>
+        <text name="ft_help_a3_bucket_title" text="버킷 추적기"/>
+        <text name="ft_help_a3_bucket_text" text="버킷 트래커는 휠 로더, 굴삭기 또는 자재 운반기를 운전할 때 자동으로 활성화됩니다. 모든 덤프 주기를 계산하고 자재 유형 및 로드당 예상 중량에 대한 실행 로그를 유지합니다. 이를 사용하여 토공사, 분뇨 살포 또는 대량 자재 취급 작업의 생산성을 추적할 수 있습니다."/>
+        <text name="ft_help_m1_title" text="소득 및 세금 조정"/>
+        <text name="ft_help_m1_income_title" text="FS25 소득 모드"/>
+        <text name="ft_help_m1_income_text" text="저장 게임에서 FS25_IncomeMod가 활성화되면 Income 앱이 사이드바에 나타납니다. 현재 결제 모드와 예정된 금액이 표시되며 태블릿을 떠나지 않고도 모드를 활성화 또는 비활성화할 수 있습니다. 변경 사항은 즉시 적용됩니다."/>
+        <text name="ft_help_m1_tax_title" text="FS25 세금 모드"/>
+        <text name="ft_help_m1_tax_text" text="FS25_TaxMod가 활성화되면 세금 앱에 현재 세율, 신고율 및 이번 세션에 납부한 총 세금이 표시됩니다. 태블릿에서 모드를 켜거나 끌 수 있으며 최소 잔액 요구 사항을 한눈에 확인할 수 있습니다."/>
+        <text name="ft_help_m2_title" text="작물 스트레스 및 토양 비료"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 계절 작물 스트레스"/>
+        <text name="ft_help_m2_cropstress_text" text="FS25_SeasonalCropStress가 활성화되면 작물 스트레스 앱은 현재 토양 수분 비율 및 누적된 가뭄 스트레스와 함께 모든 필드를 나열합니다. 색상으로 구분된 막대는 상태를 한눈에 보여줍니다. 녹색은 정상, 노란색은 경고, 빨간색은 스트레스가 이미 쌓이고 수확량 손실이 시작되었음을 의미합니다. 해당 모드를 설치하고 전체 관개 지침을 보려면 자체 도움말 섹션을 여세요."/>
+        <text name="ft_help_m2_soil_title" text="FS25 토양 비료"/>
+        <text name="ft_help_m2_soil_text" text="FS25_SoilFertilizer가 활성화되면 토양 비료 앱은 필드당 질소, 인, 칼륨, pH 및 유기물을 표시합니다. 전체 토양 프로필과 비료가 필요한지 여부를 보려면 목록에서 필드를 선택하세요. 영양소 수준은 색상으로 구분되어 있습니다. 녹색은 양호, 노란색은 보통, 빨간색은 주의가 필요합니다."/>
+        <text name="ft_help_m3_title" text="앱스토어"/>
+        <text name="ft_help_m3_appstore_title" text="설치된 앱 검색"/>
+        <text name="ft_help_m3_appstore_text" text="App Store 앱에는 컴패니언 모드 앱을 포함하여 태블릿에 등록된 모든 앱이 나열됩니다. 현재 활성화되지 않은 모드가 필요한 앱은 흐린 상태로 표시되므로 일치하는 모드를 활성화하면 사용할 수 있음을 알 수 있습니다. 구성이 필요하지 않습니다. 모드가 로드되면 컴패니언 앱이 자동으로 나타납니다."/>
+        <text name="ft_help_s1_title" text="태블릿 설정"/>
+        <text name="ft_help_s1_settings_title" text="변경할 수 있는 사항"/>
+        <text name="ft_help_s1_settings_text" text="사이드바에서 설정 앱을 열어 태블릿 위치 및 배율(또는 시각적 드래그를 위해 편집 모드 사용), 태블릿을 처음 열 때 표시되는 시작 앱, 로드 시 환영 알림 표시 여부, 문제 해결을 위한 디버그 로깅을 관리합니다. 게임을 종료하면 모든 설정이 자동으로 저장됩니다."/>
+        <text name="ft_help_s1_sound_title" text="음향 효과"/>
+        <text name="ft_help_s1_sound_text" text="사운드 효과는 기본적으로 켜져 있습니다. 앱을 전환하면 앱 선택 클릭이 재생됩니다. 게임 내 도움말 패널이 열리거나 닫힐 때 페이징 소리가 재생됩니다. 둘 다 설정 앱에서 독립적으로 전환할 수 있습니다."/>
+        <text name="ft_help_s2_title" text="콘솔 명령"/>
+        <text name="ft_help_s2_console_title" text="사용 가능한 명령"/>
+        <text name="ft_help_s2_console_text" text="사용 가능한 모든 명령을 보려면 물결표 키를 사용하여 개발자 콘솔을 열고 태블릿을 입력하세요. 예: TabletKeybind H는 열기 키를 H로 변경합니다. TabletSetStartupApp 날씨는 기본적으로 날씨 앱을 엽니다. TabletResetSettings는 모든 태블릿 설정을 기본값으로 복원합니다. TabletToggleDebug는 자세한 로깅을 켜거나 끕니다."/>
+
+    </texts>
+</l10n>

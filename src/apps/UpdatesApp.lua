@@ -56,42 +56,42 @@ local CHANGELOG = {
 }
 
 FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
-    local startY = self:drawAppHeader("Updates", "Changelog")
+    local AC = FT.appColor(FT.APP.UPDATES)
 
+    if self:drawHelpPage("_updatesHelp", FT.APP.UPDATES, "Updates", AC, {
+        { title = "WHAT IS THIS APP",
+          body  = "Shows the changelog for Farm Tablet — what changed\n" ..
+                  "in each version, newest first." },
+        { title = "VERSION ENTRIES",
+          body  = "Each block shows the version number on the left and\n" ..
+                  "the release date on the right.\n" ..
+                  "Bullet points below list individual changes." },
+        { title = "KEEPING UP TO DATE",
+          body  = "Download the latest version from the mod page on\n" ..
+                  "GitHub or KingMods to get new features and fixes." },
+    }) then return end
+
+    local startY = self:drawAppHeader("Updates", "Changelog")
     local x, contentY, cw, _ = self:contentInner()
-    local y = startY
+    local y    = startY
     local minY = contentY + FT.py(8)
 
     for _, entry in ipairs(CHANGELOG) do
         if y < minY then break end
-
-        -- Version header
-        self.r:appRect(x - FT.px(4), y - FT.py(2),
-            cw + FT.px(8), FT.py(18), FT.C.BG_CARD)
-        self.r:appText(x + FT.px(6), y + FT.py(4),
-            FT.FONT.BODY, "v" .. entry.version,
-            RenderText.ALIGN_LEFT, FT.C.BRAND)
-        self.r:appText(x + cw - FT.px(4), y + FT.py(4),
-            FT.FONT.TINY, entry.date,
-            RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
-
+        self.r:appRect(x - FT.px(4), y - FT.py(2), cw + FT.px(8), FT.py(18), FT.C.BG_CARD)
+        self.r:appText(x + FT.px(6),      y + FT.py(4), FT.FONT.BODY, "v" .. entry.version, RenderText.ALIGN_LEFT,  FT.C.BRAND)
+        self.r:appText(x + cw - FT.px(4), y + FT.py(4), FT.FONT.TINY, entry.date,           RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
         y = y - FT.py(22)
-
         for _, change in ipairs(entry.changes) do
             if y < minY then break end
-
-            -- Bullet point
-            self.r:appRect(x + FT.px(6), y + FT.py(5),
-                FT.px(4), FT.px(4), FT.C.BRAND_DIM)
-
+            self.r:appRect(x + FT.px(6), y + FT.py(5), FT.px(4), FT.px(4), FT.C.BRAND_DIM)
             local txt = change
-            if #txt > 46 then txt = txt:sub(1,44) .. "…" end
-            self.r:appText(x + FT.px(16), y, FT.FONT.SMALL,
-                txt, RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
-
+            if #txt > 46 then txt = txt:sub(1,44) .. ">" end
+            self.r:appText(x + FT.px(16), y, FT.FONT.SMALL, txt, RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
             y = y - FT.py(16)
         end
-
         y = y - FT.py(6)
     end
+
+    self:drawInfoIcon("_updatesHelp", AC)
 end)

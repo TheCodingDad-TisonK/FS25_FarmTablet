@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="ファームタブレット"/>
+        <text name="ft_ui_welcome_title" text="ファームタブレットv2"/>
+        <text name="ft_ui_welcome_message" text="%s を押して開きます"/>
+        <text name="ft_ui_enabled_short" text="タブレットを有効にする"/>
+        <text name="ft_ui_enabled_long" text="ファームタブレットシステムを有効または無効にする"/>
+        <text name="ft_ui_keybind_short" text="オープンキー"/>
+        <text name="ft_ui_keybind_long" text="ファームタブレット開閉キー"/>
+        <text name="ft_ui_notifications_short" text="通知"/>
+        <text name="ft_ui_notifications_long" text="ゲームロード時にタブレット通知を表示する"/>
+        <text name="ft_ui_startupapp_short" text="スタートアップアプリ"/>
+        <text name="ft_ui_startupapp_long" text="タブレットを開いたときのデフォルトのアプリ"/>
+        <text name="ft_ui_startupapp_1" text="ダッシュボード"/>
+        <text name="ft_ui_startupapp_2" text="アプリストア"/>
+        <text name="ft_ui_startupapp_3" text="天気"/>
+        <text name="ft_ui_startupapp_4" text="掘る"/>
+        <text name="ft_ui_soundeffects_short" text="効果音"/>
+        <text name="ft_ui_soundeffects_long" text="タブレットのインタラクション用の効果音を再生する"/>
+        <text name="ft_ui_debug_short" text="デバッグモード"/>
+        <text name="ft_ui_debug_long" text="コンソールでのデバッグログを有効にする"/>
+        <text name="ft_ui_reset" text="タブレットの設定をリセットする"/>
+        <text name="ft_ui_app_dashboard" text="ダッシュボード"/>
+        <text name="ft_ui_app_store" text="アプリストア"/>
+        <text name="ft_ui_app_updates" text="アップデート"/>
+        <text name="ft_ui_app_settings" text="設定"/>
+        <text name="ft_ui_app_workshop" text="ワークショップ"/>
+        <text name="ft_ui_app_field_status" text="フィールドマネージャー"/>
+        <text name="ft_ui_app_animals" text="動物"/>
+        <text name="ft_ui_app_weather" text="天気"/>
+        <text name="ft_ui_app_digging" text="掘る"/>
+        <text name="ft_ui_app_bucket_tracker" text="バケットトラッカー"/>
+        <text name="ft_ui_app_income_mod" text="収入モッド"/>
+        <text name="ft_ui_app_tax_mod" text="税金モッド"/>
+        <text name="ft_ui_app_npc_favor" text="NPCの好意"/>
+        <text name="ft_ui_app_crop_stress" text="作物ストレス"/>
+        <text name="ft_ui_app_soil_fertilizer" text="土壌肥料"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="はじめる"/>
+        <text name="ft_help_cat_apps" text="ファームアプリ"/>
+        <text name="ft_help_cat_mods" text="コンパニオン Mod"/>
+        <text name="ft_help_cat_settings" text="設定とコンソール"/>
+        <text name="ft_help_p1_title" text="開くことと操作すること"/>
+        <text name="ft_help_p1_open_title" text="タブレットを開く"/>
+        <text name="ft_help_p1_open_text" text="T (設定可能) を押すと、いつでもファーム タブレットを開いたり閉じたりできます。キーを変更するには、設定アプリで、または開発者コンソールで TabletKeybind に続いてキー文字を入力します。"/>
+        <text name="ft_help_p1_nav_title" text="サイドバーのナビゲーション"/>
+        <text name="ft_help_p1_nav_text" text="左側のサイドバーには、インストールされているアプリごとに 1 つのアイコンが表示されます。いずれかのアイコンをクリックすると、アプリを即座に切り替えることができます。多くのコンパニオン MOD をアクティブにしている場合は、サイドバーがスクロールします。サイドバーの上にマウスを置きながらマウス ホイールを使用すると、上下にスクロールできます。"/>
+        <text name="ft_help_p2_title" text="移動とサイズ変更"/>
+        <text name="ft_help_p2_move_title" text="編集モード"/>
+        <text name="ft_help_p2_move_text" text="設定アプリを開き、「編集モードに入る」をクリックします。編集モードでは、タブレット本体をドラッグして画面上の任意の場所に位置を変更したり、隅のハンドルをドラッグしてタブレット全体を拡大縮小したり、左端または右端をドラッグして幅のみを調整したりできます。任意の場所を右クリックして編集モードを終了します。位置とスケールは自動的に保存されます。"/>
+        <text name="ft_help_p2_key_title" text="オープンキーの変更"/>
+        <text name="ft_help_p2_key_text" text="デフォルトのキーは T です。変更するには、設定アプリを開いてキーバインド設定を見つけるか、開発者コンソールで TabletKeybind に続いてキー名を入力します。たとえば、TabletKeybind H はキーを H に設定します。単一の文字、F キー、および TAB や ESC などの共通キーがすべてサポートされています。"/>
+        <text name="ft_help_a1_title" text="ダッシュボードと天気"/>
+        <text name="ft_help_a1_dash_title" text="ダッシュボード"/>
+        <text name="ft_help_a1_dash_text" text="ダッシュボードは、ファームの概要を一目で把握できるものです。上部の大きなヒーロー カードに現在の残高が表示され、その下にセッションの収入、支出、純利益が表示されます。 Farm Stats には、所有する畑の数と車両の総数がリストされます。 「世界」セクションには、現在の季節、曜日、時刻、およびライブ天気のスナップショットが表示されます。ダッシュボードの右下隅にある小さな情報アイコンをタップすると、すべての値の詳細な説明が表示されます。"/>
+        <text name="ft_help_a1_weather_title" text="天気アプリ"/>
+        <text name="ft_help_a1_weather_text" text="天気アプリには、気温、降水確率、風などの詳細な複数日間の予報が表示されます。条件は色分けされています。雨は青、嵐はオレンジ、晴天は白です。これを Crop Stress mod と一緒に使用して、いつ灌漑をスケジュールするかを決定します。"/>
+        <text name="ft_help_a2_title" text="野原と動物"/>
+        <text name="ft_help_a2_fields_title" text="フィールドマネージャー"/>
+        <text name="ft_help_a2_fields_text" text="フィールド マネージャーには、所有するすべてのフィールドがリストされます。各行には、作物の種類、現在の成長段階がバッジ (播種済み、成長中、準備完了) として表示され、色分けされた状態のドットが表示されます。緑色は、そのフィールドに注意を払う必要がないことを意味します。黄色は、肥料、耕作、転圧など、何かが必要であることを意味します。赤は、作物が収穫の準備ができているか、緊急の対応が必要であることを意味します。"/>
+        <text name="ft_help_a2_animals_title" text="動物"/>
+        <text name="ft_help_a2_animals_text" text="Animals アプリには、所有しているすべてのペンが、餌のレベル、水のレベル、清潔さの 3 つの進行状況バーで表示されます。緑色のバーは何もする必要はありません。黄色のバーはすぐに補充されるはずです。赤いバーは重要であり、放置すると生産性に影響します。"/>
+        <text name="ft_help_a3_title" text="ワークショップとバケットトラッカー"/>
+        <text name="ft_help_a3_workshop_title" text="ワークショップ"/>
+        <text name="ft_help_a3_workshop_text" text="車両から 25 メートル以内に歩くと、その車両がワークショップ アプリに自動的に表示されます。各エントリには、燃料レベル、摩耗率、および合計稼働時間が表示されます。任意の車両上で [選択] をクリックして固定します。固定された車両は、離れていてもアプリ内に表示されたままになるため、現場で稼働している機械を簡単に監視できます。"/>
+        <text name="ft_help_a3_bucket_title" text="バケットトラッカー"/>
+        <text name="ft_help_a3_bucket_text" text="バケット トラッカーは、ホイール ローダー、掘削機、マテリアル ハンドラーを運転すると自動的にアクティブになります。すべてのダンプ サイクルをカウントし、材料の種類と負荷ごとの推定重量の実行ログを保存します。これを使用して、土工、肥料散布、またはバルクマテリアルハンドリング作業の生産性を追跡します。"/>
+        <text name="ft_help_m1_title" text="所得と税金の変更"/>
+        <text name="ft_help_m1_income_title" text="FS25 インカムモッド"/>
+        <text name="ft_help_m1_income_text" text="セーブゲームで FS25_IncomeMod がアクティブになっている場合、Income アプリがサイドバーに表示されます。現在の支払いモードと予定金額が表示され、タブレットから離れることなく MOD を有効または無効にすることができます。変更はすぐに有効になります。"/>
+        <text name="ft_help_m1_tax_title" text="FS25 税金モッド"/>
+        <text name="ft_help_m1_tax_text" text="FS25_TaxMod がアクティブな場合、Tax アプリには現在の税率、還付率、およびこのセッションで支払った税金の合計が表示されます。タブレットから MOD のオンとオフを切り替えて、最小残高要件を一目で確認できます。"/>
+        <text name="ft_help_m2_title" text="作物ストレスと土壌肥料"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 季節的作物ストレス"/>
+        <text name="ft_help_m2_cropstress_text" text="FS25_SeasonalCropStress がアクティブな場合、作物ストレス アプリは、現在の土壌水分率と蓄積された干ばつストレスを含むすべての圃場をリストします。色分けされたバーは健康状態を一目で示します。緑色は問題なし、黄色は警告、赤色はストレスがすでに蓄積しており、収量の低下が始まっていることを意味します。その MOD をインストールし、完全な灌漑ガイダンスについての独自のヘルプ セクションを開いてください。"/>
+        <text name="ft_help_m2_soil_title" text="FS25 土壌肥料"/>
+        <text name="ft_help_m2_soil_text" text="FS25_SoilFertilizer がアクティブな場合、土壌肥料アプリには圃場ごとの窒素、リン、カリウム、pH、および有機物が表示されます。リストから任意の圃場を選択すると、その完全な土壌プロファイルと肥料が必要かどうかが表示されます。栄養素レベルは色分けされています。緑は良好、黄色は普通、赤は注意が必要です。"/>
+        <text name="ft_help_m3_title" text="アプリストア"/>
+        <text name="ft_help_m3_appstore_title" text="インストールされているアプリの検出"/>
+        <text name="ft_help_m3_appstore_text" text="App Store アプリには、コンパニオン MOD アプリを含む、タブレットに登録されているすべてのアプリがリストされます。現在アクティブではない MOD を必要とするアプリは淡色表示されるため、一致する MOD を有効にすると利用可能になることがわかります。設定は必要ありません。コンパニオン アプリは、MOD がロードされると自動的に表示されます。"/>
+        <text name="ft_help_s1_title" text="タブレットの設定"/>
+        <text name="ft_help_s1_settings_title" text="変えられるもの"/>
+        <text name="ft_help_s1_settings_text" text="サイドバーから設定アプリを開いて、タブレットの位置とスケール (または視覚的なドラッグには編集モードを使用)、タブレットを初めて開いたときに表示されるスタートアップ アプリ、読み込み時にウェルカム通知を表示するかどうか、トラブルシューティングのためのデバッグ ログを管理します。ゲームを閉じると、すべての設定が自動的に保存されます。"/>
+        <text name="ft_help_s1_sound_title" text="効果音"/>
+        <text name="ft_help_s1_sound_text" text="効果音はデフォルトでオンになっています。アプリを切り替えると、アプリ選択のクリック音が再生されます。ゲーム内のヘルプ パネルが開いたり閉じたりすると、ページング音が再生されます。どちらも設定アプリで個別に切り替えることができます。"/>
+        <text name="ft_help_s2_title" text="コンソールコマンド"/>
+        <text name="ft_help_s2_console_title" text="利用可能なコマンド"/>
+        <text name="ft_help_s2_console_text" text="チルダ キーを使用して開発者コンソールを開き、「tablet」と入力すると、使用可能なコマンドがすべて表示されます。例: TabletKeybind H は、オープン キーを H に変更します。TabletSetStartupApp Weather は、デフォルトで Weather アプリを開きます。 TabletResetSettings は、すべてのタブレット設定をデフォルトに戻します。 TabletToggleDebug は、詳細ログをオンまたはオフにします。"/>
+
+    </texts>
+</l10n>

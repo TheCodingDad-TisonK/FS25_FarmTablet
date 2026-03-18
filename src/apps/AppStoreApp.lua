@@ -4,24 +4,39 @@
 -- =========================================================
 
 FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
-    local apps = self.system.registry:getAll()
+    local AC = FT.appColor(FT.APP.APP_STORE)
 
-    local startY = self:drawAppHeader("App Store",
-        #apps .. " installed")
+    if self:drawHelpPage("_appStoreHelp", FT.APP.APP_STORE, "App Store", AC, {
+        { title = "WHAT IS THE APP STORE",
+          body  = "Lists every app registered with the Farm Tablet,\n" ..
+                  "grouped into Built-in, Farming, Finance, and\n" ..
+                  "Mod Integration categories." },
+        { title = "OPEN BUTTON",
+          body  = "Click OPEN on any app row to switch to it directly.\n" ..
+                  "This is a shortcut — you can also click the icon in\n" ..
+                  "the left sidebar at any time." },
+        { title = "MOD INTEGRATIONS",
+          body  = "Companion mod apps (Income, Tax, NPC Favor, Crop\n" ..
+                  "Stress, Soil Fertilizer) appear here automatically\n" ..
+                  "when their mod is loaded in your savegame.\n" ..
+                  "No setup needed." },
+        { title = "VERSION / DEVELOPER",
+          body  = "Built-in apps show 'Built-in' as their version.\n" ..
+                  "Third-party companion apps show their own version\n" ..
+                  "number and developer name." },
+    }) then return end
 
+    local apps   = self.system.registry:getAll()
+    local startY = self:drawAppHeader("App Store", #apps .. " installed")
     local x, contentY, cw, _ = self:contentInner()
-    local y = startY
+    local y    = startY
     local minY = contentY + FT.py(8)
 
-    -- Group apps by category
-    local groups = {}
+    local groups     = {}
     local groupOrder = {}
     for _, app in ipairs(apps) do
         local g = app.group or "core"
-        if not groups[g] then
-            groups[g] = {}
-            table.insert(groupOrder, g)
-        end
+        if not groups[g] then groups[g] = {}; table.insert(groupOrder, g) end
         table.insert(groups[g], app)
     end
 
@@ -31,52 +46,29 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
         local list = groups[gid]
         if #list > 0 and y > minY + FT.py(20) then
             y = self:drawSection(y, groupLabels[gid] or gid:upper())
-
             for _, app in ipairs(list) do
                 if y < minY then break end
-
-                -- App row bg
-                self.r:appRect(x - FT.px(4), y - FT.py(4),
-                    cw + FT.px(8), FT.py(30), FT.C.BG_CARD)
-
-                -- App name (bold-ish with TITLE_COLOR)
+                self.r:appRect(x - FT.px(4), y - FT.py(4), cw + FT.px(8), FT.py(30), FT.C.BG_CARD)
                 local dispName = (g_i18n and g_i18n:getText(app.name)) or app.navLabel or app.id
-                self.r:appText(x + FT.px(8), y + FT.py(10),
-                    FT.FONT.BODY, dispName,
+                self.r:appText(x + FT.px(8),  y + FT.py(10), FT.FONT.BODY, dispName,
                     RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
-
-                -- Description
                 local desc = app.description or ""
-                if #desc > 44 then desc = desc:sub(1,42) .. "…" end
-                self.r:appText(x + FT.px(8), y - FT.py(4),
-                    FT.FONT.TINY, desc,
+                if #desc > 44 then desc = desc:sub(1,42) .. ">" end
+                self.r:appText(x + FT.px(8),  y - FT.py(4),  FT.FONT.TINY, desc,
                     RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-
-                -- Version badge
-                local versionText = app.version or "Built-in"
-                self.r:appText(x + cw - FT.px(4), y + FT.py(10),
-                    FT.FONT.TINY, versionText,
+                self.r:appText(x + cw - FT.px(4), y + FT.py(10), FT.FONT.TINY, app.version or "Built-in",
                     RenderText.ALIGN_RIGHT, FT.C.BRAND)
-
-                -- Developer
-                self.r:appText(x + cw - FT.px(4), y - FT.py(4),
-                    FT.FONT.TINY, app.developer or "",
+                self.r:appText(x + cw - FT.px(4), y - FT.py(4),  FT.FONT.TINY, app.developer or "",
                     RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
-
-                -- Launch button
                 local appId = app.id
-                local lbtn = self.r:button(x + cw - FT.px(48), y,
-                    FT.px(44), FT.py(14),
-                    "OPEN", FT.C.BTN_PRIMARY,
-                    { onClick = function()
-                        self:switchApp(appId)
-                    end })
+                local lbtn = self.r:button(x + cw - FT.px(48), y, FT.px(44), FT.py(14),
+                    "OPEN", FT.C.BTN_PRIMARY, { onClick = function() self:switchApp(appId) end })
                 table.insert(self._contentBtns, lbtn)
-
                 y = y - FT.py(34)
             end
-
             y = y - FT.py(4)
         end
     end
+
+    self:drawInfoIcon("_appStoreHelp", AC)
 end)

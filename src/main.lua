@@ -58,9 +58,16 @@ local function loadedMission(mission, node)
 end
 
 local function load(mission)
+    -- Farm Tablet is a client-side HUD mod — it must not run on dedicated servers.
+    -- A dedicated server has no local player, no GUI, no keyboard and no rendering.
+    -- g_dedicatedServer is set by the engine before Mission00.load fires.
+    if g_dedicatedServer then
+        Logging.info("[FarmTablet v2] Dedicated server detected – skipping initialisation.")
+        return
+    end
+
     if farmTabletManager == nil then
         Logging.info("[FarmTablet v2] Initializing...")
-        
         farmTabletManager = FarmTabletManager.new(mission, modDirectory, modName)
         getfenv(0)["g_FarmTablet"] = farmTabletManager
         Logging.info("[FarmTablet v2] Ready.")

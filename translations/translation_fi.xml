@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Maatilan tabletti"/>
+        <text name="ft_ui_welcome_title" text="Farm Tablet v2"/>
+        <text name="ft_ui_welcome_message" text="Avaa painamalla %s"/>
+        <text name="ft_ui_enabled_short" text="Ota tabletti käyttöön"/>
+        <text name="ft_ui_enabled_long" text="Ota käyttöön tai poista käytöstä maatilan tablettijärjestelmä"/>
+        <text name="ft_ui_keybind_short" text="Avaa avain"/>
+        <text name="ft_ui_keybind_long" text="Avain tilan tabletin avaamiseen/sulkemiseen"/>
+        <text name="ft_ui_notifications_short" text="Ilmoitukset"/>
+        <text name="ft_ui_notifications_long" text="Näytä tabletin ilmoitukset pelin latauksen yhteydessä"/>
+        <text name="ft_ui_startupapp_short" text="Käynnistyssovellus"/>
+        <text name="ft_ui_startupapp_long" text="Oletussovellus tablettia avattaessa"/>
+        <text name="ft_ui_startupapp_1" text="Kojelauta"/>
+        <text name="ft_ui_startupapp_2" text="App Storesta"/>
+        <text name="ft_ui_startupapp_3" text="Sää"/>
+        <text name="ft_ui_startupapp_4" text="Kaivaminen"/>
+        <text name="ft_ui_soundeffects_short" text="Äänitehosteet"/>
+        <text name="ft_ui_soundeffects_long" text="Toista äänitehosteita tabletin vuorovaikutuksessa"/>
+        <text name="ft_ui_debug_short" text="Virheenkorjaustila"/>
+        <text name="ft_ui_debug_long" text="Ota virheenkorjauskirjaus käyttöön konsolissa"/>
+        <text name="ft_ui_reset" text="Palauta tabletin asetukset"/>
+        <text name="ft_ui_app_dashboard" text="Kojelauta"/>
+        <text name="ft_ui_app_store" text="App Storesta"/>
+        <text name="ft_ui_app_updates" text="Päivitykset"/>
+        <text name="ft_ui_app_settings" text="Asetukset"/>
+        <text name="ft_ui_app_workshop" text="Työpaja"/>
+        <text name="ft_ui_app_field_status" text="Kenttäpäällikkö"/>
+        <text name="ft_ui_app_animals" text="Eläimet"/>
+        <text name="ft_ui_app_weather" text="Sää"/>
+        <text name="ft_ui_app_digging" text="Kaivaminen"/>
+        <text name="ft_ui_app_bucket_tracker" text="Kauhan seurantalaite"/>
+        <text name="ft_ui_app_income_mod" text="Tulot Mod"/>
+        <text name="ft_ui_app_tax_mod" text="Tax Mod"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="Viljelystressi"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Maaperän lannoite"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Aloitus"/>
+        <text name="ft_help_cat_apps" text="Farm Apps"/>
+        <text name="ft_help_cat_mods" text="Companion Mods"/>
+        <text name="ft_help_cat_settings" text="Asetukset ja konsoli"/>
+        <text name="ft_help_p1_title" text="Avaaminen ja navigointi"/>
+        <text name="ft_help_p1_open_title" text="Tabletin avaaminen"/>
+        <text name="ft_help_p1_open_text" text="Paina T (konfiguroitavissa) milloin tahansa avataksesi tai sulkeaksesi Farm Tabletin. Voit vaihtaa avaimen Asetukset-sovelluksessa tai kirjoittamalla TabletKeybind ja sen jälkeen avaimen kirjaimen kehittäjäkonsoliin."/>
+        <text name="ft_help_p1_nav_title" text="Sivupalkin navigointi"/>
+        <text name="ft_help_p1_nav_text" text="Vasemmassa sivupalkissa näkyy yksi kuvake jokaista asennettua sovellusta kohden. Napsauta mitä tahansa kuvaketta vaihtaaksesi sovelluksia välittömästi. Jos käytössäsi on useita täydentäviä modeja, sivupalkki vierittää – käytä hiiren rullaa vierittäessäsi sen päällä vierittääksesi ylös ja alas."/>
+        <text name="ft_help_p2_title" text="Siirtäminen ja koon muuttaminen"/>
+        <text name="ft_help_p2_move_title" text="Muokkaustila"/>
+        <text name="ft_help_p2_move_text" text="Avaa Asetukset-sovellus ja napsauta ENTER EDIT MODE. Muokkaustilassa voit vetämällä tabletin runkoa siirtääksesi sen mihin tahansa näytölle, vetämällä mitä tahansa kulman kahvaa skaalataksesi koko tabletin tai vetämällä vasenta tai oikeaa reunaa säätääksesi vain leveyttä. Napsauta hiiren kakkospainikkeella mitä tahansa poistuaksesi muokkaustilasta. Sijaintisi ja asteikkosi tallennetaan automaattisesti."/>
+        <text name="ft_help_p2_key_title" text="Avaimen vaihtaminen"/>
+        <text name="ft_help_p2_key_text" text="Oletusavain on T. Voit muuttaa sitä avaamalla Asetukset-sovelluksen ja etsimällä Keybind-asetuksen tai kirjoittamalla TabletKeybind ja sen jälkeen avaimen nimen kehittäjäkonsoliin – esimerkiksi TabletKeybind H asettaa avaimen H:ksi. Yksittäisiä kirjaimia, F-näppäimiä ja yleisiä näppäimiä, kuten TAB ja ESC, tuetaan."/>
+        <text name="ft_help_a1_title" text="Kojelauta ja sää"/>
+        <text name="ft_help_a1_dash_title" text="Kojelauta"/>
+        <text name="ft_help_a1_dash_text" text="Dashboard on maatilan yhteenveto yhdellä silmäyksellä. Se näyttää nykyisen saldosi suuressa sankarikortissa ylhäällä ja sen jälkeen tulot, kulut ja nettotulot istunnossa alla. Farm Stats näyttää, kuinka monta peltoa omistat ja ajoneuvosi kokonaismäärä. Maailma-osiossa näkyy nykyinen kausi, päivä, kellonaika ja reaaliaikainen sääkuva. Napauta pientä tietokuvaketta Dashboardin oikeassa alakulmassa saadaksesi yksityiskohtaisen selityksen jokaisesta arvosta."/>
+        <text name="ft_help_a1_weather_title" text="Sääsovellus"/>
+        <text name="ft_help_a1_weather_text" text="Sää-sovellus näyttää yksityiskohtaisen usean päivän ennusteen lämpötilalla, sateen todennäköisyydellä ja tuulella. Olosuhteet ovat värikoodattuja: sininen sateelle, oranssi myrskylle, valkoinen kirkkaalle taivaalle. Käytä tätä yhdessä Crop Stress -moodin kanssa päättääksesi, milloin kastelu ajoitetaan."/>
+        <text name="ft_help_a2_title" text="Kentät ja eläimet"/>
+        <text name="ft_help_a2_fields_title" text="Kenttäpäällikkö"/>
+        <text name="ft_help_a2_fields_text" text="Field Manager luettelee kaikki omistamasi kentät. Jokaisella rivillä näkyy satotyyppi, nykyinen kasvuvaihe tunnuksena (Külvetty, Kasvava, Valmis) ja värikoodattu tilapiste. Vihreä tarkoittaa, että kenttä ei tarvitse huomiota. Keltainen tarkoittaa, että se tarvitsee jotain - lannoitetta, kyntöä tai käärimistä. Punainen tarkoittaa, että sato on valmis korjattavaksi tai vaatii kiireellisiä toimia."/>
+        <text name="ft_help_a2_animals_title" text="Eläimet"/>
+        <text name="ft_help_a2_animals_text" text="Animals-sovellus näyttää jokaisen omistamasi kynän kolmella edistymispalkilla: ruoan taso, veden taso ja puhtaus. Vihreät palkit eivät vaadi toimia. Keltaiset palkit pitäisi lisätä pian. Punaiset palkit ovat kriittisiä ja vaikuttavat tuottavuuteen, jos ne jätetään ilman valvontaa."/>
+        <text name="ft_help_a3_title" text="Workshop &amp; Bucket Tracker"/>
+        <text name="ft_help_a3_workshop_title" text="Työpaja"/>
+        <text name="ft_help_a3_workshop_text" text="Kävele 25 metrin säteellä mistä tahansa ajoneuvosta, niin se näkyy automaattisesti Workshop-sovelluksessa. Jokainen merkintä näyttää polttoainetason, kulumisprosentin ja kokonaiskäyttötunnit. Kiinnitä se napsauttamalla missä tahansa ajoneuvossa VALITSE – kiinnitetyt ajoneuvot pysyvät näkyvissä sovelluksessa, vaikka kävelet pois, jolloin pellolla työskentelevien koneiden seuranta on helppoa."/>
+        <text name="ft_help_a3_bucket_title" text="Kauhan seurantalaite"/>
+        <text name="ft_help_a3_bucket_text" text="Kauhaseuranta aktivoituu automaattisesti, kun ajat pyöräkuormaajaa, kaivinkonetta tai materiaalinkäsittelylaitetta. Se laskee jokaisen tyhjennysjakson ja pitää kirjaa materiaalityypeistä ja arvioidusta painosta kuormaa kohden. Käytä sitä tuottavuuden seuraamiseen maanrakennustöissä, lannanlevityksessä tai irtotavarankäsittelytöissä."/>
+        <text name="ft_help_m1_title" text="Tulot ja verot"/>
+        <text name="ft_help_m1_income_title" text="FS25 Income Mod"/>
+        <text name="ft_help_m1_income_text" text="Kun FS25_IncomeMod on aktiivinen tallennuspelissäsi, Tulot-sovellus tulee näkyviin sivupalkkiin. Se näyttää nykyisen maksutavan, ajoitetun summan ja voit ottaa modin käyttöön tai poistaa sen käytöstä poistumatta tabletista. Muutokset astuvat voimaan välittömästi."/>
+        <text name="ft_help_m1_tax_title" text="FS25 Tax Mod"/>
+        <text name="ft_help_m1_tax_text" text="Kun FS25_TaxMod on aktiivinen, Tax-sovellus näyttää nykyisen veroprosentin, palautusprosentin ja tässä istunnossa maksettujen verojen kokonaismäärän. Voit ottaa modin käyttöön tai poistaa sen käytöstä tabletissa ja nähdä vähimmäistasapainovaatimuksen yhdellä silmäyksellä."/>
+        <text name="ft_help_m2_title" text="Viljelystressi ja maaperän lannoite"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 kausiluonteinen sadon stressi"/>
+        <text name="ft_help_m2_cropstress_text" text="Kun FS25_SeasonalCropStress on aktiivinen, Crop Stress -sovellus näyttää jokaisen pellon sen hetkisen maaperän kosteusprosentin ja kertyneen kuivuusstressin mukaan. Värikoodattu palkki näyttää terveyden yhdellä silmäyksellä: vihreä on hyvä, keltainen on varoitus, punainen tarkoittaa, että stressi on jo lisääntymässä ja sadonmenetys on alkanut. Asenna kyseinen modi ja avaa sen oma ohjeosio saadaksesi täydelliset kasteluohjeet."/>
+        <text name="ft_help_m2_soil_title" text="FS25 maaperän lannoite"/>
+        <text name="ft_help_m2_soil_text" text="Kun FS25_SoilFertilizer on aktiivinen, Soil Fertilizer -sovellus näyttää typen, fosforin, kaliumin, pH:n ja orgaanisen aineksen peltokohtaisesti. Valitse mikä tahansa pelto luettelosta nähdäksesi sen koko maaprofiilin ja sen, tarvitseeko se lannoitusta. Ravinnetasot on merkitty värillä: vihreä on hyvä, keltainen on reilu, punainen vaatii huomiota."/>
+        <text name="ft_help_m3_title" text="App Storesta"/>
+        <text name="ft_help_m3_appstore_title" text="Asennettujen sovellusten löytäminen"/>
+        <text name="ft_help_m3_appstore_text" text="App Store -sovellus luettelee kaikki tablettiin rekisteröidyt sovellukset, mukaan lukien täydentävät mod-sovellukset. Sovellukset, jotka vaativat modin, joka ei ole tällä hetkellä aktiivinen, näkyvät himmennettyinä, jotta tiedät, että ne ovat käytettävissä, kun otat vastaavan modin käyttöön. Määrityksiä ei tarvita – kumppanisovellukset ilmestyvät automaattisesti, kun niiden modi ladataan."/>
+        <text name="ft_help_s1_title" text="Tabletin asetukset"/>
+        <text name="ft_help_s1_settings_title" text="Mitä voit muuttaa"/>
+        <text name="ft_help_s1_settings_text" text="Avaa Asetukset-sovellus sivupalkista hallitaksesi: tabletin sijaintia ja mittakaavaa (tai käytä muokkaustilaa visuaaliseen raahaamiseen), käynnistyssovellusta, joka näytetään, kun avaat tabletin ensimmäisen kerran, näytetäänkö tervetuloilmoitus latauksen yhteydessä ja virheenkorjausloki vianmääritystä varten. Kaikki asetukset tallentuvat automaattisesti, kun suljet pelin."/>
+        <text name="ft_help_s1_sound_title" text="Äänitehosteet"/>
+        <text name="ft_help_s1_sound_text" text="Äänitehosteet ovat oletuksena käytössä. Sovelluksen valintanapsautus toistetaan, kun vaihdat sovellusta. Hakuääni kuuluu, kun pelin sisäinen ohjepaneeli avautuu tai sulkeutuu. Molemmat voidaan vaihtaa erikseen Asetukset-sovelluksessa."/>
+        <text name="ft_help_s2_title" text="Konsolin komennot"/>
+        <text name="ft_help_s2_console_title" text="Käytettävissä olevat komennot"/>
+        <text name="ft_help_s2_console_text" text="Avaa kehittäjäkonsoli tilde-näppäimellä ja kirjoita tabletti nähdäksesi kaikki käytettävissä olevat komennot. Esimerkkejä: TabletKeybind H muuttaa avausavaimen muotoon H. TabletSetStartupApp sää avaa Sää-sovelluksen oletuksena. TabletResetSettings palauttaa kaikki tabletin asetukset oletusarvoihinsa. TabletToggleDebug ottaa monisanaisen kirjauksen käyttöön tai poistaa sen käytöstä."/>
+
+    </texts>
+</l10n>

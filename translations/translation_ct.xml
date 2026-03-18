@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="農場平板電腦"/>
+        <text name="ft_ui_welcome_title" text="農場平板電腦 v2"/>
+        <text name="ft_ui_welcome_message" text="Press %s to open"/>
+        <text name="ft_ui_enabled_short" text="啟用平板電腦"/>
+        <text name="ft_ui_enabled_long" text="啟用或停用農場平板電腦系統"/>
+        <text name="ft_ui_keybind_short" text="打開鑰匙"/>
+        <text name="ft_ui_keybind_long" text="打開/關閉農場平板電腦的鑰匙"/>
+        <text name="ft_ui_notifications_short" text="通知"/>
+        <text name="ft_ui_notifications_long" text="在遊戲載入時顯示平板電腦通知"/>
+        <text name="ft_ui_startupapp_short" text="啟動應用程式"/>
+        <text name="ft_ui_startupapp_long" text="打開平板電腦時的預設應用程式"/>
+        <text name="ft_ui_startupapp_1" text="儀表板"/>
+        <text name="ft_ui_startupapp_2" text="應用程式商店"/>
+        <text name="ft_ui_startupapp_3" text="天氣"/>
+        <text name="ft_ui_startupapp_4" text="挖掘"/>
+        <text name="ft_ui_soundeffects_short" text="音效"/>
+        <text name="ft_ui_soundeffects_long" text="播放平板電腦互動的音效"/>
+        <text name="ft_ui_debug_short" text="偵錯模式"/>
+        <text name="ft_ui_debug_long" text="在控制台中啟用偵錯日誌記錄"/>
+        <text name="ft_ui_reset" text="重設平板電腦設定"/>
+        <text name="ft_ui_app_dashboard" text="儀表板"/>
+        <text name="ft_ui_app_store" text="應用程式商店"/>
+        <text name="ft_ui_app_updates" text="更新"/>
+        <text name="ft_ui_app_settings" text="設定"/>
+        <text name="ft_ui_app_workshop" text="工作坊"/>
+        <text name="ft_ui_app_field_status" text="現場經理"/>
+        <text name="ft_ui_app_animals" text="動物"/>
+        <text name="ft_ui_app_weather" text="天氣"/>
+        <text name="ft_ui_app_digging" text="挖掘"/>
+        <text name="ft_ui_app_bucket_tracker" text="桶追蹤器"/>
+        <text name="ft_ui_app_income_mod" text="收入模式"/>
+        <text name="ft_ui_app_tax_mod" text="稅收模式"/>
+        <text name="ft_ui_app_npc_favor" text="NPC Favor"/>
+        <text name="ft_ui_app_crop_stress" text="作物脅迫"/>
+        <text name="ft_ui_app_soil_fertilizer" text="土壤肥料"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="入門"/>
+        <text name="ft_help_cat_apps" text="農場應用程式"/>
+        <text name="ft_help_cat_mods" text="配套模組"/>
+        <text name="ft_help_cat_settings" text="設定和控制台"/>
+        <text name="ft_help_p1_title" text="打開和導航"/>
+        <text name="ft_help_p1_open_title" text="開啟平板電腦"/>
+        <text name="ft_help_p1_open_text" text="Press T (configurable) at any time to open or close the Farm Tablet. You can change the key in the Settings app or by typing TabletKeybind followed by a key letter in the developer console."/>
+        <text name="ft_help_p1_nav_title" text="側邊欄導航"/>
+        <text name="ft_help_p1_nav_text" text="左側邊欄為每個已安裝的應用程式顯示一個圖示。點擊任何圖示即可立即切換應用程式。如果您有許多活動的配套模組，側邊欄將滾動 - 將滑鼠懸停在其上時使用滑鼠滾輪上下滾動。"/>
+        <text name="ft_help_p2_title" text="移動和調整大小"/>
+        <text name="ft_help_p2_move_title" text="編輯模式"/>
+        <text name="ft_help_p2_move_text" text="開啟“設定”應用程式並點擊“進入編輯模式”。在編輯模式下，您可以拖曳平板電腦主體以將其重新定位在螢幕上的任何位置，拖曳任何角落手柄以縮放整個平板電腦，或拖曳左邊緣或右邊緣以僅調整寬度。右鍵點選任意位置可退出編輯模式。您的位置和比例會自動儲存。"/>
+        <text name="ft_help_p2_key_title" text="更改開啟密鑰"/>
+        <text name="ft_help_p2_key_text" text="預設鍵是 T。要更改它，請打開“設置”應用程式並找到“Keybind”設置，或者在開發者控制台中鍵入 TabletKeybind，後跟鍵名稱 - 例如 TabletKeybind H 將鍵設置為 H。單字母、F 鍵以及 TAB 和 ESC 等常用鍵都支援。"/>
+        <text name="ft_help_a1_title" text="儀表板和天氣"/>
+        <text name="ft_help_a1_dash_title" text="儀表板"/>
+        <text name="ft_help_a1_dash_text" text="儀表板是您一目了然的農場摘要。它在頂部的大英雄卡中顯示您當前的餘額，然後在下面顯示該會話的收入、支出和淨利潤。農場統計列出了您擁有的田地數量和車輛總數。世界部分顯示當前季節、日期、時間以及即時天氣快照。點擊儀表板右下角的小資訊圖示即可取得每個值的詳細說明。"/>
+        <text name="ft_help_a1_weather_title" text="天氣應用程式"/>
+        <text name="ft_help_a1_weather_text" text="天氣應用程式顯示詳細的多日天氣預報，包括溫度、降水機率和風力。情況用顏色編碼：藍色表示下雨，橘色表示暴風雨，白色表示晴朗的天空。將其與作物脅迫模組一起使用來決定何時安排灌溉。"/>
+        <text name="ft_help_a2_title" text="田野與動物"/>
+        <text name="ft_help_a2_fields_title" text="現場經理"/>
+        <text name="ft_help_a2_fields_text" text="字段管理器列出了您擁有的每個字段。每行顯示作物類型、目前生長階段（作為徽章）（播種、生長、就緒）以及顏色編碼的狀態點。綠色表示該欄位不需要關注。黃色意味著它需要一些東西——肥料、犁地或碾壓。紅色表示農作物已準備好收穫或需要緊急行動。"/>
+        <text name="ft_help_a2_animals_title" text="動物"/>
+        <text name="ft_help_a2_animals_text" text="動物應用程式透過三個進度條顯示您擁有的每個圍欄：食物水平、水位和清潔度。綠條無需執行任何操作。黃色條應該很快就會被填滿。紅條至關重要，如果無人看管，將會影響生產力。"/>
+        <text name="ft_help_a3_title" text="車間和桶追蹤器"/>
+        <text name="ft_help_a3_workshop_title" text="工作坊"/>
+        <text name="ft_help_a3_workshop_text" text="步行到任何車輛 25 公尺範圍內，它就會自動出現在 Workshop 應用程式中。每個條目都會顯示燃油油位、磨損百分比和總運行時間。點擊任何車輛上的“選擇”以固定它 - 即使您離開，固定的車輛在應用程式中仍然可見，從而可以輕鬆監控在現場工作的機器。"/>
+        <text name="ft_help_a3_bucket_title" text="桶追蹤器"/>
+        <text name="ft_help_a3_bucket_text" text="當您駕駛輪式裝載機、挖土機或物料搬運機時，鏟鬥追蹤器會自動啟動。它對每個傾倒週期進行計數，並保存材料類型和每次負載的估計重量的運行日誌。用它來追蹤土方工程、肥料撒播或散裝物料搬運作業的生產力。"/>
+        <text name="ft_help_m1_title" text="收入和稅收模式"/>
+        <text name="ft_help_m1_income_title" text="FS25 收入模式"/>
+        <text name="ft_help_m1_income_text" text="當 FS25_IncomeMod 在您的保存遊戲中處於活動狀態時，收入應用程式會出現在側欄中。它顯示目前的付款模式、預定金額，並讓您無需離開平板電腦即可啟用或停用該模式。更改立即生效。"/>
+        <text name="ft_help_m1_tax_title" text="FS25 稅務模組"/>
+        <text name="ft_help_m1_tax_text" text="當 FS25_TaxMod 處於活動狀態時，稅務應用程式會顯示您目前的稅率、退貨百分比以及本次會話支付的稅金總額。您可以從平板電腦上開啟或關閉該模組，並一目了然地查看您的最低餘額要求。"/>
+        <text name="ft_help_m2_title" text="作物脅迫與土壤肥料"/>
+        <text name="ft_help_m2_cropstress_title" text="FS25 季節性作物脅迫"/>
+        <text name="ft_help_m2_cropstress_text" text="當 FS25_SeasonalCropStress 處於活動狀態時，作物壓力應用程式會列出每個田地及其當前土壤濕度百分比和累積的乾旱壓力。顏色編碼條一目了然地顯示健康狀況：綠色表示良好，黃色表示警告，紅色表示壓力已經形成並且產量已經開始下降。安裝該模組並打開自己的幫助部分以獲得完整的灌溉指導。"/>
+        <text name="ft_help_m2_soil_title" text="FS25土壤肥料"/>
+        <text name="ft_help_m2_soil_text" text="當 FS25_SoilFertilizer 處於活動狀態時，Soil Fertilizer 應用程式會顯示每個田地的氮、磷、鉀、pH 值和有機質。從清單中選擇任何田地以查看其完整的土壤剖面以及是否需要施肥。營養等級以顏色編碼：綠色為良好，黃色為一般，紅色需要注意。"/>
+        <text name="ft_help_m3_title" text="應用程式商店"/>
+        <text name="ft_help_m3_appstore_title" text="發現已安裝的應用程式"/>
+        <text name="ft_help_m3_appstore_text" text="App Store 應用程式列出了在平板電腦上註冊的每個應用程序，包括配套 mod 應用程式。需要當前未啟動的 mod 的應用程式會顯示為灰色狀態，因此您知道一旦啟用匹配的 mod，它們就可用。無需配置 - 載入 mod 時，配套應用程式會自動出現。"/>
+        <text name="ft_help_s1_title" text="Tablet Settings"/>
+        <text name="ft_help_s1_settings_title" text="你可以改變什麼"/>
+        <text name="ft_help_s1_settings_text" text="從側邊欄開啟「設定」應用程式以管理：平板電腦位置和比例（或使用編輯模式進行視覺拖曳）、首次開啟平板電腦時顯示的啟動應用程式、是否在載入時顯示歡迎通知以及用於故障排除的偵錯日誌記錄。當您關閉遊戲時，所有設定都會自動儲存。"/>
+        <text name="ft_help_s1_sound_title" text="音效"/>
+        <text name="ft_help_s1_sound_text" text="預設情況下，聲音效果處於開啟狀態。當您切換應用程式時，會播放應用程式選擇點擊聲。當遊戲內幫助面板開啟或關閉時，會發出尋呼聲音。兩者都可以在“設定”應用程式中獨立切換。"/>
+        <text name="ft_help_s2_title" text="控制台命令"/>
+        <text name="ft_help_s2_console_title" text="可用指令"/>
+        <text name="ft_help_s2_console_text" text="使用波浪號鍵開啟開發人員控制台並鍵入 Tablet 以查看所有可用命令。範例：TabletKeybind H 將開啟鍵更改為 H。 TabletSetStartupApp 天氣 預設開啟天氣應用程式。 TabletResetSettings 將所有平板電腦設定還原為預設值。 TabletToggleDebug 開啟或關閉詳細日誌記錄。"/>
+
+    </texts>
+</l10n>

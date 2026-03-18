@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- UI STRINGS                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_ui_section" text="Máy tính bảng trang trại"/>
+        <text name="ft_ui_welcome_title" text="Máy tính bảng trang trại v2"/>
+        <text name="ft_ui_welcome_message" text="Nhấn %s để mở"/>
+        <text name="ft_ui_enabled_short" text="Kích hoạt máy tính bảng"/>
+        <text name="ft_ui_enabled_long" text="Kích hoạt hoặc vô hiệu hóa hệ thống máy tính bảng trang trại"/>
+        <text name="ft_ui_keybind_short" text="Mở khóa"/>
+        <text name="ft_ui_keybind_long" text="Chìa khóa để mở/đóng máy tính bảng nông trại"/>
+        <text name="ft_ui_notifications_short" text="Thông báo"/>
+        <text name="ft_ui_notifications_long" text="Hiển thị thông báo trên máy tính bảng khi tải trò chơi"/>
+        <text name="ft_ui_startupapp_short" text="Ứng dụng khởi động"/>
+        <text name="ft_ui_startupapp_long" text="Ứng dụng mặc định khi mở máy tính bảng"/>
+        <text name="ft_ui_startupapp_1" text="Trang tổng quan"/>
+        <text name="ft_ui_startupapp_2" text="Cửa hàng ứng dụng"/>
+        <text name="ft_ui_startupapp_3" text="Thời tiết"/>
+        <text name="ft_ui_startupapp_4" text="Đào"/>
+        <text name="ft_ui_soundeffects_short" text="Hiệu ứng âm thanh"/>
+        <text name="ft_ui_soundeffects_long" text="Phát hiệu ứng âm thanh khi tương tác với máy tính bảng"/>
+        <text name="ft_ui_debug_short" text="Chế độ gỡ lỗi"/>
+        <text name="ft_ui_debug_long" text="Cho phép ghi nhật ký gỡ lỗi trong bảng điều khiển"/>
+        <text name="ft_ui_reset" text="Đặt lại cài đặt máy tính bảng"/>
+        <text name="ft_ui_app_dashboard" text="Trang tổng quan"/>
+        <text name="ft_ui_app_store" text="Cửa hàng ứng dụng"/>
+        <text name="ft_ui_app_updates" text="Cập nhật"/>
+        <text name="ft_ui_app_settings" text="Cài đặt"/>
+        <text name="ft_ui_app_workshop" text="Xưởng"/>
+        <text name="ft_ui_app_field_status" text="Người quản lý hiện trường"/>
+        <text name="ft_ui_app_animals" text="Động vật"/>
+        <text name="ft_ui_app_weather" text="Thời tiết"/>
+        <text name="ft_ui_app_digging" text="Đào"/>
+        <text name="ft_ui_app_bucket_tracker" text="Trình theo dõi nhóm"/>
+        <text name="ft_ui_app_income_mod" text="Mod thu nhập"/>
+        <text name="ft_ui_app_tax_mod" text="Chế độ thuế"/>
+        <text name="ft_ui_app_npc_favor" text="Ưu đãi NPC"/>
+        <text name="ft_ui_app_crop_stress" text="Cắt căng thẳng"/>
+        <text name="ft_ui_app_soil_fertilizer" text="Phân bón đất"/>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- HELP STRINGS                                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+
+        <text name="ft_help_cat_start" text="Bắt đầu"/>
+        <text name="ft_help_cat_apps" text="Ứng dụng trang trại"/>
+        <text name="ft_help_cat_mods" text="Mod đồng hành"/>
+        <text name="ft_help_cat_settings" text="Cài đặt &amp; Bảng điều khiển"/>
+        <text name="ft_help_p1_title" text="Mở &amp; Điều hướng"/>
+        <text name="ft_help_p1_open_title" text="Mở máy tính bảng"/>
+        <text name="ft_help_p1_open_text" text="Nhấn T (có thể định cấu hình) bất kỳ lúc nào để mở hoặc đóng Farm Tablet. Bạn có thể thay đổi khóa trong ứng dụng Cài đặt hoặc bằng cách nhập TabletKeybind, sau đó là một chữ cái chính trong bảng điều khiển dành cho nhà phát triển."/>
+        <text name="ft_help_p1_nav_title" text="Điều hướng thanh bên"/>
+        <text name="ft_help_p1_nav_text" text="Thanh bên trái hiển thị một biểu tượng cho mỗi ứng dụng đã cài đặt. Nhấp vào bất kỳ biểu tượng nào để chuyển đổi ứng dụng ngay lập tức. Nếu bạn có nhiều mod đồng hành đang hoạt động, thanh bên sẽ cuộn - hãy sử dụng con lăn chuột trong khi di chuột qua nó để cuộn lên và xuống."/>
+        <text name="ft_help_p2_title" text="Di chuyển &amp; Thay đổi kích thước"/>
+        <text name="ft_help_p2_move_title" text="Chế độ chỉnh sửa"/>
+        <text name="ft_help_p2_move_text" text="Mở ứng dụng Cài đặt và nhấp vào NHẬP CHẾ ĐỘ CHỈNH SỬA. Trong chế độ chỉnh sửa, bạn có thể kéo thân máy tính bảng để đặt lại vị trí ở bất kỳ đâu trên màn hình, kéo bất kỳ bộ điều khiển ở góc nào để chia tỷ lệ toàn bộ máy tính bảng hoặc kéo cạnh trái hoặc phải để chỉ điều chỉnh độ rộng. Nhấp chuột phải vào bất kỳ đâu để thoát khỏi chế độ chỉnh sửa. Vị trí và tỷ lệ của bạn được lưu tự động."/>
+        <text name="ft_help_p2_key_title" text="Thay đổi khóa mở"/>
+        <text name="ft_help_p2_key_text" text="Khóa mặc định là T. Để thay đổi, hãy mở ứng dụng Cài đặt và tìm cài đặt Keybind hoặc nhập TabletKeybind theo sau là tên khóa trong bảng điều khiển dành cho nhà phát triển — ví dụ: TabletKeybind H đặt khóa thành H. Các chữ cái đơn, phím F và các phím chung như TAB và ESC đều được hỗ trợ."/>
+        <text name="ft_help_a1_title" text="Trang tổng quan &amp; Thời tiết"/>
+        <text name="ft_help_a1_dash_title" text="Trang tổng quan"/>
+        <text name="ft_help_a1_dash_text" text="Bảng điều khiển là bản tóm tắt trang trại nhanh chóng của bạn. Nó hiển thị số dư hiện tại của bạn trong một thẻ anh hùng lớn ở trên cùng, sau đó là thu nhập, chi phí và lợi nhuận ròng cho phiên bên dưới. Thống kê trang trại liệt kê số cánh đồng bạn sở hữu và tổng số xe của bạn. Phần Thế giới hiển thị mùa, ngày, thời gian trong ngày hiện tại và ảnh chụp nhanh thời tiết trực tiếp. Nhấn vào biểu tượng thông tin nhỏ ở góc dưới bên phải của Trang tổng quan để xem giải thích chi tiết về mọi giá trị."/>
+        <text name="ft_help_a1_weather_title" text="Ứng dụng thời tiết"/>
+        <text name="ft_help_a1_weather_text" text="Ứng dụng Thời tiết hiển thị dự báo chi tiết cho nhiều ngày với nhiệt độ, xác suất mưa và gió. Các điều kiện được mã hóa bằng màu: xanh dương khi trời mưa, cam khi có bão, trắng khi trời trong. Sử dụng tính năng này cùng với mod Crop Stress để quyết định thời điểm lên lịch tưới."/>
+        <text name="ft_help_a2_title" text="Cánh đồng &amp; Động vật"/>
+        <text name="ft_help_a2_fields_title" text="Người quản lý hiện trường"/>
+        <text name="ft_help_a2_fields_text" text="Trình quản lý trường liệt kê mọi trường bạn sở hữu. Mỗi hàng hiển thị loại cây trồng, giai đoạn tăng trưởng hiện tại dưới dạng huy hiệu (Đã gieo, Đang phát triển, Sẵn sàng) và dấu chấm trạng thái được mã hóa bằng màu. Màu xanh lá cây có nghĩa là trường này không cần chú ý. Màu vàng có nghĩa là nó cần thứ gì đó - phân bón, cày xới hoặc lăn. Màu đỏ có nghĩa là cây trồng đã sẵn sàng thu hoạch hoặc cần hành động khẩn cấp."/>
+        <text name="ft_help_a2_animals_title" text="Động vật"/>
+        <text name="ft_help_a2_animals_text" text="Ứng dụng Động vật hiển thị mọi chiếc bút bạn sở hữu với ba thanh tiến trình: mức thức ăn, mực nước và mức độ sạch sẽ. Thanh màu xanh lá cây không cần hành động. Thanh màu vàng nên được nạp sớm. Thanh màu đỏ rất quan trọng và sẽ ảnh hưởng đến năng suất nếu không được giám sát."/>
+        <text name="ft_help_a3_title" text="Trình theo dõi xưởng &amp; nhóm"/>
+        <text name="ft_help_a3_workshop_title" text="Xưởng"/>
+        <text name="ft_help_a3_workshop_text" text="Đi bộ trong phạm vi 25 mét tới bất kỳ phương tiện nào và phương tiện đó sẽ tự động xuất hiện trong ứng dụng Workshop. Mỗi mục hiển thị mức nhiên liệu, tỷ lệ hao mòn và tổng số giờ hoạt động. Nhấp vào CHỌN trên bất kỳ phương tiện nào để ghim phương tiện đó — các phương tiện được ghim vẫn hiển thị trong ứng dụng ngay cả khi bạn bỏ đi, giúp bạn dễ dàng giám sát các máy móc đang hoạt động tại hiện trường."/>
+        <text name="ft_help_a3_bucket_title" text="Trình theo dõi nhóm"/>
+        <text name="ft_help_a3_bucket_text" text="Bucket Tracker tự động kích hoạt khi bạn lái máy xúc lật, máy xúc hoặc máy xử lý vật liệu. Nó đếm mọi chu kỳ đổ rác và lưu giữ nhật ký hoạt động của loại vật liệu và trọng lượng ước tính trên mỗi lần tải. Sử dụng nó để theo dõi năng suất của các công việc đào đất, rải phân hoặc xử lý vật liệu khối lượng lớn."/>
+        <text name="ft_help_m1_title" text="Chế độ thu nhập và thuế"/>
+        <text name="ft_help_m1_income_title" text="Mod thu nhập FS25"/>
+        <text name="ft_help_m1_income_text" text="Khi FS25_IncomeMod hoạt động trong trò chơi lưu trữ của bạn, ứng dụng Thu nhập sẽ xuất hiện trên thanh bên. Nó hiển thị chế độ thanh toán hiện tại, số tiền đã lên lịch và cho phép bạn bật hoặc tắt bản mod mà không cần rời khỏi máy tính bảng. Những thay đổi có hiệu lực ngay lập tức."/>
+        <text name="ft_help_m1_tax_title" text="Chế độ thuế FS25"/>
+        <text name="ft_help_m1_tax_text" text="Khi FS25_TaxMod hoạt động, ứng dụng Thuế sẽ hiển thị mức thuế hiện tại của bạn, tỷ lệ phần trăm hoàn thuế và tổng số thuế đã nộp trong phiên này. Bạn có thể bật hoặc tắt chế độ này từ máy tính bảng và xem nhanh yêu cầu số dư tối thiểu của mình."/>
+        <text name="ft_help_m2_title" text="Căng thẳng cây trồng &amp; Phân bón cho đất"/>
+        <text name="ft_help_m2_cropstress_title" text="Căng thẳng cây trồng theo mùa FS25"/>
+        <text name="ft_help_m2_cropstress_text" text="Khi FS25_SeasonalCropStress đang hoạt động, ứng dụng Crop Stress sẽ liệt kê mọi cánh đồng với phần trăm độ ẩm đất hiện tại và tình trạng hạn hán tích lũy. Một thanh mã màu hiển thị nhanh tình trạng sức khỏe: màu xanh lá cây là ổn, màu vàng là cảnh báo, màu đỏ có nghĩa là căng thẳng đang gia tăng và năng suất đã bắt đầu giảm. Cài đặt bản mod đó và mở phần trợ giúp riêng để được hướng dẫn tưới tiêu đầy đủ."/>
+        <text name="ft_help_m2_soil_title" text="Phân bón đất FS25"/>
+        <text name="ft_help_m2_soil_text" text="Khi FS25_SoilFertilizer hoạt động, ứng dụng Phân bón đất sẽ hiển thị nitơ, phốt pho, kali, độ pH và chất hữu cơ trên mỗi cánh đồng. Chọn bất kỳ cánh đồng nào trong danh sách để xem thông tin đầy đủ về đất và liệu nó có cần bón phân hay không. Mức độ dinh dưỡng được mã hóa bằng màu: xanh là tốt, vàng là vừa, đỏ cần chú ý."/>
+        <text name="ft_help_m3_title" text="Cửa hàng ứng dụng"/>
+        <text name="ft_help_m3_appstore_title" text="Khám phá ứng dụng đã cài đặt"/>
+        <text name="ft_help_m3_appstore_text" text="Ứng dụng App Store liệt kê mọi ứng dụng đã đăng ký với máy tính bảng, bao gồm cả các ứng dụng mod đồng hành. Các ứng dụng yêu cầu một mod hiện không hoạt động sẽ được hiển thị ở trạng thái mờ để bạn biết chúng có sẵn sau khi bạn bật mod phù hợp. Không cần cấu hình - các ứng dụng đồng hành tự động xuất hiện khi bản mod của chúng được tải."/>
+        <text name="ft_help_s1_title" text="Cài đặt máy tính bảng"/>
+        <text name="ft_help_s1_settings_title" text="Những gì bạn có thể thay đổi"/>
+        <text name="ft_help_s1_settings_text" text="Mở ứng dụng Cài đặt từ thanh bên để quản lý: vị trí và tỷ lệ của máy tính bảng (hoặc sử dụng Chế độ chỉnh sửa để kéo trực quan), ứng dụng khởi động được hiển thị khi bạn mở máy tính bảng lần đầu tiên, có hiển thị thông báo chào mừng khi tải hay không và ghi nhật ký gỡ lỗi để khắc phục sự cố. Tất cả các cài đặt sẽ được lưu tự động khi bạn đóng trò chơi."/>
+        <text name="ft_help_s1_sound_title" text="Hiệu ứng âm thanh"/>
+        <text name="ft_help_s1_sound_text" text="Hiệu ứng âm thanh được bật theo mặc định. Nhấp chuột chọn ứng dụng sẽ phát khi bạn chuyển đổi ứng dụng. Âm thanh phân trang phát ra khi bảng trợ giúp trong trò chơi mở hoặc đóng. Cả hai đều có thể được chuyển đổi độc lập trong ứng dụng Cài đặt."/>
+        <text name="ft_help_s2_title" text="Lệnh điều khiển"/>
+        <text name="ft_help_s2_console_title" text="Các lệnh có sẵn"/>
+        <text name="ft_help_s2_console_text" text="Mở bảng điều khiển dành cho nhà phát triển bằng phím dấu ngã và nhập máy tính bảng để xem tất cả các lệnh có sẵn. Ví dụ: TabletKeybind H thay đổi phím mở thành H. Thời tiết TabletSetStartupApp sẽ mở ứng dụng Thời tiết theo mặc định. TabletResetSettings khôi phục tất cả cài đặt máy tính bảng về mặc định. TabletToggleDebug bật hoặc tắt tính năng đăng nhập chi tiết."/>
+
+    </texts>
+</l10n>
