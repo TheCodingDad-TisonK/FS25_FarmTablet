@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.1.0.0</version>
+    <version>2.1.1.0</version>
     <modName>FS25_FarmTablet</modName>
     <title>
         <en>Farm Tablet</en>
@@ -31,29 +31,37 @@
 
     <helpLines>
         <helpLine>
-            <en>Press T (configurable) to open/close the Farm Tablet. All apps are accessible from the sidebar icon panel on the left.</en>
-            <de>Drücke T (einstellbar), um das Farm-Tablet zu öffnen/schließen. Alle Apps sind über die Seitenleiste links erreichbar.</de>
+            <en>OPENING THE TABLET: Press T (configurable) to open or close the Farm Tablet at any time during gameplay. The key can be changed via the TabletKeybind console command or in the Settings app.</en>
         </helpLine>
         <helpLine>
-            <en>Dashboard: Farm balance hero card, finance summary, field and vehicle counts, season/time and live weather snapshot.</en>
+            <en>NAVIGATION: The left sidebar contains all app icons. Click any icon to switch apps. Scroll the mouse wheel over the sidebar to scroll if you have many apps installed.</en>
         </helpLine>
         <helpLine>
-            <en>Workshop: Walk within 25m of any vehicle to inspect fuel, wear and operating hours. Click SELECT to pin a vehicle for detailed diagnostics.</en>
+            <en>MOVING &amp; RESIZING: While the tablet is open, open the Settings app and click ENTER EDIT MODE. Then drag the tablet body to reposition it, drag corners to scale it, or drag the left/right edges to adjust width. Right-click to exit edit mode. Position is saved automatically.</en>
         </helpLine>
         <helpLine>
-            <en>Field Manager: All owned fields with crop type, growth phase badges and color-coded state indicators.</en>
+            <en>DASHBOARD: Shows your farm balance (hero card), income/expense summary, field count, vehicle count, current season and time, and a live weather snapshot.</en>
         </helpLine>
         <helpLine>
-            <en>Animals: Per-pen food, water and cleanliness progress bars with traffic-light color coding.</en>
+            <en>WORKSHOP: Walk within 25m of any vehicle to see its fuel level, wear percentage and operating hours. Click SELECT to pin a vehicle for detailed diagnostics that stay visible as you walk away.</en>
         </helpLine>
         <helpLine>
-            <en>Bucket Tracker: Automatically detects and counts loader/excavator dumps. Shows load history with material type and estimated weight.</en>
+            <en>FIELD MANAGER: Lists all fields you own with their crop type, current growth phase badge, and a color-coded state indicator (fallow, seeded, growing, ready to harvest, needs work).</en>
         </helpLine>
         <helpLine>
-            <en>App Store: Browse all installed apps. Companion mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer) appear automatically when those mods are loaded.</en>
+            <en>ANIMALS: Shows every animal pen with color-coded progress bars for food level, water level, and cleanliness. Green = good, yellow = attention needed, red = critical.</en>
         </helpLine>
         <helpLine>
-            <en>Type  tablet  in the developer console for a list of all available console commands.</en>
+            <en>BUCKET TRACKER: Automatically detects when you are driving a wheel loader, excavator, or material handler and counts dump cycles. Shows a history of loads with material type and estimated weight per dump.</en>
+        </helpLine>
+        <helpLine>
+            <en>APP STORE: Browse all installed tablet apps. Companion mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer) appear here automatically when those mods are active in your savegame.</en>
+        </helpLine>
+        <helpLine>
+            <en>SETTINGS: Manage display position and scale, toggle sound effects (app-select click, help-panel paging), set the startup app, toggle notifications, and enable debug logging. Use the ENTER EDIT MODE button to drag and resize the tablet visually.</en>
+        </helpLine>
+        <helpLine>
+            <en>CONSOLE COMMANDS: Type  tablet  in the developer console (tilde key) for a list of all available commands. Examples: TabletKeybind H, TabletSetStartupApp weather, TabletResetSettings.</en>
         </helpLine>
     </helpLines>
 

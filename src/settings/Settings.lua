@@ -36,15 +36,24 @@ end
 
 function Settings:resetToDefaults(saveImmediately)
     saveImmediately = saveImmediately ~= false
-    
-    self.enabled = true
-    self.tabletKeybind = "T"
+
+    self.enabled                 = true
+    self.tabletKeybind           = "T"
     self.showTabletNotifications = true
-    self.startupApp = "dashboard"
-    self.vibrationFeedback = true
-    self.soundEffects = true
-    self.debugMode = false
-    
+    self.startupApp              = "dashboard"
+    self.vibrationFeedback       = true
+    self.soundEffects            = true
+    self.soundOnAppSelect        = true   -- sound when clicking a sidebar app
+    self.soundOnHelpOpen         = true   -- sound when help panel opens/closes
+    self.soundOnTabletToggle     = true   -- sound when tablet opens or closes
+    self.debugMode               = false
+
+    -- HUD / tablet window position and scale (saved across sessions)
+    self.tabletPosX              = 0.5   -- normalized, centre-anchored
+    self.tabletPosY              = 0.5
+    self.tabletScale             = 1.0   -- multiplier (0.5 – 2.0)
+    self.tabletWidthMult         = 1.0   -- independent width stretch (0.5 – 2.0)
+
     if saveImmediately then
         self:save()
         print("Farm Tablet: Settings reset to defaults")
@@ -80,11 +89,20 @@ function Settings:validateSettings()
     end
     
     -- Boolean validation
-    self.enabled = not not self.enabled
-    self.debugMode = not not self.debugMode
+    self.enabled                 = not not self.enabled
+    self.debugMode               = not not self.debugMode
     self.showTabletNotifications = not not self.showTabletNotifications
-    self.soundEffects = not not self.soundEffects
-    self.vibrationFeedback = not not self.vibrationFeedback
+    self.soundEffects            = not not self.soundEffects
+    self.soundOnAppSelect        = self.soundOnAppSelect    == nil and true or not not self.soundOnAppSelect
+    self.soundOnHelpOpen         = self.soundOnHelpOpen     == nil and true or not not self.soundOnHelpOpen
+    self.soundOnTabletToggle     = self.soundOnTabletToggle == nil and true or not not self.soundOnTabletToggle
+    self.vibrationFeedback       = not not self.vibrationFeedback
+
+    -- Numeric range clamping
+    self.tabletScale     = math.max(0.5, math.min(2.0, self.tabletScale     or 1.0))
+    self.tabletWidthMult = math.max(0.5, math.min(2.0, self.tabletWidthMult or 1.0))
+    self.tabletPosX      = math.max(0.0, math.min(1.0, self.tabletPosX      or 0.5))
+    self.tabletPosY      = math.max(0.0, math.min(1.0, self.tabletPosY      or 0.5))
 end
 
 function Settings:save()

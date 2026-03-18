@@ -40,8 +40,49 @@ function FarmTabletUI.new(settings, system, modDirectory)
     self._sidebarScrollOffset = 0   -- in icon slots (integer)
     self._sidebarMaxScroll    = 0   -- set in _drawSidebar
 
+    -- Content area scroll state (per-app, reset on app switch)
+    self._contentScrollY      = 0   -- current scroll in normalized units
+    self._contentScrollMax    = 0   -- set by apps that overflow
+    self._contentScrollStep   = FT.py and FT.py(22) or 0.018 -- pixels per wheel tick
+
     -- Backdrop overlay (separate from renderer for ordering)
     self._backdrop = nil
+
+    -- ── Resize / Move (edit mode) ─────────────────────────
+    -- Drag/resize/position approach inspired by NPCFavorHUD from FS25_NPCFavor
+    self._editModeActive  = false
+    self._editBgOverlay   = nil
+    self._editAnimTimer   = 0
+
+    -- Drag state
+    self._emDragging      = false
+    self._emDragOffX      = 0
+    self._emDragOffY      = 0
+
+    -- Corner-resize state
+    self._emResizing      = false
+    self._emResizeStartX  = 0
+    self._emResizeStartY  = 0
+    self._emResizeStartS  = 1.0
+    self._emHoverCorner   = nil
+
+    -- Edge (width) drag state
+    self._emEdgeDragging  = nil
+    self._emEdgeStartX    = 0
+    self._emEdgeStartW    = 1.0
+
+    -- Camera lock for edit mode
+    self._emCamRotX = nil
+    self._emCamRotY = nil
+    self._emCamRotZ = nil
+
+    -- Edit-mode constants
+    self.EM_HANDLE_SIZE  = 0.010
+    self.EM_MIN_SCALE    = 0.5
+    self.EM_MAX_SCALE    = 2.0
+    self.EM_MIN_WIDTH    = 0.5
+    self.EM_MAX_WIDTH    = 2.0
+
 
     return self
 end
@@ -56,6 +97,11 @@ function FarmTabletUI:openTablet()
     self.system.isTabletOpen = true
     self.system.registry:autoDetect()
     self:_build()
+
+    -- Play open sound
+    if self.settings.soundOnTabletToggle ~= false then
+        self:playUISound("paging")
+    end
 
     if g_currentMission then
         g_currentMission:addDrawable(self)
@@ -78,6 +124,12 @@ end
 
 function FarmTabletUI:closeTablet()
     if not self.isOpen then return end
+
+    -- Play close sound before teardown (while soundPlayer still reachable)
+    if self.settings.soundOnTabletToggle ~= false then
+        self:playUISound("back")
+    end
+
     self.isOpen = false
     self.system.isTabletOpen = false
     self:_destroy()
@@ -115,10 +167,31 @@ function FarmTabletUI:_build()
     self._contentBtns = {}
     self._sidebarScrollOffset = self._sidebarScrollOffset or 0
 
+    -- Initialise edit-mode scale trackers from settings (first open or after reset)
+    if not self._emCurrentScale then
+        self._emCurrentScale = self.settings.tabletScale or 1.0
+    end
+    if not self._emCurrentWidthMult then
+        self._emCurrentWidthMult = self.settings.tabletWidthMult or 1.0
+    end
+
     -- 1. Compute layout in normalized coords
-    local tw, th = getNormalizedScreenValues(FT.REF_W, FT.REF_H)
-    local tx = 0.5 - tw/2
-    local ty = 0.5 - th/2
+    -- Apply scale multiplier from settings
+    local scaleMultW = (self.settings.tabletScale or 1.0) * (self.settings.tabletWidthMult or 1.0)
+    local scaleMultH = self.settings.tabletScale or 1.0
+    local tw, th = getNormalizedScreenValues(
+        FT.REF_W * scaleMultW,
+        FT.REF_H * scaleMultH)
+
+    -- Position: settings store the centre in 0-1 space
+    local centreX = self.settings.tabletPosX or 0.5
+    local centreY = self.settings.tabletPosY or 0.5
+    local tx = centreX - tw/2
+    local ty = centreY - th/2
+
+    -- Clamp to screen
+    tx = math.max(0, math.min(1 - tw, tx))
+    ty = math.max(0, math.min(1 - th, ty))
 
     -- Scale factors for ref->normalized
     FT.LAYOUT.scaleX = tw / FT.REF_W
@@ -166,6 +239,9 @@ end
 function FarmTabletUI:_drawChrome()
     local L = FT.LAYOUT
     local r = self.r
+
+    -- Rebuild cover layer fresh (cover strips depend on computed layout)
+    r:clearCoverLayer()
 
     -- === 1. Drop Shadow (layered for softness) ===
     local sh = FT.px(2)
@@ -291,6 +367,20 @@ function FarmTabletUI:_drawChrome()
     grX = L.tabletX + FT.px(10)
     for i = 0, 5 do
         r:rect(grX, grY + i * FT.py(8) + FT.py(2), FT.px(2), FT.py(3), {0.08, 0.09, 0.12, 1.0})
+    end
+
+    -- === Cover strips: clip scrolled content at content-area boundaries ===
+    -- These are drawn AFTER the app-layer (via coverRect) so scrolled items
+    -- that extend past the content zone edges are hidden behind the tablet chrome.
+    local coverColor = FT.C.BG_DEEP
+    local bottomGap  = L.contentY - L.sidebarY
+    if bottomGap > 0 then
+        r:coverRect(L.contentX, L.sidebarY, L.contentW, bottomGap, coverColor)
+    end
+    local topCoverY = L.contentY + L.contentH
+    local topGap    = L.topbarY - topCoverY
+    if topGap > 0 then
+        r:coverRect(L.contentX, topCoverY, L.contentW, topGap, coverColor)
     end
 
 end
@@ -478,6 +568,22 @@ end
 -- CONTENT LAYOUT HELPERS  (for app files)
 -- ─────────────────────────────────────────────────────────
 
+-- Returns the current content scroll offset (apps subtract this from their Y values)
+function FarmTabletUI:getContentScrollY()
+    return self._contentScrollY or 0
+end
+
+-- Apps call this after drawing to tell the system how tall their content is.
+-- totalH = the Y distance from the top of the content to the lowest element drawn.
+-- The system computes how much of that overflows and enables scrolling.
+function FarmTabletUI:setContentHeight(totalH)
+    local _, _, _, ch = self:contentInner()
+    self._contentScrollMax  = math.max(0, totalH - ch)
+    self._contentScrollStep = FT.py(22)
+    -- Clamp current scroll in case content shrank
+    self._contentScrollY = math.min(self._contentScrollY or 0, self._contentScrollMax)
+end
+
 -- Returns the content area table {x,y,w,h}
 function FarmTabletUI:content()
     return FT.LAYOUT.contentX, FT.LAYOUT.contentY,
@@ -608,7 +714,16 @@ function FarmTabletUI:switchApp(appId)
     local app = self.system.registry:get(appId)
     if not app or not app.enabled then return false end
 
+    -- Play click sound when switching apps (if enabled)
+    local s = self.settings
+    if s and s.soundEffects and s.soundOnAppSelect and appId ~= self.system.currentApp then
+        self:playUISound("click")
+    end
+
     self.system.currentApp = appId
+    -- Reset content scroll on every app switch
+    self._contentScrollY   = 0
+    self._contentScrollMax = 0
 
     if self.isOpen then
         -- Refresh sidebar active states (persistent overlays must be rebuilt)
@@ -630,14 +745,25 @@ end
 
 function FarmTabletUI:draw()
     if not self.isOpen then return end
-    self.r:flush()
+    -- Pass content-area bounds for vertical clip culling of scrolled items
+    local clipY = FT.LAYOUT.contentY
+    local clipH = FT.LAYOUT.contentH
+    self.r:flush(clipY, clipH)
+    -- Render the edit-mode chrome overlay on top of everything
+    self:_drawEditOverlay()
 end
 
 function FarmTabletUI:update(dt)
     if not self.isOpen then return end
 
+    -- Edit mode per-frame logic (camera freeze, cursor assert, auto-exit)
+    self:_updateEditMode(dt)
+
     -- Poll scroll wheel for sidebar navigation (FS25 has no mouseWheelEvent callback)
     self:_pollSidebarScroll()
+
+    -- Poll scroll wheel for content area (Settings and other tall apps)
+    self:_pollContentScroll()
 
     -- Forward to app-specific updaters
     local appId = self.system.currentApp
@@ -765,6 +891,59 @@ function FarmTabletUI:_pollSidebarScroll()
 end
 
 -- ─────────────────────────────────────────────────────────
+-- CONTENT AREA SCROLL  (Settings and other tall apps)
+-- Uses separate wheel-state trackers so sidebar and content
+-- scroll don't interfere with each other.
+-- ─────────────────────────────────────────────────────────
+
+function FarmTabletUI:_pollContentScroll()
+    if not self.isOpen then return end
+    -- Only scroll when cursor is over the content area (not sidebar)
+    local L  = FT.LAYOUT
+    local px = self._mouseX
+    local py = self._mouseY
+    if not (L.contentX and L.contentW) then return end
+    if not (px >= L.contentX and px <= L.contentX + L.contentW and
+            py >= L.contentY and py <= L.contentY + L.contentH) then
+        self._cWheelUpWas   = false
+        self._cWheelDownWas = false
+        return
+    end
+
+    -- No scrollable content for this app → bail early
+    if (self._contentScrollMax or 0) <= 0 then
+        self._cWheelUpWas   = false
+        self._cWheelDownWas = false
+        return
+    end
+
+    local upNow   = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_UP)
+    local downNow = Input.isMouseButtonPressed(Input.MOUSE_BUTTON_WHEEL_DOWN)
+
+    local dir = nil
+    if upNow   and not self._cWheelUpWas   then dir =  1 end  -- wheel up   → scroll content up (reveal top)
+    if downNow and not self._cWheelDownWas then dir = -1 end  -- wheel down → scroll content down (reveal bottom)
+
+    self._cWheelUpWas   = upNow
+    self._cWheelDownWas = downNow
+
+    if dir == nil then return end
+
+    local step    = self._contentScrollStep or FT.py(22)
+    local newScroll = math.max(0,
+        math.min((self._contentScrollY or 0) + dir * step,
+                 self._contentScrollMax or 0))
+
+    if math.abs(newScroll - (self._contentScrollY or 0)) > 0.0001 then
+        self._contentScrollY = newScroll
+        -- Rebuild only the content layer (cheap — no chrome rebuild needed)
+        self.r:clearAppLayer()
+        self._contentBtns = {}
+        self:_drawContent()
+    end
+end
+
+-- ─────────────────────────────────────────────────────────
 -- MOUSE INPUT
 -- ─────────────────────────────────────────────────────────
 
@@ -814,6 +993,14 @@ end
 -- ─────────────────────────────────────────────────────────
 
 function FarmTabletUI:_destroy()
+    -- Exit edit mode cleanly before tearing down
+    if self._editModeActive then
+        self:_exitEditMode()
+    end
+    if self._editBgOverlay then
+        delete(self._editBgOverlay)
+        self._editBgOverlay = nil
+    end
     self.r:destroyAll()
     self._iconBtns    = {}
     self._contentBtns = {}
@@ -828,4 +1015,425 @@ function FarmTabletUI:log(msg, ...)
     if self.settings.debugMode then
         Logging.info("[FarmTablet UI] " .. string.format(msg, ...))
     end
+end
+
+-- =========================================================
+-- EDIT MODE — Drag / Resize / Position
+-- Inspired by NPCFavorHUD from FS25_NPCFavor by TisonK
+-- =========================================================
+
+-- ── Entry / Exit ─────────────────────────────────────────
+
+function FarmTabletUI:toggleEditMode()
+    if self._editModeActive then
+        self:_exitEditMode()
+    else
+        self:_enterEditMode()
+    end
+end
+
+function FarmTabletUI:_enterEditMode()
+    self._editModeActive = true
+    self._emDragging     = false
+    self._emResizing     = false
+    self._emEdgeDragging = nil
+
+    -- Create pixel overlay if not already present
+    if not self._editBgOverlay and createImageOverlay then
+        self._editBgOverlay = createImageOverlay("dataS/menu/base/graph_pixel.dds")
+    end
+
+    -- Show cursor
+    if g_inputBinding and g_inputBinding.setShowMouseCursor then
+        g_inputBinding:setShowMouseCursor(true)
+    end
+
+    -- Freeze camera
+    if getCamera then
+        local cam = getCamera()
+        if cam and cam ~= 0 and getRotation then
+            self._emCamRotX, self._emCamRotY, self._emCamRotZ = getRotation(cam)
+        end
+    end
+
+    -- Hook right-click into the mouse handler to exit edit mode
+    self:_registerEditMouseHandler()
+
+    Logging.info("[FarmTablet] Edit mode ON — drag to move, corners to resize, right-click to exit")
+end
+
+function FarmTabletUI:_exitEditMode()
+    self._editModeActive = false
+    self._emDragging     = false
+    self._emResizing     = false
+    self._emEdgeDragging = nil
+    self._emHoverCorner  = nil
+    self._emCamRotX      = nil
+    self._emCamRotY      = nil
+    self._emCamRotZ      = nil
+
+    if g_inputBinding and g_inputBinding.setShowMouseCursor then
+        g_inputBinding:setShowMouseCursor(false)
+    end
+
+    self:_saveEditPosition()
+    self:_unregisterEditMouseHandler()
+
+    Logging.info("[FarmTablet] Edit mode OFF — position/scale saved")
+end
+
+-- ── Settings sync ─────────────────────────────────────────
+
+function FarmTabletUI:applyPositionFromSettings()
+    local s = self.settings
+    -- The tablet is re-centred inside _build() from tabletPosX/Y,
+    -- so we just need to trigger a rebuild if the tablet is open.
+    if self.isOpen then
+        self.r:destroyAll()
+        self._iconBtns    = {}
+        self._contentBtns = {}
+        self:_build()
+    end
+end
+
+function FarmTabletUI:_saveEditPosition()
+    -- tabletPosX/Y is stored as the normalized screen position of the tablet centre.
+    -- We derive it from FT.LAYOUT which is set during _build().
+    local s = self.settings
+    if FT.LAYOUT and FT.LAYOUT.tabletX and FT.LAYOUT.tabletW then
+        s.tabletPosX = FT.LAYOUT.tabletX + FT.LAYOUT.tabletW * 0.5
+        s.tabletPosY = FT.LAYOUT.tabletY + FT.LAYOUT.tabletH * 0.5
+    end
+    s.tabletScale     = self._emCurrentScale    or 1.0
+    s.tabletWidthMult = self._emCurrentWidthMult or 1.0
+    s:save()
+end
+
+-- ── Mouse handler registration ────────────────────────────
+
+function FarmTabletUI:_registerEditMouseHandler()
+    -- Inject our edit-mode mouse handler before the normal tablet handler
+    -- We store it so we can remove it on exit
+    self._editMouseHandler = function(mission, px, py, isDown, isUp, btn)
+        if self:_onEditMouse(px, py, isDown, isUp, btn) then return true end
+        return false
+    end
+
+    if g_currentMission then
+        local prevHandler = g_currentMission.mouseEvent
+        self._editPrevMouseEvent = prevHandler
+        g_currentMission.mouseEvent = function(mission, px, py, isDown, isUp, btn)
+            if self._editMouseHandler and self._editMouseHandler(mission, px, py, isDown, isUp, btn) then
+                return true
+            end
+            if self._editPrevMouseEvent then
+                return self._editPrevMouseEvent(mission, px, py, isDown, isUp, btn)
+            end
+            return false
+        end
+    end
+end
+
+function FarmTabletUI:_unregisterEditMouseHandler()
+    if g_currentMission and self._editPrevMouseEvent then
+        g_currentMission.mouseEvent = self._editPrevMouseEvent
+    end
+    self._editMouseHandler    = nil
+    self._editPrevMouseEvent  = nil
+end
+
+-- ── Edit-mode mouse logic ─────────────────────────────────
+
+function FarmTabletUI:_onEditMouse(px, py, isDown, isUp, btn)
+    if not self._editModeActive then return false end
+
+    -- Right-click exits edit mode (button == 2 is right mouse in FS25)
+    if isDown and btn == 2 then
+        self:_exitEditMode()
+        return true
+    end
+
+    local hudX = FT.LAYOUT.tabletX
+    local hudY = FT.LAYOUT.tabletY
+    local hudW = FT.LAYOUT.tabletW
+    local hudH = FT.LAYOUT.tabletH
+
+    if not (hudX and hudW) then return false end
+
+    if isDown and btn == 1 then
+        -- 1) Corner resize handles
+        local corner = self:_emHitTestCorner(px, py)
+        if corner then
+            self._emResizing      = true
+            self._emDragging      = false
+            self._emEdgeDragging  = nil
+            self._emResizeStartX  = px
+            self._emResizeStartY  = py
+            self._emResizeStartS  = self._emCurrentScale or 1.0
+            return true
+        end
+
+        -- 2) Edge width handles
+        local edge = self:_emHitTestEdge(px, py)
+        if edge then
+            self._emEdgeDragging  = edge
+            self._emDragging      = false
+            self._emResizing      = false
+            self._emEdgeStartX    = px
+            self._emEdgeStartW    = self._emCurrentWidthMult or 1.0
+            return true
+        end
+
+        -- 3) Body drag
+        if px >= hudX and px <= hudX + hudW and py >= hudY and py <= hudY + hudH then
+            self._emDragging     = true
+            self._emResizing     = false
+            self._emEdgeDragging = nil
+            self._emDragOffX     = px - hudX
+            self._emDragOffY     = py - hudY
+            return true
+        end
+    end
+
+    if isUp and btn == 1 then
+        if self._emDragging or self._emResizing or self._emEdgeDragging then
+            self._emDragging     = false
+            self._emResizing     = false
+            self._emEdgeDragging = nil
+            self:_saveEditPosition()
+            return true
+        end
+    end
+
+    -- Mouse move (isDown == false, isUp == false)
+    if not isDown and not isUp then
+        if self._emDragging then
+            local newX = px - self._emDragOffX
+            local newY = py - self._emDragOffY
+            self:_emApplyPosition(newX, newY)
+            return true
+        end
+
+        if self._emResizing then
+            local dx = px - self._emResizeStartX
+            local dy = py - self._emResizeStartY
+            local cx = hudX + hudW * 0.5
+            local cy = hudY + hudH * 0.5
+            local startDist = math.sqrt((self._emResizeStartX-cx)^2 + (self._emResizeStartY-cy)^2)
+            local currDist  = math.sqrt((px-cx)^2 + (py-cy)^2)
+            local delta = (currDist - startDist) * 2.0
+            local newS = self._emResizeStartS + delta
+            self._emCurrentScale = math.max(self.EM_MIN_SCALE, math.min(self.EM_MAX_SCALE, newS))
+            self:_emRebuild()
+            return true
+        end
+
+        if self._emEdgeDragging then
+            local dx = px - self._emEdgeStartX
+            if self._emEdgeDragging == "left" then dx = -dx end
+            local newW = self._emEdgeStartW + dx * 3.0
+            self._emCurrentWidthMult = math.max(self.EM_MIN_WIDTH, math.min(self.EM_MAX_WIDTH, newW))
+            self:_emRebuild()
+            return true
+        end
+
+        -- Hover detection
+        self._emHoverCorner = self:_emHitTestCorner(px, py)
+    end
+
+    return false
+end
+
+-- ── Geometry helpers ──────────────────────────────────────
+
+function FarmTabletUI:_emGetHandleRects()
+    local x = FT.LAYOUT.tabletX or 0
+    local y = FT.LAYOUT.tabletY or 0
+    local w = FT.LAYOUT.tabletW or 0
+    local h = FT.LAYOUT.tabletH or 0
+    local hs = self.EM_HANDLE_SIZE
+    return {
+        bl = { x = x,         y = y,         w = hs, h = hs },
+        br = { x = x+w-hs,    y = y,         w = hs, h = hs },
+        tl = { x = x,         y = y+h-hs,    w = hs, h = hs },
+        tr = { x = x+w-hs,    y = y+h-hs,    w = hs, h = hs },
+    }
+end
+
+function FarmTabletUI:_emHitTestCorner(px, py)
+    local rects = self:_emGetHandleRects()
+    for key, r in pairs(rects) do
+        if px >= r.x and px <= r.x+r.w and py >= r.y and py <= r.y+r.h then
+            return key
+        end
+    end
+    return nil
+end
+
+function FarmTabletUI:_emHitTestEdge(px, py)
+    local x = FT.LAYOUT.tabletX or 0
+    local y = FT.LAYOUT.tabletY or 0
+    local w = FT.LAYOUT.tabletW or 0
+    local h = FT.LAYOUT.tabletH or 0
+    local ew = 0.009  -- edge hit zone width
+    if px >= x-ew/2 and px <= x+ew/2 and py >= y and py <= y+h then return "left"  end
+    if px >= x+w-ew/2 and px <= x+w+ew/2 and py >= y and py <= y+h then return "right" end
+    return nil
+end
+
+-- ── Apply + Rebuild ───────────────────────────────────────
+
+function FarmTabletUI:_emApplyPosition(newTabletX, newTabletY)
+    -- Clamp so the tablet cannot leave the screen
+    local w = FT.LAYOUT.tabletW or 0
+    local h = FT.LAYOUT.tabletH or 0
+    newTabletX = math.max(0, math.min(1 - w, newTabletX))
+    newTabletY = math.max(0, math.min(1 - h, newTabletY))
+
+    -- Store centre for settings
+    local s = self.settings
+    s.tabletPosX = newTabletX + w * 0.5
+    s.tabletPosY = newTabletY + h * 0.5
+
+    -- Shift all layout zones by the delta
+    local dx = newTabletX - FT.LAYOUT.tabletX
+    local dy = newTabletY - FT.LAYOUT.tabletY
+
+    FT.LAYOUT.tabletX = newTabletX
+    FT.LAYOUT.tabletY = newTabletY
+    FT.LAYOUT.sidebarX = FT.LAYOUT.sidebarX + dx
+    FT.LAYOUT.sidebarY = FT.LAYOUT.sidebarY + dy
+    FT.LAYOUT.topbarX  = FT.LAYOUT.topbarX  + dx
+    FT.LAYOUT.topbarY  = FT.LAYOUT.topbarY  + dy
+    FT.LAYOUT.contentX = FT.LAYOUT.contentX + dx
+    FT.LAYOUT.contentY = FT.LAYOUT.contentY + dy
+
+    -- Rebuild all drawables with updated layout
+    self:_emRebuild()
+end
+
+function FarmTabletUI:_emRebuild()
+    -- Store current edit overrides before full rebuild wipes layout
+    local posX = FT.LAYOUT.tabletX
+    local posY = FT.LAYOUT.tabletY
+
+    self.r:destroyAll()
+    self._iconBtns    = {}
+    self._contentBtns = {}
+
+    -- Full build recomputes layout from settings values
+    self.settings.tabletPosX = posX + (FT.LAYOUT.tabletW or 0) * 0.5
+    self.settings.tabletPosY = posY + (FT.LAYOUT.tabletH or 0) * 0.5
+    if self._emCurrentScale then
+        self.settings.tabletScale = self._emCurrentScale
+    end
+    if self._emCurrentWidthMult then
+        self.settings.tabletWidthMult = self._emCurrentWidthMult
+    end
+
+    self:_build()
+end
+
+-- ── Per-frame update + draw for edit mode ─────────────────
+
+function FarmTabletUI:_updateEditMode(dt)
+    if not self._editModeActive then return end
+
+    self._editAnimTimer = self._editAnimTimer + dt * 0.001  -- dt is ms
+
+    -- Keep cursor visible (engine may reset it)
+    if g_inputBinding and g_inputBinding.setShowMouseCursor then
+        g_inputBinding:setShowMouseCursor(true)
+    end
+
+    -- Freeze camera rotation
+    if self._emCamRotX and getCamera and setRotation then
+        local cam = getCamera()
+        if cam and cam ~= 0 then
+            setRotation(cam, self._emCamRotX, self._emCamRotY, self._emCamRotZ)
+        end
+    end
+
+    -- Auto-exit if a dialog or GUI overlay opens
+    if g_gui and (g_gui:getIsGuiVisible() or g_gui:getIsDialogVisible()) then
+        self:_exitEditMode()
+    end
+end
+
+function FarmTabletUI:_drawEditOverlay()
+    if not self._editModeActive then return end
+    if not self._editBgOverlay  then return end
+
+    local x = FT.LAYOUT.tabletX or 0
+    local y = FT.LAYOUT.tabletY or 0
+    local w = FT.LAYOUT.tabletW or 0
+    local h = FT.LAYOUT.tabletH or 0
+
+    local pulse = 0.5 + 0.5 * math.sin(self._editAnimTimer * 4)
+    local bAlpha = 0.4 + 0.4 * pulse
+    local bw     = 0.0025
+
+    -- Pulsing border: green during resize/edge-drag, blue otherwise
+    local isResizingAny = self._emResizing or (self._emEdgeDragging ~= nil)
+    local br, bg, bb = 0.30, 0.50, 0.90
+    if isResizingAny then br, bg, bb = 0.30, 0.90, 0.30 end
+
+    setOverlayColor(self._editBgOverlay, br, bg, bb, bAlpha)
+    renderOverlay(self._editBgOverlay, x,       y+h-bw, w,  bw)  -- top
+    renderOverlay(self._editBgOverlay, x,       y,      w,  bw)  -- bottom
+    renderOverlay(self._editBgOverlay, x,       y,      bw, h )  -- left
+    renderOverlay(self._editBgOverlay, x+w-bw,  y,      bw, h )  -- right
+
+    -- Edge width handles (left and right mid-strips)
+    local ehw    = 0.004
+    local inset  = h * 0.15
+    local eH     = h - inset * 2
+    local eY     = y + inset
+    local lcol   = (self._emEdgeDragging == "left")  and {0.30,0.90,0.30,0.80} or {0.30,0.50,0.90,0.60}
+    local rcol   = (self._emEdgeDragging == "right") and {0.30,0.90,0.30,0.80} or {0.30,0.50,0.90,0.60}
+    setOverlayColor(self._editBgOverlay, lcol[1],lcol[2],lcol[3],lcol[4])
+    renderOverlay(self._editBgOverlay, x - ehw/2, eY, ehw, eH)
+    setOverlayColor(self._editBgOverlay, rcol[1],rcol[2],rcol[3],rcol[4])
+    renderOverlay(self._editBgOverlay, x+w - ehw/2, eY, ehw, eH)
+
+    -- Corner resize handles
+    local handles = self:_emGetHandleRects()
+    for key, rect in pairs(handles) do
+        local hcol
+        if self._emResizing then
+            hcol = {0.30,0.90,0.30,0.80}
+        elseif self._emHoverCorner == key then
+            hcol = {0.50,0.70,1.00,0.90}
+        else
+            hcol = {0.30,0.50,0.90,0.60}
+        end
+        setOverlayColor(self._editBgOverlay, hcol[1],hcol[2],hcol[3],hcol[4])
+        renderOverlay(self._editBgOverlay, rect.x, rect.y, rect.w, rect.h)
+    end
+
+    -- Help label at bottom of screen
+    setTextAlignment(RenderText.ALIGN_CENTER)
+    setTextColor(0.70, 0.85, 1.0, 0.90)
+    renderText(0.5, 0.04, 0.010,
+        "TABLET EDIT MODE  |  Drag: move  |  Corners: scale  |  Edges: width  |  Right-click: exit")
+    setTextAlignment(RenderText.ALIGN_LEFT)
+    setTextColor(1,1,1,1)
+end
+
+-- ── Sound helpers ─────────────────────────────────────────
+
+function FarmTabletUI:playUISound(soundType)
+    -- soundType: "click" | "paging" | "back"
+    local s = self.settings
+    if not (s and s.soundEffects) then return end
+    pcall(function()
+        if not (g_gui and g_gui.guiSoundPlayer) then return end
+        if soundType == "click" then
+            g_gui.guiSoundPlayer:playSample(GuiSoundPlayer.SOUND_SAMPLES.CLICK)
+        elseif soundType == "paging" then
+            g_gui.guiSoundPlayer:playSample(GuiSoundPlayer.SOUND_SAMPLES.PAGING)
+        elseif soundType == "back" then
+            g_gui.guiSoundPlayer:playSample(GuiSoundPlayer.SOUND_SAMPLES.BACK)
+        end
+    end)
 end

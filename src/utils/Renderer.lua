@@ -8,10 +8,11 @@ local FT_Renderer_mt = Class(FT_Renderer)
 
 function FT_Renderer.new()
     local self = setmetatable({}, FT_Renderer_mt)
-    self._overlays = {}      -- {overlay, layer}
-    self._texts    = {}      -- {x,y,size,align,color,text}
-    self._buttons  = {}      -- managed hitboxes (cleared per-app)
-    self._appLayer = {}      -- sub-list cleared on app switch
+    self._overlays   = {}      -- {overlay, layer}
+    self._texts      = {}      -- {x,y,size,align,color,text}
+    self._buttons    = {}      -- managed hitboxes (cleared per-app)
+    self._appLayer   = {}      -- sub-list cleared on app switch
+    self._coverLayer = {}      -- drawn LAST to clip scrolled content (rebuilt with chrome)
     return self
 end
 
@@ -42,9 +43,20 @@ function FT_Renderer:rect(x, y, w, h, color, sliceId)
     return ov
 end
 
+-- Cover overlay — drawn AFTER app-layer so it clips scrolled content (rebuilt with chrome)
+function FT_Renderer:coverRect(x, y, w, h, color)
+    local ov = self:_newOverlay(x, y, w, h, color)
+    table.insert(self._coverLayer, ov)
+    return ov
+end
+
 -- App-scoped overlay (cleared on app switch)
 function FT_Renderer:appRect(x, y, w, h, color, sliceId)
     local ov = self:_newOverlay(x, y, w, h, color, sliceId)
+    if ov then
+        ov.y = y   -- store for clip culling
+        ov.h = h
+    end
     table.insert(self._appLayer, ov)
     return ov
 end
@@ -148,39 +160,71 @@ function FT_Renderer:clearAppLayer()
     self._buttons = {}
 end
 
+-- Clear cover strips (called when chrome is rebuilt)
+function FT_Renderer:clearCoverLayer()
+    for _, ov in ipairs(self._coverLayer) do
+        if ov and ov.delete then ov:delete() end
+    end
+    self._coverLayer = {}
+end
+
 -- Full cleanup (tablet close)
 function FT_Renderer:destroyAll()
     self:clearAppLayer()
     for _, ov in ipairs(self._overlays) do
         if ov and ov.delete then ov:delete() end
     end
-    self._overlays = {}
-    self._texts    = {}
-    self._buttons  = {}
+    for _, ov in ipairs(self._coverLayer) do
+        if ov and ov.delete then ov:delete() end
+    end
+    self._overlays   = {}
+    self._coverLayer = {}
+    self._texts      = {}
+    self._buttons    = {}
 end
 
 -- Draw everything this frame
-function FT_Renderer:flush()
-    -- Persistent overlays
+-- clipY, clipH: optional content-area Y and height for vertical clipping
+function FT_Renderer:flush(clipY, clipH)
+    local doClip = (clipY ~= nil and clipH ~= nil)
+    local clipTop    = doClip and (clipY + clipH) or nil
+    local clipBottom = doClip and clipY or nil
+
+    local function inView(oy, oh)
+        if not doClip then return true end
+        return (oy + oh) >= clipBottom and oy <= clipTop
+    end
+
+    -- 1. Persistent base overlays (chrome body, background)
     for _, ov in ipairs(self._overlays) do
         if ov and ov.render then ov:render() end
     end
-    -- App overlays
+    -- 2. App overlays (scrolled content, clipped)
     for _, ov in ipairs(self._appLayer) do
-        if ov and ov.render and not ov._isText then ov:render() end
+        if ov and ov.render and not ov._isText then
+            if not doClip or inView(ov.y or 0, ov.h or 0) then
+                ov:render()
+            end
+        end
     end
-    -- Persistent text
+    -- 3. Cover overlays (drawn on top of app-layer to clip overflow)
+    for _, ov in ipairs(self._coverLayer) do
+        if ov and ov.render then ov:render() end
+    end
+    -- 4. Persistent text
     for _, t in ipairs(self._texts) do
         setTextAlignment(t.align)
         setTextColor(unpack(t.color))
         renderText(t.x, t.y, t.size, t.text)
     end
-    -- App text (mixed in _buttons)
+    -- 5. App text (mixed in _buttons, clipped)
     for _, t in ipairs(self._buttons) do
         if t._isText then
-            setTextAlignment(t.align)
-            setTextColor(unpack(t.color))
-            renderText(t.x, t.y, t.size, t.text)
+            if not doClip or inView(t.y or 0, t.size or 0) then
+                setTextAlignment(t.align)
+                setTextColor(unpack(t.color))
+                renderText(t.x, t.y, t.size, t.text)
+            end
         end
     end
     setTextAlignment(RenderText.ALIGN_LEFT)
