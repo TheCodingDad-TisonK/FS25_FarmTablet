@@ -223,7 +223,7 @@ function AppRegistry:autoDetect()
 
     -- Seasonal Crop Stress
     -- Global: g_cropStressManager  (getfenv(0)["g_cropStressManager"] in CropStress main.lua)
-    if g_cropStressManager ~= nil and not self:has(FT.APP.CROP_STRESS) then
+    if getfenv(0)["g_cropStressManager"] ~= nil and not self:has(FT.APP.CROP_STRESS) then
         self:register({
             id = FT.APP.CROP_STRESS, group = "mods",
             name = "ft_ui_app_crop_stress", navLabel = "CRPS",
@@ -236,8 +236,8 @@ function AppRegistry:autoDetect()
     -- Soil Fertilizer
     -- Global: g_SoilFertilityManager  (getfenv(0)["g_SoilFertilityManager"] in SoilFertilizer main.lua)
     -- Note: capital S, capital F, capital M  — exact casing matters in Lua globals.
-    local hasSoil = (g_SoilFertilityManager ~= nil)
-                 or (g_soilFertilizerManager ~= nil)
+    local hasSoil = (getfenv(0)["g_SoilFertilityManager"] ~= nil)
+                 or (getfenv(0)["g_soilFertilizerManager"] ~= nil)
                  or (g_currentMission and (
                         g_currentMission.soilFertilityManager ~= nil
                      or g_currentMission.soilFertilizerManager ~= nil))
