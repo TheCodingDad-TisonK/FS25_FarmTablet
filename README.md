@@ -17,7 +17,8 @@
 `Singleplayer` • `Multiplayer (per-farm)` • `15 apps` • `Mod integrations` • `Console commands`
 
 </div>
-<img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/aeafc106-6fb6-4d31-ac44-4cff21db0a0b" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/671061be-4e01-464d-a2a7-aa2a50c7a5b5" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/e51b9027-4816-43ec-97ca-f6c190ffa5b9" /> <img width="234" height="354" alt="image" src="https://github.com/user-attachments/assets/e5f5226e-d5c7-45df-ae2e-3822958cb649" />
+
+<img width="234" height="354" alt="ft_dashboard" src="https://github.com/user-attachments/assets/52d57384-30da-421b-a7ee-4d24cd03abc1" /> <img width="234" height="354" alt="ft_settings" src="https://github.com/user-attachments/assets/ff063c01-c9ef-48ac-8800-03ee234ae0ce" /> <img width="234" height="354" alt="ft_npc" src="https://github.com/user-attachments/assets/8cfbadf1-ad43-4a19-8de8-a33d39ff880b" /> <img width="234" height="354" alt="ft_bt" src="https://github.com/user-attachments/assets/05615608-9429-49e8-b10d-29816a27f5ac" />
 
 ---
 
