@@ -1,4 +1,6 @@
 <div align="center">
+  
+<img width="154" height="204" alt="icon" src="https://github.com/user-attachments/assets/040a03c2-517a-4a30-ba58-af85378cb2f7" />
 
 <img src="icon.png" width="120" alt="Farm Tablet Icon" />
 
@@ -46,6 +48,8 @@ Press **`T`** again — you're back in the cab. Job done.
 `Singleplayer` &nbsp;•&nbsp; `Multiplayer` &nbsp;•&nbsp; `15 Apps` &nbsp;•&nbsp; `26 Languages` &nbsp;•&nbsp; `5 Mod Integrations` &nbsp;•&nbsp; `Zero Config`
 
 </div>
+
+<img width="234" height="354" alt="ft_dashboard" src="https://github.com/user-attachments/assets/52d57384-30da-421b-a7ee-4d24cd03abc1" /> <img width="234" height="354" alt="ft_settings" src="https://github.com/user-attachments/assets/ff063c01-c9ef-48ac-8800-03ee234ae0ce" /> <img width="234" height="354" alt="ft_npc" src="https://github.com/user-attachments/assets/8cfbadf1-ad43-4a19-8de8-a33d39ff880b" /> <img width="234" height="354" alt="ft_bt" src="https://github.com/user-attachments/assets/05615608-9429-49e8-b10d-29816a27f5ac" />
 
 ---
 
