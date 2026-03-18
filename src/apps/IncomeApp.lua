@@ -1,6 +1,15 @@
 -- =========================================================
--- FarmTablet v2 – Income / Tax / NPC Favor / Crop Stress /
---                 Soil Fertilizer  (companion mod bundle)
+-- FarmTablet v2 – Companion Mod Integration Apps
+-- Registers drawers for four companion mods:
+--   • FT.APP.INCOME     → FS25_IncomeMod
+--   • FT.APP.TAX        → FS25_TaxMod
+--   • FT.APP.NPC_FAVOR  → FS25_NPCFavor
+--   • FT.APP.CROP_STRESS→ FS25_SeasonalCropStress
+--   • FT.APP.SOIL_FERT  → FS25_SoilFertilizer
+-- Each drawer guards itself: if the companion mod's global
+-- manager is nil the app shows a "mod not installed" banner
+-- rather than erroring. The apps are only visible in the
+-- sidebar when autoDetect() has confirmed the mod is loaded.
 -- =========================================================
 
 -- ── INCOME MOD ────────────────────────────────────────────

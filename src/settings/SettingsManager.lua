@@ -1,14 +1,7 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – SettingsManager
+-- Handles XML serialisation of Settings to/from the
+-- per-savegame config file (modName.xml in savegame dir).
 -- =========================================================
 ---@class SettingsManager
 SettingsManager = {}
@@ -21,7 +14,7 @@ SettingsManager.defaultConfig = {
     enabled = true,
     tabletKeybind = "T",
     showTabletNotifications = true,
-    startupApp = 1, -- Dashboard
+    startupApp = "dashboard",  -- stored as string ID (see Settings.lua FT.APP constants)
     vibrationFeedback = true,
     soundEffects = true,
     debugMode = false
@@ -46,7 +39,14 @@ function SettingsManager:loadSettings(settingsObject)
             settingsObject.enabled                 = xml:getBool(self.XMLTAG..".enabled",                 self.defaultConfig.enabled)
             settingsObject.tabletKeybind           = xml:getString(self.XMLTAG..".tabletKeybind",         self.defaultConfig.tabletKeybind)
             settingsObject.showTabletNotifications = xml:getBool(self.XMLTAG..".showTabletNotifications", self.defaultConfig.showTabletNotifications)
-            settingsObject.startupApp              = xml:getInt(self.XMLTAG..".startupApp",               self.defaultConfig.startupApp)
+            -- Load as string; fall back to getInt for legacy saves that stored a numeric index.
+            local savedApp = xml:getString(self.XMLTAG..".startupApp", "")
+            if savedApp ~= nil and savedApp ~= "" then
+                settingsObject.startupApp = savedApp
+            else
+                local legacyIdx = xml:getInt(self.XMLTAG..".startupApp", 0)
+                settingsObject.startupApp = legacyIdx > 0 and legacyIdx or self.defaultConfig.startupApp
+            end
             settingsObject.vibrationFeedback       = xml:getBool(self.XMLTAG..".vibrationFeedback",       self.defaultConfig.vibrationFeedback)
             settingsObject.soundEffects            = xml:getBool(self.XMLTAG..".soundEffects",            self.defaultConfig.soundEffects)
             settingsObject.soundOnAppSelect        = xml:getBool(self.XMLTAG..".soundOnAppSelect",        true)
@@ -64,7 +64,7 @@ function SettingsManager:loadSettings(settingsObject)
     settingsObject.enabled = self.defaultConfig.enabled
     settingsObject.tabletKeybind = self.defaultConfig.tabletKeybind
     settingsObject.showTabletNotifications = self.defaultConfig.showTabletNotifications
-    settingsObject.startupApp = self.defaultConfig.startupApp
+    settingsObject.startupApp = self.defaultConfig.startupApp  -- string ID
     settingsObject.vibrationFeedback = self.defaultConfig.vibrationFeedback
     settingsObject.soundEffects = self.defaultConfig.soundEffects
     settingsObject.debugMode = self.defaultConfig.debugMode
@@ -79,7 +79,7 @@ function SettingsManager:saveSettings(settingsObject)
         xml:setBool(self.XMLTAG..".enabled",                 settingsObject.enabled)
         xml:setString(self.XMLTAG..".tabletKeybind",         settingsObject.tabletKeybind)
         xml:setBool(self.XMLTAG..".showTabletNotifications", settingsObject.showTabletNotifications)
-        xml:setInt(self.XMLTAG..".startupApp",               settingsObject.startupApp)
+        xml:setString(self.XMLTAG..".startupApp",            tostring(settingsObject.startupApp or "dashboard"))
         xml:setBool(self.XMLTAG..".vibrationFeedback",       settingsObject.vibrationFeedback)
         xml:setBool(self.XMLTAG..".soundEffects",            settingsObject.soundEffects)
         xml:setBool(self.XMLTAG..".soundOnAppSelect",        settingsObject.soundOnAppSelect)

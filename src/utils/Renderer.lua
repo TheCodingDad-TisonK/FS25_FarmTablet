@@ -36,32 +36,39 @@ end
 
 -- ── Public drawing functions ──────────────────────────────
 
--- Persistent overlay (lives until destroyAll)
+--- Draws a persistent overlay rectangle (lives until destroyAll).
+--- Use for chrome elements that should survive app switches.
 function FT_Renderer:rect(x, y, w, h, color, sliceId)
     local ov = self:_newOverlay(x, y, w, h, color, sliceId)
     table.insert(self._overlays, ov)
     return ov
 end
 
--- Cover overlay — drawn AFTER app-layer so it clips scrolled content (rebuilt with chrome)
+--- Draws a cover overlay — rendered AFTER the app layer so it clips any
+--- content that scrolls past the content-area boundaries. Rebuilt alongside
+--- chrome; do NOT use inside app drawers.
 function FT_Renderer:coverRect(x, y, w, h, color)
     local ov = self:_newOverlay(x, y, w, h, color)
     table.insert(self._coverLayer, ov)
     return ov
 end
 
--- App-scoped overlay (cleared on app switch)
+--- Draws an app-scoped overlay rectangle.
+--- Cleared automatically on every app switch via clearAppLayer().
+--- Stores y and h on the overlay for clip-culling during flush().
 function FT_Renderer:appRect(x, y, w, h, color, sliceId)
     local ov = self:_newOverlay(x, y, w, h, color, sliceId)
     if ov then
-        ov.y = y   -- store for clip culling
+        ov.y = y   -- stored for vertical clip culling in flush()
         ov.h = h
     end
     table.insert(self._appLayer, ov)
     return ov
 end
 
--- Text (persistent)
+--- Queues a persistent text entry (survives app switches, cleared only by destroyAll).
+--- Use only for chrome-layer text (topbar, sidebar labels).
+--- App drawers must use appText() instead.
 function FT_Renderer:text(x, y, size, txt, align, color)
     table.insert(self._texts, {
         x = x, y = y, size = size or FT.FONT.BODY,
@@ -71,9 +78,11 @@ function FT_Renderer:text(x, y, size, txt, align, color)
     })
 end
 
--- App-scoped text (cleared on app switch)
+--- Queues an app-scoped text entry.
+--- Stored in the _buttons table (which holds mixed text+button entries)
+--- so both are cleared together on app switch.
 function FT_Renderer:appText(x, y, size, txt, align, color)
-    table.insert(self._buttons, {   -- reuse buttons table for mixed clearing
+    table.insert(self._buttons, {   -- mixed table: text entries have _isText=true
         _isText = true,
         x = x, y = y, size = size or FT.FONT.BODY,
         text = tostring(txt),
@@ -82,10 +91,12 @@ function FT_Renderer:appText(x, y, size, txt, align, color)
     })
 end
 
--- Register a clickable button; returns descriptor for hit testing
+--- Draws a clickable button (background rect + centred label).
+--- Returns a descriptor table {ov, x, y, w, h, meta} for hit-testing.
+--- The descriptor is NOT automatically inserted into FarmTabletUI._contentBtns;
+--- callers must do that themselves if they want click handling.
 function FT_Renderer:button(x, y, w, h, label, color, meta)
     local ov = self:appRect(x, y, w, h, color or FT.C.BTN_NEUTRAL)
-    -- Button label
     self:appText(x + w/2, y + h/2 - FT.py(3), FT.FONT.SMALL, label,
         RenderText.ALIGN_CENTER, FT.C.TEXT_BRIGHT)
     local btn = { ov=ov, x=x, y=y, w=w, h=h, meta=meta }
@@ -93,23 +104,28 @@ function FT_Renderer:button(x, y, w, h, label, color, meta)
     return btn
 end
 
--- Horizontal rule
+--- Draws a thin horizontal divider rule.
+--- alpha: opacity of the rule line (default 0.6).
 function FT_Renderer:rule(x, y, w, alpha)
     self:appRect(x, y, w, math.max(FT.py(1), 0.0009),
         {FT.C.RULE[1], FT.C.RULE[2], FT.C.RULE[3], alpha or 0.6})
 end
 
--- Progress bar (returns y below bar)
+--- Draws a horizontal progress bar.
+--- Returns the Y coordinate immediately below the bar for chaining.
+---@param value  number  current value
+---@param maxVal number  maximum value (bar is full when value == maxVal)
+---@param barColor table  RGBA color table; defaults to FT.C.BRAND
 function FT_Renderer:progressBar(x, y, w, value, maxVal, barColor)
     local h = math.max(FT.py(5), 0.005)
-    -- Track
+    -- Track (dark background)
     self:appRect(x, y, w, h, FT.C.BG_PANEL)
     -- Fill
     local ratio = (maxVal and maxVal > 0) and math.min(value/maxVal, 1) or 0
     if ratio > 0 then
         self:appRect(x, y, w*ratio, h, barColor or FT.C.BRAND)
     end
-    -- Glow on high fill
+    -- Subtle glow overlay when nearly full (> 90%)
     if ratio > 0.9 then
         self:appRect(x, y, w*ratio, h,
             {barColor and barColor[1] or FT.C.BRAND[1],
@@ -119,15 +135,15 @@ function FT_Renderer:progressBar(x, y, w, value, maxVal, barColor)
     return y - h - FT.py(2)
 end
 
--- Section label with left accent bar
+--- Draws a section heading with a coloured left accent bar.
 function FT_Renderer:sectionHeader(x, y, contentW, label)
-    -- Accent bar
     self:appRect(x, y - FT.py(2), FT.px(3), FT.py(13), FT.C.BRAND)
     self:appText(x + FT.px(8), y, FT.FONT.SMALL, label,
         RenderText.ALIGN_LEFT, FT.C.TEXT_ACCENT)
 end
 
--- Label + right-aligned value row
+--- Draws a label/value row with the label left-aligned and value right-aligned.
+--- Pass nil for value to draw the label only.
 function FT_Renderer:row(x, y, contentW, label, value, labelColor, valueColor)
     local padX = FT.px(14)
     self:appText(x + padX, y, FT.FONT.BODY, label,
@@ -138,7 +154,8 @@ function FT_Renderer:row(x, y, contentW, label, value, labelColor, valueColor)
     end
 end
 
--- Small badge/chip
+--- Draws a small filled badge/chip with a centred label.
+--- Returns the badge width so callers can advance their X cursor.
 function FT_Renderer:badge(x, y, label, color)
     local w = FT.px(36)
     local h = FT.py(13)
@@ -150,7 +167,8 @@ end
 
 -- ── Lifecycle ─────────────────────────────────────────────
 
--- Clear app-scoped drawables (called on app switch)
+--- Destroys all app-scoped overlays and clears the mixed buttons/text table.
+--- Called automatically on every app switch.
 function FT_Renderer:clearAppLayer()
     for _, item in ipairs(self._appLayer) do
         if item.delete then item:delete() end
@@ -160,7 +178,8 @@ function FT_Renderer:clearAppLayer()
     self._buttons = {}
 end
 
--- Clear cover strips (called when chrome is rebuilt)
+--- Destroys cover-layer overlays (chrome clip strips).
+--- Called at the start of _drawChrome() so old strips are replaced cleanly.
 function FT_Renderer:clearCoverLayer()
     for _, ov in ipairs(self._coverLayer) do
         if ov and ov.delete then ov:delete() end
@@ -168,7 +187,8 @@ function FT_Renderer:clearCoverLayer()
     self._coverLayer = {}
 end
 
--- Full cleanup (tablet close)
+--- Full cleanup — destroys every overlay and clears all tables.
+--- Called on tablet close and before a full layout rebuild.
 function FT_Renderer:destroyAll()
     self:clearAppLayer()
     for _, ov in ipairs(self._overlays) do
@@ -183,8 +203,10 @@ function FT_Renderer:destroyAll()
     self._buttons    = {}
 end
 
--- Draw everything this frame
--- clipY, clipH: optional content-area Y and height for vertical clipping
+--- Renders all queued drawables for the current frame.
+--- Draw order: chrome overlays → app overlays (clipped) → cover strips → text.
+--- clipY / clipH: content-area bounds used for vertical culling of app-layer items.
+--- Items whose Y range does not intersect [clipY, clipY+clipH] are skipped.
 function FT_Renderer:flush(clipY, clipH)
     local doClip = (clipY ~= nil and clipH ~= nil)
     local clipTop    = doClip and (clipY + clipH) or nil
@@ -231,7 +253,9 @@ function FT_Renderer:flush(clipY, clipH)
     setTextColor(1, 1, 1, 1)
 end
 
--- Hit test against registered buttons. Returns first match or nil.
+--- Hit-tests screen position (px, py) against all registered button descriptors.
+--- Returns the first matching button table, or nil if no button was hit.
+--- Text entries (_isText == true) are excluded from hit-testing.
 function FT_Renderer:hitTest(px, py)
     for _, b in ipairs(self._buttons) do
         if not b._isText then

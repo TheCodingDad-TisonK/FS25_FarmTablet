@@ -1,6 +1,7 @@
 -- =========================================================
--- FarmTablet v2 – FarmTabletSystem  (FIXED)
--- Orchestrates state, data and the app registry
+-- FarmTablet v2 – FarmTabletSystem
+-- Orchestrates state, data, and the app registry.
+-- Safe to construct on all contexts (pure data, no rendering).
 -- =========================================================
 ---@class FarmTabletSystem
 FarmTabletSystem = {}
@@ -42,9 +43,11 @@ function FarmTabletSystem:initialize()
     self:log("System initialized. Apps: %d", #self.registry:getAll())
 end
 
--- FIX: reset workshopSelectedVehicle on close so stale selections don't persist
+-- reset workshopSelectedVehicle and soilSelectedField on close so stale
+-- selections don't persist across tablet open/close cycles.
 function FarmTabletSystem:onTabletClosed()
     self.workshopSelectedVehicle = nil
+    self.soilSelectedField = nil
     self.data:invalidate()
 end
 
@@ -82,11 +85,15 @@ function FarmTabletSystem:_getBucketVehicle()
     return nil
 end
 
--- FIX: use the correct FS25 fillUnit API:
---   v:getNumFillUnits()           → count
---   v:getFillUnitFillLevel(idx)   → current litres
---   v:getFillUnitCapacity(idx)    → max litres
---   v:getFillUnitFillType(idx)    → fill type index
+-- Returns fill information for vehicle v as a table:
+--   { total, cap, fillType, name, pct }
+-- Uses the public spec_fillUnit API when available; falls
+-- back to iterating the raw fillUnits table for modded vehicles
+-- that do not expose the standard accessor methods.
+--   v:getNumFillUnits()         → count of fill units
+--   v:getFillUnitFillLevel(i)   → current litres for unit i
+--   v:getFillUnitCapacity(i)    → max litres for unit i
+--   v:getFillUnitFillType(i)    → fill type index for unit i
 function FarmTabletSystem:_getBucketFillInfo(v)
     local info = { total=0, cap=0, fillType=nil, name="Empty", pct=0 }
     if not v then return info end
@@ -123,17 +130,28 @@ function FarmTabletSystem:_getBucketFillInfo(v)
     return info
 end
 
-local DENSITIES = {
-    -- kg per litre for common fill types (approximate)
-    [FillType and FillType.DIRT        or 0]  = 1.5,
-    [FillType and FillType.STONES      or 0]  = 1.8,
-    [FillType and FillType.GRAVEL      or 0]  = 1.7,
-    [FillType and FillType.SAND        or 0]  = 1.6,
-    [FillType and FillType.SOIL        or 0]  = 1.4,
-}
+-- Density table: kg per litre for common fill types (approximate).
+-- Intentionally lazy — resolved at call time so FillType constants are
+-- guaranteed to be populated by the time the first bucket fill happens.
+local DENSITY_MAP = nil
+local function getDensities()
+    if DENSITY_MAP then return DENSITY_MAP end
+    -- Only build once FillType global is available (after mission load)
+    if not FillType then return {} end
+    DENSITY_MAP = {
+        [FillType.DIRT   or 0] = 1.5,
+        [FillType.STONES or 0] = 1.8,
+        [FillType.GRAVEL or 0] = 1.7,
+        [FillType.SAND   or 0] = 1.6,
+        [FillType.SOIL   or 0] = 1.4,
+    }
+    -- Remove the zero-key fallback entry if it was inserted (UNKNOWN / unresolved type)
+    DENSITY_MAP[0] = nil
+    return DENSITY_MAP
+end
 
 function FarmTabletSystem:_estimateWeight(litres, fillType)
-    local density = DENSITIES[fillType or 0] or 1.0
+    local density = getDensities()[fillType or 0] or 1.0
     return litres * density
 end
 

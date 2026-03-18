@@ -1,14 +1,7 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – Settings
+-- Value object that holds all user preferences.
+-- Loaded/saved via SettingsManager; validated on every load.
 -- =========================================================
 ---@class Settings
 

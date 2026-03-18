@@ -143,6 +143,8 @@ FT.APP = {
     SOIL_FERT    = "soil_fertilizer",
 }
 
--- Helper: scale a reference pixel value to normalized coords
+-- Helper: scale a reference pixel value to normalized coords.
+-- NOTE: FT.px() / FT.py() return 0 until FarmTabletUI:_build() runs and
+-- sets FT.LAYOUT.scaleX / scaleY. Never call them at module-load time.
 function FT.px(v) return v * FT.LAYOUT.scaleX end
 function FT.py(v) return v * FT.LAYOUT.scaleY end

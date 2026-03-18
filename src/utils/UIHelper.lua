@@ -1,14 +1,8 @@
 -- =========================================================
--- FS25 Farm Tablet Mod (version 1.1.0.1)
--- =========================================================
--- Central tablet interface for farm management mods
--- =========================================================
--- Author: TisonK
--- =========================================================
--- COPYRIGHT NOTICE:
--- All rights reserved. Unauthorized redistribution, copying,
--- or claiming this code as your own is strictly prohibited.
--- Original author: TisonK
+-- FarmTablet v2 – UIHelper
+-- Utility for injecting Farm Tablet options into the FS25
+-- pause-menu settings frame (InGameMenuSettingsFrame).
+-- Used exclusively by SettingsUI.lua.
 -- =========================================================
 ---@class UIHelper
 UIHelper = {}

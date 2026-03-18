@@ -95,7 +95,7 @@ FarmTabletUI:registerDrawer(FT.APP.BUCKET, function(self)
     end
 
     if y > minY + FT.py(4) then
-        local _, resetBtn = self:drawButton(minY + FT.py(2), "RESET", FT.C.BTN_DANGER,
+        self:drawButton(minY + FT.py(2), "RESET", FT.C.BTN_DANGER,
             { onClick = function()
                 self.system:resetBucket()
                 self:switchApp(FT.APP.BUCKET)

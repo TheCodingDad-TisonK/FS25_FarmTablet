@@ -79,41 +79,10 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Bucket/loader load counter",
     },
-    {
-        id = FT.APP.INCOME, group = "mods",
-        name = "ft_ui_app_income_mod", navLabel = "INC",
-        icon = "income", order = 20,
-        developer = "TisonK", version = "Integrated",
-        description = "Income Mod controls and statistics",
-    },
-    {
-        id = FT.APP.TAX, group = "mods",
-        name = "ft_ui_app_tax_mod", navLabel = "TAX",
-        icon = "tax", order = 21,
-        developer = "TisonK", version = "Integrated",
-        description = "Tax Mod status and toggle",
-    },
-    {
-        id = FT.APP.NPC_FAVOR, group = "mods",
-        name = "ft_ui_app_npc_favor", navLabel = "NPC",
-        icon = "npc", order = 22,
-        developer = "TisonK", version = "Integrated",
-        description = "NPC favor tracker",
-    },
-    {
-        id = FT.APP.CROP_STRESS, group = "mods",
-        name = "ft_ui_app_crop_stress", navLabel = "CRPS",
-        icon = "crop_stress", order = 23,
-        developer = "TisonK", version = "Integrated",
-        description = "Seasonal crop stress monitor",
-    },
-    {
-        id = FT.APP.SOIL_FERT, group = "mods",
-        name = "ft_ui_app_soil_fertilizer", navLabel = "SOIL",
-        icon = "soil", order = 24,
-        developer = "TisonK", version = "Integrated",
-        description = "Soil fertilizer status",
-    },
+    -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
+    -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
+    -- mission is loaded and the companion mod's global manager is confirmed present.
+    -- This prevents "mod not installed" placeholders from cluttering the sidebar.
     {
         id = FT.APP.UPDATES,    group = "core",
         name = "ft_ui_app_updates",    navLabel = "UPD",
