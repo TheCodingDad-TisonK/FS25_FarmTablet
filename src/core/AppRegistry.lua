@@ -18,105 +18,105 @@ AppRegistry.GROUPS = {
 AppRegistry.BUILTIN_APPS = {
     {
         id = FT.APP.DASHBOARD,  group = "core",
-        name = "ft_app_dashboard",  navLabel = "DASH",
+        name = "ft_ui_app_dashboard",  navLabel = "DASH",
         icon = "dashboard",         order = 1,
         developer = "FarmTablet",   version = "Built-in",
         description = "Farm overview: balance, fields, vehicles, world state",
     },
     {
         id = FT.APP.APP_STORE,  group = "core",
-        name = "ft_app_store",      navLabel = "APPS",
+        name = "ft_ui_app_store",      navLabel = "APPS",
         icon = "store",             order = 2,
         developer = "FarmTablet",   version = "Built-in",
         description = "Browse and manage installed apps",
     },
     {
         id = FT.APP.SETTINGS,   group = "core",
-        name = "ft_app_settings",   navLabel = "SET",
+        name = "ft_ui_app_settings",   navLabel = "SET",
         icon = "settings",          order = 3,
         developer = "FarmTablet",   version = "Built-in",
         description = "Tablet configuration",
     },
     {
         id = FT.APP.WEATHER,    group = "farm",
-        name = "ft_app_weather",    navLabel = "WTH",
+        name = "ft_ui_app_weather",    navLabel = "WTH",
         icon = "weather",           order = 10,
         developer = "FarmTablet",   version = "Built-in",
         description = "Current conditions and forecast",
     },
     {
         id = FT.APP.FIELDS,     group = "farm",
-        name = "ft_app_field_status", navLabel = "FLD",
+        name = "ft_ui_app_field_status", navLabel = "FLD",
         icon = "fields",            order = 11,
         developer = "FarmTablet",   version = "Built-in",
         description = "All owned fields with crop and growth state",
     },
     {
         id = FT.APP.ANIMALS,    group = "farm",
-        name = "ft_app_animals",    navLabel = "ANI",
+        name = "ft_ui_app_animals",    navLabel = "ANI",
         icon = "animals",           order = 12,
         developer = "FarmTablet",   version = "Built-in",
         description = "Animal pens — food, water, cleanliness",
     },
     {
         id = FT.APP.WORKSHOP,   group = "farm",
-        name = "ft_app_workshop",   navLabel = "WRK",
+        name = "ft_ui_app_workshop",   navLabel = "WRK",
         icon = "workshop",          order = 13,
         developer = "FarmTablet",   version = "Built-in",
         description = "Nearby vehicle diagnostics",
     },
     {
         id = FT.APP.DIGGING,    group = "farm",
-        name = "ft_app_digging",    navLabel = "DIG",
+        name = "ft_ui_app_digging",    navLabel = "DIG",
         icon = "digging",           order = 14,
         developer = "FarmTablet",   version = "Built-in",
         description = "Excavation tracking and soil scanner",
     },
     {
         id = FT.APP.BUCKET,     group = "farm",
-        name = "ft_app_bucket_tracker", navLabel = "BCK",
+        name = "ft_ui_app_bucket_tracker", navLabel = "BCK",
         icon = "bucket",            order = 15,
         developer = "FarmTablet",   version = "Built-in",
         description = "Bucket/loader load counter",
     },
     {
         id = FT.APP.INCOME, group = "mods",
-        name = "ft_app_income_mod", navLabel = "INC",
+        name = "ft_ui_app_income_mod", navLabel = "INC",
         icon = "income", order = 20,
         developer = "TisonK", version = "Integrated",
         description = "Income Mod controls and statistics",
     },
     {
         id = FT.APP.TAX, group = "mods",
-        name = "ft_app_tax_mod", navLabel = "TAX",
+        name = "ft_ui_app_tax_mod", navLabel = "TAX",
         icon = "tax", order = 21,
         developer = "TisonK", version = "Integrated",
         description = "Tax Mod status and toggle",
     },
     {
         id = FT.APP.NPC_FAVOR, group = "mods",
-        name = "ft_app_npc_favor", navLabel = "NPC",
+        name = "ft_ui_app_npc_favor", navLabel = "NPC",
         icon = "npc", order = 22,
         developer = "TisonK", version = "Integrated",
         description = "NPC favor tracker",
     },
     {
         id = FT.APP.CROP_STRESS, group = "mods",
-        name = "ft_app_crop_stress", navLabel = "CRPS",
+        name = "ft_ui_app_crop_stress", navLabel = "CRPS",
         icon = "crop_stress", order = 23,
         developer = "TisonK", version = "Integrated",
         description = "Seasonal crop stress monitor",
     },
     {
         id = FT.APP.SOIL_FERT, group = "mods",
-        name = "ft_app_soil_fertilizer", navLabel = "SOIL",
+        name = "ft_ui_app_soil_fertilizer", navLabel = "SOIL",
         icon = "soil", order = 24,
         developer = "TisonK", version = "Integrated",
         description = "Soil fertilizer status",
     },
     {
         id = FT.APP.UPDATES,    group = "core",
-        name = "ft_app_updates",    navLabel = "UPD",
+        name = "ft_ui_app_updates",    navLabel = "UPD",
         icon = "updates",           order = 100,
         developer = "FarmTablet",   version = "Built-in",
         description = "Changelog and update history",
@@ -185,7 +185,7 @@ function AppRegistry:autoDetect()
         if not self:has(FT.APP.INCOME) then
             self:register({
                 id = FT.APP.INCOME, group = "mods",
-                name = "ft_app_income_mod", navLabel = "INC",
+                name = "ft_ui_app_income_mod", navLabel = "INC",
                 icon = "income", order = 20,
                 developer = "TisonK", version = "Integrated",
                 description = "Income Mod controls and statistics",
@@ -198,7 +198,7 @@ function AppRegistry:autoDetect()
         if not self:has(FT.APP.TAX) then
             self:register({
                 id = FT.APP.TAX, group = "mods",
-                name = "ft_app_tax_mod", navLabel = "TAX",
+                name = "ft_ui_app_tax_mod", navLabel = "TAX",
                 icon = "tax", order = 21,
                 developer = "TisonK", version = "Integrated",
                 description = "Tax Mod status and toggle",
@@ -214,7 +214,7 @@ function AppRegistry:autoDetect()
     if hasNPC and not self:has(FT.APP.NPC_FAVOR) then
         self:register({
             id = FT.APP.NPC_FAVOR, group = "mods",
-            name = "ft_app_npc_favor", navLabel = "NPC",
+            name = "ft_ui_app_npc_favor", navLabel = "NPC",
             icon = "npc", order = 22,
             developer = "TisonK", version = "Integrated",
             description = "NPC favor tracker",
@@ -223,10 +223,10 @@ function AppRegistry:autoDetect()
 
     -- Seasonal Crop Stress
     -- Global: g_cropStressManager  (getfenv(0)["g_cropStressManager"] in CropStress main.lua)
-    if g_cropStressManager ~= nil and not self:has(FT.APP.CROP_STRESS) then
+    if getfenv(0)["g_cropStressManager"] ~= nil and not self:has(FT.APP.CROP_STRESS) then
         self:register({
             id = FT.APP.CROP_STRESS, group = "mods",
-            name = "ft_app_crop_stress", navLabel = "CRPS",
+            name = "ft_ui_app_crop_stress", navLabel = "CRPS",
             icon = "crop_stress", order = 23,
             developer = "TisonK", version = "Integrated",
             description = "Seasonal crop stress monitor",
@@ -236,15 +236,15 @@ function AppRegistry:autoDetect()
     -- Soil Fertilizer
     -- Global: g_SoilFertilityManager  (getfenv(0)["g_SoilFertilityManager"] in SoilFertilizer main.lua)
     -- Note: capital S, capital F, capital M  — exact casing matters in Lua globals.
-    local hasSoil = (g_SoilFertilityManager ~= nil)
-                 or (g_soilFertilizerManager ~= nil)
+    local hasSoil = (getfenv(0)["g_SoilFertilityManager"] ~= nil)
+                 or (getfenv(0)["g_soilFertilizerManager"] ~= nil)
                  or (g_currentMission and (
                         g_currentMission.soilFertilityManager ~= nil
                      or g_currentMission.soilFertilizerManager ~= nil))
     if hasSoil and not self:has(FT.APP.SOIL_FERT) then
         self:register({
             id = FT.APP.SOIL_FERT, group = "mods",
-            name = "ft_app_soil_fertilizer", navLabel = "SOIL",
+            name = "ft_ui_app_soil_fertilizer", navLabel = "SOIL",
             icon = "soil", order = 24,
             developer = "TisonK", version = "Integrated",
             description = "Soil fertilizer status",

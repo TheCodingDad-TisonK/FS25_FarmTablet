@@ -271,7 +271,7 @@ function FarmTabletUI:_drawChrome()
     -- Draw a solid blue background to ensure screen is opaque
     r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.2, 0.5, 0.8, 1.0})
     -- Draw the original texture over the solid background
-    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, nil, "farmTablet.tabletBackground")
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, FT.C.BG_DEEP)
 
     -- === 5a. Screen Border ===
     local bx, by = L.sidebarX, L.sidebarY
