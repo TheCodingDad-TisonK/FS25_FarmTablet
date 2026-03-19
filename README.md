@@ -10,6 +10,9 @@
 [![Downloads](https://img.shields.io/github/downloads/TheCodingDad-TisonK/FS25_FarmTablet/total?style=for-the-badge&logo=github&color=22c55e&logoColor=white&label=DOWNLOADS)](https://github.com/TheCodingDad-TisonK/FS25_FarmTablet/releases)
 [![Latest Release](https://img.shields.io/github/v/release/TheCodingDad-TisonK/FS25_FarmTablet?style=for-the-badge&logo=tag&color=16a34a&logoColor=white&label=VERSION)](https://github.com/TheCodingDad-TisonK/FS25_FarmTablet/releases/latest)
 [![License](https://img.shields.io/badge/LICENSE-CC%20BY--NC--ND%204.0-64748b?style=for-the-badge&logo=creativecommons&logoColor=white)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+<a href="https://paypal.me/TheCodingDad">
+  <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate via PayPal" height="50">
+</a>
 
 [📚 Docs](docs/README.md) •
 [📥 Installation](#-install-in-10-seconds) •

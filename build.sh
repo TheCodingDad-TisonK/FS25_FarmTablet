@@ -24,7 +24,7 @@ with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
         path = os.path.join(src, f)
         if os.path.exists(path):
             zf.write(path, f)
-    for d in ['src', 'hud']:
+    for d in ['src', 'hud', 'translations']:
         dpath = os.path.join(src, d)
         if not os.path.isdir(dpath):
             continue

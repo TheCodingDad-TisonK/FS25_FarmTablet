@@ -67,12 +67,14 @@ FarmTabletUI:registerDrawer(FT.APP.INCOME, function(self)
         self:drawButtonPair(minY + FT.py(2),
             "ENABLE",  enabled and FT.C.BTN_NEUTRAL or FT.C.BTN_PRIMARY,
             { onClick = function()
+                if not g_currentMission:getIsServer() then return end
                 if inst.settings then inst.settings.enabled = true end
                 if inst.settings and inst.settings.save then inst.settings:save() end
                 self:switchApp(FT.APP.INCOME)
             end },
             "DISABLE", enabled and FT.C.BTN_DANGER or FT.C.BTN_NEUTRAL,
             { onClick = function()
+                if not g_currentMission:getIsServer() then return end
                 if inst.settings then inst.settings.enabled = false end
                 if inst.settings and inst.settings.save then inst.settings:save() end
                 self:switchApp(FT.APP.INCOME)
@@ -145,12 +147,14 @@ FarmTabletUI:registerDrawer(FT.APP.TAX, function(self)
         self:drawButtonPair(minY + FT.py(2),
             "ENABLE",  enabled and FT.C.BTN_NEUTRAL or FT.C.BTN_PRIMARY,
             { onClick = function()
+                if not g_currentMission:getIsServer() then return end
                 if inst.settings then inst.settings.enabled = true end
                 if inst.saveSettings then inst:saveSettings() end
                 self:switchApp(FT.APP.TAX)
             end },
             "DISABLE", enabled and FT.C.BTN_DANGER or FT.C.BTN_NEUTRAL,
             { onClick = function()
+                if not g_currentMission:getIsServer() then return end
                 if inst.settings then inst.settings.enabled = false end
                 if inst.saveSettings then inst:saveSettings() end
                 self:switchApp(FT.APP.TAX)

@@ -45,17 +45,17 @@ function SettingsUI:_doInject()
         return
     end
 
-    local section = UIHelper.createSection(layout, "ft_section")
+    local section = UIHelper.createSection(layout, "ft_ui_section")
     if not section then
         Logging.error("ft: Failed to create settings section!")
         return
     end
-    
+
     -- Enabled option
     local enabledOpt = UIHelper.createBinaryOption(
         layout,
-        "ft_enabled",
-        "ft_enabled",
+        "ft_ui_enabled",
+        "ft_ui_enabled",
         self.settings.enabled,
         function(val)
             self.settings.enabled = val
@@ -67,8 +67,8 @@ function SettingsUI:_doInject()
     -- Debug mode option
     local debugOpt = UIHelper.createBinaryOption(
         layout,
-        "ft_debug",
-        "ft_debug",
+        "ft_ui_debug",
+        "ft_ui_debug",
         self.settings.debugMode,
         function(val)
             self.settings.debugMode = val
@@ -94,8 +94,8 @@ function SettingsUI:_doInject()
 
     local startupOpt = UIHelper.createMultiOption(
         layout,
-        "ft_startupapp",
-        "ft_startupapp",
+        "ft_ui_startupapp",
+        "ft_ui_startupapp",
         startupOptions,
         startupState,
         function(val)
@@ -109,8 +109,8 @@ function SettingsUI:_doInject()
     -- Notifications option
     local notificationsOpt = UIHelper.createBinaryOption(
         layout,
-        "ft_notifications",
-        "ft_notifications",
+        "ft_ui_notifications",
+        "ft_ui_notifications",
         self.settings.showTabletNotifications,
         function(val)
             self.settings.showTabletNotifications = val
@@ -122,8 +122,8 @@ function SettingsUI:_doInject()
     -- Sound effects option
     local soundOpt = UIHelper.createBinaryOption(
         layout,
-        "ft_soundeffects",
-        "ft_soundeffects",
+        "ft_ui_soundeffects",
+        "ft_ui_soundeffects",
         self.settings.soundEffects,
         function(val)
             self.settings.soundEffects = val
