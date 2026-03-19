@@ -60,6 +60,18 @@ FT.C = {
     WEATHER_FOG  = {0.72, 0.74, 0.80, 1.00},
 }
 
+-- ── Background Color Palette ───────────────────────────────
+-- Index stored in settings.tabletBgColorIndex (1-based).
+-- Used by SettingsApp color picker and applied in FarmTabletUI.
+FT.BG_PALETTE = {
+    { label = "Deep Space",      color = {0.04, 0.05, 0.07, 0.97} },  -- default
+    { label = "Ocean Blue",      color = {0.03, 0.07, 0.18, 0.97} },
+    { label = "Forest Green",    color = {0.03, 0.10, 0.05, 0.97} },
+    { label = "Midnight Purple", color = {0.08, 0.04, 0.14, 0.97} },
+    { label = "Warm Dark",       color = {0.12, 0.07, 0.04, 0.97} },
+    { label = "Slate Grey",      color = {0.08, 0.09, 0.12, 0.97} },
+}
+
 -- ── Typography Scale ──────────────────────────────────────
 FT.FONT = {
     TITLE    = 0.016,   -- app title

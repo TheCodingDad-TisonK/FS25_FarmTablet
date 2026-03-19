@@ -46,6 +46,7 @@ function Settings:resetToDefaults(saveImmediately)
     self.tabletPosY              = 0.5
     self.tabletScale             = 1.0   -- multiplier (0.5 – 2.0)
     self.tabletWidthMult         = 1.0   -- independent width stretch (0.5 – 2.0)
+    self.tabletBgColorIndex      = 1     -- index into FT.BG_PALETTE (1 = Deep Space)
 
     if saveImmediately then
         self:save()
@@ -92,10 +93,11 @@ function Settings:validateSettings()
     self.vibrationFeedback       = not not self.vibrationFeedback
 
     -- Numeric range clamping
-    self.tabletScale     = math.max(0.5, math.min(2.0, self.tabletScale     or 1.0))
-    self.tabletWidthMult = math.max(0.5, math.min(2.0, self.tabletWidthMult or 1.0))
-    self.tabletPosX      = math.max(0.0, math.min(1.0, self.tabletPosX      or 0.5))
-    self.tabletPosY      = math.max(0.0, math.min(1.0, self.tabletPosY      or 0.5))
+    self.tabletScale         = math.max(0.5, math.min(2.0, self.tabletScale         or 1.0))
+    self.tabletWidthMult     = math.max(0.5, math.min(2.0, self.tabletWidthMult     or 1.0))
+    self.tabletPosX          = math.max(0.0, math.min(1.0, self.tabletPosX          or 0.5))
+    self.tabletPosY          = math.max(0.0, math.min(1.0, self.tabletPosY          or 0.5))
+    self.tabletBgColorIndex  = math.max(1,               math.floor(self.tabletBgColorIndex or 1))
 end
 
 function Settings:save()

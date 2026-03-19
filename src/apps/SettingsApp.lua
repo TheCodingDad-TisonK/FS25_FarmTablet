@@ -43,6 +43,11 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
                   "Drag a corner handle to scale the whole tablet.\n" ..
                   "Drag left or right edge to adjust width only.\n" ..
                   "Right-click or press Esc to exit." },
+        { title = "BACKGROUND COLOR",
+          body  = "Changes the screen background of the tablet.\n" ..
+                  "Click to cycle through 6 preset dark themes:\n" ..
+                  "Deep Space, Ocean Blue, Forest Green,\n" ..
+                  "Midnight Purple, Warm Dark, Slate Grey." },
         { title = "SOUND EFFECTS",
           body  = "Master toggle for all tablet sounds.\n" ..
                   "When off all sub-toggles are also silenced.\n" ..
@@ -141,6 +146,32 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
         end
     })
     y = y - BTN_GAP
+
+    y = self:drawRule(y - FT.py(4), 0.3)
+    y = y - FT.py(6)
+
+    -- ── APPEARANCE ────────────────────────────────────────
+    y = self:drawSection(y, "APPEARANCE")
+    y = y - SECT_GAP
+
+    local BG_PALETTE = FT.BG_PALETTE
+    local bgIdx   = s.tabletBgColorIndex or 1
+    local bgEntry = BG_PALETTE[bgIdx] or BG_PALETTE[1]
+
+    y = y - BTN_H
+    self:drawButton(y, "BACKGROUND: " .. string.upper(bgEntry.label), FT.C.BTN_NEUTRAL, {
+        onClick = function()
+            playClickSound(s)
+            local next = (bgIdx % #BG_PALETTE) + 1
+            s.tabletBgColorIndex = next
+            s:save()
+            refresh(self)
+        end
+    })
+    self.r:appText(cx + FT.px(2), y - FT.py(2),
+        FT.FONT.TINY, "Click to cycle  |  Screen background color",
+        RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    y = y - HINT_H - BTN_GAP
 
     y = self:drawRule(y - FT.py(4), 0.3)
     y = y - FT.py(6)

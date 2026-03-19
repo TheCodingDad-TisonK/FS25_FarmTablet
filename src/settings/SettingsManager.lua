@@ -57,6 +57,7 @@ function SettingsManager:loadSettings(settingsObject)
             settingsObject.tabletPosY              = xml:getFloat(self.XMLTAG..".tabletPosY",             0.5)
             settingsObject.tabletScale             = xml:getFloat(self.XMLTAG..".tabletScale",            1.0)
             settingsObject.tabletWidthMult         = xml:getFloat(self.XMLTAG..".tabletWidthMult",        1.0)
+            settingsObject.tabletBgColorIndex      = xml:getInt(self.XMLTAG..".tabletBgColorIndex",       1)
             xml:delete()
             return
         end
@@ -68,6 +69,7 @@ function SettingsManager:loadSettings(settingsObject)
     settingsObject.vibrationFeedback = self.defaultConfig.vibrationFeedback
     settingsObject.soundEffects = self.defaultConfig.soundEffects
     settingsObject.debugMode = self.defaultConfig.debugMode
+    settingsObject.tabletBgColorIndex = 1
 end
 
 function SettingsManager:saveSettings(settingsObject)
@@ -90,6 +92,7 @@ function SettingsManager:saveSettings(settingsObject)
         xml:setFloat(self.XMLTAG..".tabletPosY",             settingsObject.tabletPosY or 0.5)
         xml:setFloat(self.XMLTAG..".tabletScale",            settingsObject.tabletScale or 1.0)
         xml:setFloat(self.XMLTAG..".tabletWidthMult",        settingsObject.tabletWidthMult or 1.0)
+        xml:setInt(self.XMLTAG..".tabletBgColorIndex",       settingsObject.tabletBgColorIndex or 1)
 
         xml:save()
         xml:delete()

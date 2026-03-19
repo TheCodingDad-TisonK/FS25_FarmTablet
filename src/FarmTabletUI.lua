@@ -268,10 +268,11 @@ function FarmTabletUI:_drawChrome()
     r:rect(camX + FT.px(2), camY + FT.py(4), FT.px(2), FT.py(2), {1, 1, 1, 0.10}) -- Lens reflection
 
     -- === 5. Screen Backdrop (OLED deep-black effect) ===
-    -- Draw a solid blue background to ensure screen is opaque
-    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.2, 0.5, 0.8, 1.0})
-    -- Draw the original texture over the solid background
-    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, FT.C.BG_DEEP)
+    -- Draw a solid backing to ensure screen is fully opaque
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, {0.0, 0.0, 0.0, 1.0})
+    -- Draw user-selected background color from the palette
+    local _bgPal = FT.BG_PALETTE[self.settings.tabletBgColorIndex or 1] or FT.BG_PALETTE[1]
+    r:rect(L.sidebarX, L.sidebarY, L.sidebarW + L.contentW, L.sidebarH, _bgPal.color)
 
     -- === 5a. Screen Border ===
     local bx, by = L.sidebarX, L.sidebarY
