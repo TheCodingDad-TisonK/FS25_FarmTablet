@@ -16,10 +16,11 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
                   "This is a shortcut — you can also click the icon in\n" ..
                   "the left sidebar at any time." },
         { title = "MOD INTEGRATIONS",
-          body  = "Companion mod apps (Income, Tax, NPC Favor, Crop\n" ..
-                  "Stress, Soil Fertilizer) appear here automatically\n" ..
+          body  = "Companion mod apps appear here automatically\n" ..
                   "when their mod is loaded in your savegame.\n" ..
-                  "No setup needed." },
+                  "Supported: Income, Tax, NPC Favor, Crop Stress,\n" ..
+                  "Soil Fertilizer, Market Dynamics, Worker Costs,\n" ..
+                  "Random World Events. No setup needed." },
         { title = "VERSION / DEVELOPER",
           body  = "Built-in apps show 'Built-in' as their version.\n" ..
                   "Third-party companion apps show their own version\n" ..
