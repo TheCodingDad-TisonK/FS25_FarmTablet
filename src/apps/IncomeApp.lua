@@ -1,11 +1,14 @@
 -- =========================================================
 -- FarmTablet v2 – Companion Mod Integration Apps
--- Registers drawers for four companion mods:
---   • FT.APP.INCOME     → FS25_IncomeMod
---   • FT.APP.TAX        → FS25_TaxMod
---   • FT.APP.NPC_FAVOR  → FS25_NPCFavor
---   • FT.APP.CROP_STRESS→ FS25_SeasonalCropStress
---   • FT.APP.SOIL_FERT  → FS25_SoilFertilizer
+-- Registers drawers for companion mods:
+--   • FT.APP.INCOME          → FS25_IncomeMod
+--   • FT.APP.TAX             → FS25_TaxMod
+--   • FT.APP.NPC_FAVOR       → FS25_NPCFavor
+--   • FT.APP.CROP_STRESS     → FS25_SeasonalCropStress
+--   • FT.APP.SOIL_FERT       → FS25_SoilFertilizer
+--   • FT.APP.MARKET_DYNAMICS → FS25_MarketDynamics
+--   • FT.APP.WORKER_COSTS    → FS25_WorkerCosts
+--   • FT.APP.RANDOM_EVENTS   → FS25_RandomWorldEvents
 -- Each drawer guards itself: if the companion mod's global
 -- manager is nil the app shows a "mod not installed" banner
 -- rather than erroring. The apps are only visible in the
@@ -595,4 +598,215 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
     if info.needsFertilization then y = self:drawRow(y, "Needs Fertilizer", "YES", nil, FT.C.WARNING) end
 
     self:drawInfoIcon("_soilHelp", AC)
+end)
+
+
+-- ── MARKET DYNAMICS ───────────────────────────────────────
+FarmTabletUI:registerDrawer(FT.APP.MARKET_DYNAMICS, function(self)
+    local AC = FT.appColor(FT.APP.MARKET_DYNAMICS)
+
+    if self:drawHelpPage("_mktHelp", FT.APP.MARKET_DYNAMICS, "Market Dynamics", AC, {
+        { title = "WHAT THIS APP SHOWS",
+          body  = "Displays FS25_MarketDynamics status:\n" ..
+                  "active world events, market price modifiers,\n" ..
+                  "and event frequency settings." },
+        { title = "WORLD EVENTS",
+          body  = "Events like droughts, trade disruptions, and\n" ..
+                  "pest outbreaks temporarily shift crop prices.\n" ..
+                  "Active events and their intensity are listed here." },
+        { title = "SETTINGS",
+          body  = "Price modifiers and event frequency can be\n" ..
+                  "adjusted in the Market Dynamics mod settings." },
+    }) then return end
+
+    local startY = self:drawAppHeader("Market Dynamics", "Integration")
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local mgr = g_currentMission and g_currentMission.MarketDynamics
+
+    if not mgr then
+        self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
+            "Market Dynamics is not installed.", RenderText.ALIGN_LEFT, FT.C.NEGATIVE)
+        self.r:appText(x, y - FT.py(30), FT.FONT.SMALL,
+            "Install FS25_MarketDynamics to use this app.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self:drawInfoIcon("_mktHelp", AC)
+        return
+    end
+
+    local isActive       = mgr.isActive or false
+    local pricesEnabled  = mgr.settings and mgr.settings.pricesEnabled or false
+    local eventsEnabled  = mgr.settings and mgr.settings.eventsEnabled or false
+    local freqVal        = mgr.settings and mgr.settings.eventFrequency or 1.0
+    local freqLabel
+    if freqVal <= 0.5 then freqLabel = "Rare"
+    elseif freqVal <= 1.2 then freqLabel = "Normal"
+    else freqLabel = "Frequent" end
+
+    y = self:drawSection(y, "STATUS")
+    y = self:drawRow(y, "Active",          isActive and "Yes" or "No", nil,
+        isActive and FT.C.POSITIVE or FT.C.NEGATIVE)
+    y = self:drawRow(y, "Price Modifiers", pricesEnabled and "On" or "Off", nil,
+        pricesEnabled and FT.C.POSITIVE or FT.C.TEXT_DIM)
+    y = self:drawRow(y, "World Events",    eventsEnabled and "On" or "Off", nil,
+        eventsEnabled and FT.C.POSITIVE or FT.C.TEXT_DIM)
+    y = self:drawRow(y, "Event Frequency", freqLabel)
+
+    -- Active world events
+    local activeEvents = {}
+    if mgr.worldEvents and mgr.worldEvents.getActiveEvents then
+        activeEvents = mgr.worldEvents:getActiveEvents()
+    end
+
+    y = y - FT.py(4)
+    y = self:drawSection(y, "ACTIVE EVENTS  (" .. #activeEvents .. ")")
+
+    if #activeEvents == 0 then
+        self.r:appText(x, y - FT.py(8), FT.FONT.SMALL,
+            "No active market events.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        y = y - FT.py(18)
+    else
+        for _, ev in ipairs(activeEvents) do
+            local intPct = math.floor((ev.intensity or 0) * 100) .. "%"
+            y = self:drawRow(y, ev.name or ev.id, "Intensity: " .. intPct, nil, FT.C.WARNING)
+        end
+    end
+
+    self:drawInfoIcon("_mktHelp", AC)
+end)
+
+
+-- ── WORKER COSTS ──────────────────────────────────────────
+FarmTabletUI:registerDrawer(FT.APP.WORKER_COSTS, function(self)
+    local AC = FT.appColor(FT.APP.WORKER_COSTS)
+
+    if self:drawHelpPage("_wrkHelp", FT.APP.WORKER_COSTS, "Worker Costs", AC, {
+        { title = "WHAT THIS APP SHOWS",
+          body  = "Displays FS25_WorkerCosts status:\n" ..
+                  "current wage level, cost mode, active\n" ..
+                  "workers, and month-to-date costs." },
+        { title = "WAGE LEVEL",
+          body  = "Sets the per-hour wage rate for hired workers.\n" ..
+                  "Low / Medium / High tiers are configured in\n" ..
+                  "the Worker Costs mod settings." },
+        { title = "COST MODE",
+          body  = "Controls how wages are calculated:\n" ..
+                  "Hourly = charged every in-game hour.\n" ..
+                  "Monthly = accumulated and charged at month end." },
+        { title = "MONTH COSTS",
+          body  = "Total wages accumulated this month.\n" ..
+                  "Resets after the monthly salary is paid." },
+    }) then return end
+
+    local startY = self:drawAppHeader("Worker Costs", "Integration")
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local mgr = g_currentMission and g_currentMission.workerCostsManager
+
+    if not mgr then
+        self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
+            "Worker Costs is not installed.", RenderText.ALIGN_LEFT, FT.C.NEGATIVE)
+        self.r:appText(x, y - FT.py(30), FT.FONT.SMALL,
+            "Install FS25_WorkerCosts to use this app.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self:drawInfoIcon("_wrkHelp", AC)
+        return
+    end
+
+    local settings   = mgr.settings
+    local workerSys  = mgr.workerSystem
+    local enabled    = settings and settings.enabled or false
+    local wageLevel  = (settings and settings.getWageLevelName and settings:getWageLevelName()) or "Unknown"
+    local costMode   = (settings and settings.getCostModeName and settings:getCostModeName()) or "Unknown"
+
+    y = self:drawSection(y, "STATUS")
+    y = self:drawRow(y, "Status",     enabled and "Enabled" or "Disabled", nil,
+        enabled and FT.C.POSITIVE or FT.C.NEGATIVE)
+    y = self:drawRow(y, "Wage Level", wageLevel)
+    y = self:drawRow(y, "Cost Mode",  costMode)
+
+    -- Active workers
+    local activeWorkers = {}
+    if workerSys and workerSys.getActiveWorkers then
+        activeWorkers = workerSys:getActiveWorkers()
+    end
+    y = self:drawRow(y, "Active Workers", tostring(#activeWorkers),
+        nil, #activeWorkers > 0 and FT.C.WARNING or FT.C.TEXT_DIM)
+
+    -- Month-to-date costs
+    local monthTotal = 0
+    if workerSys and workerSys.monthlyCosts then
+        for _, amt in pairs(workerSys.monthlyCosts) do
+            monthTotal = monthTotal + (amt or 0)
+        end
+    end
+
+    y = y - FT.py(4)
+    y = self:drawSection(y, "THIS MONTH")
+    local fmtCost = (g_i18n and g_i18n:formatMoney(monthTotal, 0, true, true)) or tostring(monthTotal)
+    y = self:drawRow(y, "Wages Accrued", fmtCost, nil,
+        monthTotal > 0 and FT.C.WARNING or FT.C.TEXT_DIM)
+
+    self:drawInfoIcon("_wrkHelp", AC)
+end)
+
+
+-- ── RANDOM WORLD EVENTS ───────────────────────────────────
+FarmTabletUI:registerDrawer(FT.APP.RANDOM_EVENTS, function(self)
+    local AC = FT.appColor(FT.APP.RANDOM_EVENTS)
+
+    if self:drawHelpPage("_rweHelp", FT.APP.RANDOM_EVENTS, "Random World Events", AC, {
+        { title = "WHAT THIS APP SHOWS",
+          body  = "Displays FS25_RandomWorldEvents status:\n" ..
+                  "the currently active event, frequency,\n" ..
+                  "intensity, and event counter." },
+        { title = "ACTIVE EVENT",
+          body  = "When an event is running (fire, flood, drought,\n" ..
+                  "etc.) it appears here with its name. Events end\n" ..
+                  "after a fixed duration." },
+        { title = "FREQUENCY / INTENSITY",
+          body  = "Frequency (1-10) controls how often events\n" ..
+                  "occur. Intensity (1-5) controls how severe\n" ..
+                  "their effects are." },
+    }) then return end
+
+    local startY = self:drawAppHeader("Random World Events", "Integration")
+    local x, contentY, cw, _ = self:contentInner()
+    local y = startY
+    local mgr = g_currentMission and g_currentMission.randomWorldEvents
+
+    if not mgr then
+        self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
+            "Random World Events is not installed.", RenderText.ALIGN_LEFT, FT.C.NEGATIVE)
+        self.r:appText(x, y - FT.py(30), FT.FONT.SMALL,
+            "Install FS25_RandomWorldEvents to use this app.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        self:drawInfoIcon("_rweHelp", AC)
+        return
+    end
+
+    local enabled      = mgr.events and mgr.events.enabled or false
+    local frequency    = mgr.events and mgr.events.frequency or 0
+    local intensity    = mgr.events and mgr.events.intensity or 0
+    local activeEvent  = mgr.EVENT_STATE and mgr.EVENT_STATE.activeEvent
+    local eventCount   = mgr.eventCounter or 0
+
+    y = self:drawSection(y, "STATUS")
+    y = self:drawRow(y, "Status",     enabled and "Enabled" or "Disabled", nil,
+        enabled and FT.C.POSITIVE or FT.C.NEGATIVE)
+    y = self:drawRow(y, "Frequency",  tostring(frequency) .. " / 10")
+    y = self:drawRow(y, "Intensity",  tostring(intensity) .. " / 5")
+    y = self:drawRow(y, "Events Run", tostring(eventCount))
+
+    y = y - FT.py(4)
+    y = self:drawSection(y, "CURRENT EVENT")
+
+    if activeEvent then
+        local eventDef = mgr.EVENTS and mgr.EVENTS[activeEvent]
+        local eventName = (eventDef and eventDef.name) or activeEvent
+        y = self:drawRow(y, "Active", eventName, nil, FT.C.WARNING)
+    else
+        self.r:appText(x, y - FT.py(8), FT.FONT.SMALL,
+            "No event currently active.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+        y = y - FT.py(18)
+    end
+
+    self:drawInfoIcon("_rweHelp", AC)
 end)

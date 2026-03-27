@@ -129,6 +129,9 @@ FT.APP_COLOR = {
     npc_favor    = {0.80, 0.50, 1.00, 1.00},  -- lavender
     crop_stress  = {1.00, 0.80, 0.25, 1.00},  -- gold
     soil_fertilizer = {0.55, 0.80, 0.40, 1.00},-- sage
+    market_dynamics  = {0.30, 0.78, 0.95, 1.00},  -- cyan-blue
+    worker_costs     = {0.95, 0.58, 0.20, 1.00},  -- amber-orange
+    random_world_events = {0.70, 0.35, 0.90, 1.00}, -- purple
 }
 
 -- Helper: get the accent color for a given app id
@@ -150,9 +153,12 @@ FT.APP = {
     BUCKET       = "bucket_tracker",
     INCOME       = "income_mod",
     TAX          = "tax_mod",
-    NPC_FAVOR    = "npc_favor",
-    CROP_STRESS  = "crop_stress",
-    SOIL_FERT    = "soil_fertilizer",
+    NPC_FAVOR        = "npc_favor",
+    CROP_STRESS      = "crop_stress",
+    SOIL_FERT        = "soil_fertilizer",
+    MARKET_DYNAMICS  = "market_dynamics",
+    WORKER_COSTS     = "worker_costs",
+    RANDOM_EVENTS    = "random_world_events",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.

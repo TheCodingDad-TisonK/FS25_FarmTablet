@@ -224,5 +224,50 @@ function AppRegistry:autoDetect()
         })
     end
 
+    -- Market Dynamics
+    -- Bridge: mission.MarketDynamics set by MarketDynamics mod in Mission00.load
+    if g_currentMission and g_currentMission.MarketDynamics then
+        if not self:has(FT.APP.MARKET_DYNAMICS) then
+            Logging.info("[FarmTablet] autoDetect: Market Dynamics detected")
+            self:register({
+                id = FT.APP.MARKET_DYNAMICS, group = "mods",
+                name = "ft_ui_app_market_dynamics", navLabel = "MKT",
+                icon = "market", order = 25,
+                developer = "TisonK", version = "Integrated",
+                description = "Market prices and dynamic events",
+            })
+        end
+    end
+
+    -- Worker Costs
+    -- Bridge: mission.workerCostsManager set by WorkerCosts in Mission00.load
+    if g_currentMission and g_currentMission.workerCostsManager then
+        if not self:has(FT.APP.WORKER_COSTS) then
+            Logging.info("[FarmTablet] autoDetect: Worker Costs detected")
+            self:register({
+                id = FT.APP.WORKER_COSTS, group = "mods",
+                name = "ft_ui_app_worker_costs", navLabel = "WRK",
+                icon = "worker", order = 26,
+                developer = "TisonK", version = "Integrated",
+                description = "Worker wages and cost breakdown",
+            })
+        end
+    end
+
+    -- Random World Events
+    -- Bridge: mission.randomWorldEvents set by RandomWorldEvents in Mission00.load
+    if g_currentMission and g_currentMission.randomWorldEvents then
+        if not self:has(FT.APP.RANDOM_EVENTS) then
+            Logging.info("[FarmTablet] autoDetect: Random World Events detected")
+            self:register({
+                id = FT.APP.RANDOM_EVENTS, group = "mods",
+                name = "ft_ui_app_random_events", navLabel = "RWE",
+                icon = "events", order = 27,
+                developer = "TisonK", version = "Integrated",
+                description = "Random world events tracker",
+            })
+        end
+    end
+
     Logging.info("[FarmTablet] autoDetect complete — %d apps registered", #self:getAll())
 end
