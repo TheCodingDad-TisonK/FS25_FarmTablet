@@ -1,0 +1,7 @@
+-- =========================================================
+-- FarmTablet v2 – WorkerCostsApp  (stub)
+-- The Worker Costs drawer is registered in IncomeApp.lua
+-- alongside the other companion-mod integration apps.
+-- This file exists as a named placeholder so the source()
+-- ordering in main.lua remains self-documenting.
+-- =========================================================
