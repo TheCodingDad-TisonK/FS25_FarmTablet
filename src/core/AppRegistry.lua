@@ -148,10 +148,13 @@ end
 
 -- Auto-detect companion mods and register their apps.
 -- Each check uses the EXACT global name set by that mod's main.lua.
+-- NOTE: Cross-mod globals (getfenv(0)["name"]) are per-mod scoped in FS25.
+-- Use g_currentMission.xxx properties for reliable cross-mod detection.
 function AppRegistry:autoDetect()
     -- Income Mod
     if g_currentMission and g_currentMission.incomeManager then
         if not self:has(FT.APP.INCOME) then
+            Logging.info("[FarmTablet] autoDetect: Income Mod detected")
             self:register({
                 id = FT.APP.INCOME, group = "mods",
                 name = "ft_ui_app_income_mod", navLabel = "INC",
@@ -163,8 +166,10 @@ function AppRegistry:autoDetect()
     end
 
     -- Tax Mod
+    -- Bridge: mission.taxManager set by TaxMod in Mission00.load
     if g_currentMission and g_currentMission.taxManager then
         if not self:has(FT.APP.TAX) then
+            Logging.info("[FarmTablet] autoDetect: Tax Mod detected")
             self:register({
                 id = FT.APP.TAX, group = "mods",
                 name = "ft_ui_app_tax_mod", navLabel = "TAX",
@@ -176,11 +181,10 @@ function AppRegistry:autoDetect()
     end
 
     -- NPC Favor
-    -- Global: g_NPCSystem  (getfenv(0)["g_NPCSystem"] in NPCFavor main.lua)
-    -- Also aliased as mission.npcFavorSystem for cross-mod access.
-    local hasNPC = (g_NPCSystem ~= nil)
-                or (g_currentMission and g_currentMission.npcFavorSystem ~= nil)
+    -- Bridge: mission.npcFavorSystem set by NPCFavor in Mission00.load
+    local hasNPC = (g_currentMission and g_currentMission.npcFavorSystem ~= nil)
     if hasNPC and not self:has(FT.APP.NPC_FAVOR) then
+        Logging.info("[FarmTablet] autoDetect: NPC Favor detected")
         self:register({
             id = FT.APP.NPC_FAVOR, group = "mods",
             name = "ft_ui_app_npc_favor", navLabel = "NPC",
@@ -191,8 +195,11 @@ function AppRegistry:autoDetect()
     end
 
     -- Seasonal Crop Stress
-    -- Global: g_cropStressManager  (getfenv(0)["g_cropStressManager"] in CropStress main.lua)
-    if getfenv(0)["g_cropStressManager"] ~= nil and not self:has(FT.APP.CROP_STRESS) then
+    -- Bridge: mission.cropStressManager set by SeasonalCropStress in Mission00.load
+    local hasCropStress = (g_currentMission and g_currentMission.cropStressManager ~= nil)
+                       or (getfenv(0)["g_cropStressManager"] ~= nil)
+    if hasCropStress and not self:has(FT.APP.CROP_STRESS) then
+        Logging.info("[FarmTablet] autoDetect: Crop Stress detected")
         self:register({
             id = FT.APP.CROP_STRESS, group = "mods",
             name = "ft_ui_app_crop_stress", navLabel = "CRPS",
@@ -203,14 +210,11 @@ function AppRegistry:autoDetect()
     end
 
     -- Soil Fertilizer
-    -- Global: g_SoilFertilityManager  (getfenv(0)["g_SoilFertilityManager"] in SoilFertilizer main.lua)
-    -- Note: capital S, capital F, capital M  — exact casing matters in Lua globals.
-    local hasSoil = (getfenv(0)["g_SoilFertilityManager"] ~= nil)
-                 or (getfenv(0)["g_soilFertilizerManager"] ~= nil)
-                 or (g_currentMission and (
-                        g_currentMission.soilFertilityManager ~= nil
-                     or g_currentMission.soilFertilizerManager ~= nil))
+    -- Bridge: mission.soilFertilityManager set by SoilFertilizer in Mission00.load
+    local hasSoil = (g_currentMission and g_currentMission.soilFertilityManager ~= nil)
+                 or (getfenv(0)["g_SoilFertilityManager"] ~= nil)
     if hasSoil and not self:has(FT.APP.SOIL_FERT) then
+        Logging.info("[FarmTablet] autoDetect: Soil Fertilizer detected")
         self:register({
             id = FT.APP.SOIL_FERT, group = "mods",
             name = "ft_ui_app_soil_fertilizer", navLabel = "SOIL",
@@ -219,4 +223,6 @@ function AppRegistry:autoDetect()
             description = "Soil fertilizer status",
         })
     end
+
+    Logging.info("[FarmTablet] autoDetect complete — %d apps registered", #self:getAll())
 end

@@ -323,7 +323,8 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
     local minY = contentY + FT.py(8)
     local accent = AC
 
-    local mgr = g_cropStressManager
+    local mgr = (g_currentMission and g_currentMission.cropStressManager)
+             or getfenv(0)["g_cropStressManager"]
     if not mgr then
         self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
             "Crop Stress mod not detected.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
@@ -467,9 +468,8 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
     local minY = contentY + FT.py(8)
     local accent = AC
 
-    local mgr = g_SoilFertilityManager
-        or g_soilFertilizerManager
-        or (g_currentMission and (g_currentMission.soilFertilityManager or g_currentMission.soilFertilizerManager))
+    local mgr = (g_currentMission and g_currentMission.soilFertilityManager)
+             or getfenv(0)["g_SoilFertilityManager"]
 
     if not mgr then
         self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
