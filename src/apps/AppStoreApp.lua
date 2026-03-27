@@ -26,11 +26,11 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
                   "number and developer name." },
     }) then return end
 
-    local apps   = self.system.registry:getAll()
-    local startY = self:drawAppHeader("App Store", #apps .. " installed")
+    local apps     = self.system.registry:getAll()
+    local scrollY  = self:getContentScrollY()
+    local afterHdr = self:drawAppHeader("App Store", #apps .. " installed")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
+    local y = afterHdr + scrollY
 
     local groups     = {}
     local groupOrder = {}
@@ -44,10 +44,9 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
 
     for _, gid in ipairs(groupOrder) do
         local list = groups[gid]
-        if #list > 0 and y > minY + FT.py(20) then
+        if #list > 0 then
             y = self:drawSection(y, groupLabels[gid] or gid:upper())
             for _, app in ipairs(list) do
-                if y < minY then break end
                 self.r:appRect(x - FT.px(4), y - FT.py(4), cw + FT.px(8), FT.py(30), FT.C.BG_CARD)
                 local dispName = (g_i18n and g_i18n:getText(app.name)) or app.navLabel or app.id
                 self.r:appText(x + FT.px(8),  y + FT.py(10), FT.FONT.BODY, dispName,
@@ -70,5 +69,6 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
         end
     end
 
+    self:setContentHeight(afterHdr - y)
     self:drawInfoIcon("_appStoreHelp", AC)
 end)

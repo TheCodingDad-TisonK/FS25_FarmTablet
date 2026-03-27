@@ -4,6 +4,27 @@
 
 local CHANGELOG = {
     {
+        version = "2.1.4.0",
+        date    = "2026",
+        changes = {
+            "New: Market Dynamics integration app",
+            "New: Worker Costs integration app",
+            "New: Random World Events integration app",
+            "Fix: cross-mod detection for NPC/Soil/CropStress apps",
+            "Fix: App Store and Updates app now scroll",
+        },
+    },
+    {
+        version = "2.1.3.0",
+        date    = "2025",
+        changes = {
+            "Added background color picker in Settings",
+            "Fix: translations missing from zip package",
+            "Fix: SettingsUI key name alignment",
+            "Fix: companion mod setting changes server-only in MP",
+        },
+    },
+    {
         version = "2.1.2.1",
         date    = "2025",
         changes = {
@@ -92,19 +113,17 @@ FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
                   "GitHub or KingMods to get new features and fixes." },
     }) then return end
 
-    local startY = self:drawAppHeader("Updates", "Changelog")
+    local scrollY  = self:getContentScrollY()
+    local afterHdr = self:drawAppHeader("Updates", "Changelog")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
+    local y = afterHdr + scrollY
 
     for _, entry in ipairs(CHANGELOG) do
-        if y < minY then break end
         self.r:appRect(x - FT.px(4), y - FT.py(2), cw + FT.px(8), FT.py(18), FT.C.BG_CARD)
         self.r:appText(x + FT.px(6),      y + FT.py(4), FT.FONT.BODY, "v" .. entry.version, RenderText.ALIGN_LEFT,  FT.C.BRAND)
         self.r:appText(x + cw - FT.px(4), y + FT.py(4), FT.FONT.TINY, entry.date,           RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
         y = y - FT.py(22)
         for _, change in ipairs(entry.changes) do
-            if y < minY then break end
             self.r:appRect(x + FT.px(6), y + FT.py(5), FT.px(4), FT.px(4), FT.C.BRAND_DIM)
             local txt = change
             if #txt > 46 then txt = txt:sub(1,44) .. ">" end
@@ -114,5 +133,6 @@ FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
         y = y - FT.py(6)
     end
 
+    self:setContentHeight(afterHdr - y)
     self:drawInfoIcon("_updatesHelp", AC)
 end)
