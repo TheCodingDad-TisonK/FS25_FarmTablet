@@ -4,6 +4,15 @@
 
 local CHANGELOG = {
     {
+        version = "2.1.5.0",
+        date    = "2026",
+        changes = {
+            "Fix: App Store now scrolls (all mod apps visible)",
+            "Fix: Updates app now scrolls (all entries visible)",
+            "New: About section in Settings with version + links",
+        },
+    },
+    {
         version = "2.1.4.0",
         date    = "2026",
         changes = {
@@ -11,7 +20,6 @@ local CHANGELOG = {
             "New: Worker Costs integration app",
             "New: Random World Events integration app",
             "Fix: cross-mod detection for NPC/Soil/CropStress apps",
-            "Fix: App Store and Updates app now scroll",
         },
     },
     {
