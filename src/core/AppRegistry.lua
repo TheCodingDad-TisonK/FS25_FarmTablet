@@ -86,13 +86,6 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Silo inventory and current sell prices",
     },
-    {
-        id = FT.APP.RADIO,      group = "farm",
-        name = "ft_ui_app_radio",      navLabel = "RDO",
-        icon = "radio",             order = 17,
-        developer = "FarmTablet",   version = "Built-in",
-        description = "Stream live internet radio while you farm",
-    },
     -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
     -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
     -- mission is loaded and the companion mod's global manager is confirmed present.

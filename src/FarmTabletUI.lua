@@ -961,6 +961,15 @@ function FarmTabletUI:update(dt)
         -- Cheapest approach: flush rebuild topbar only
         self:_refreshTopbar()
     end
+
+    -- Live content refresh — re-draw app content on a timer so data
+    -- stays current while the tablet is open (field levels, animals, etc.)
+    -- Skip during edit mode (dragging/resizing) to avoid visual noise.
+    self._contentTimer = (self._contentTimer or 0) + dt
+    if self._contentTimer >= 4000 and not self._editModeActive then
+        self._contentTimer = 0
+        self:_drawContent()
+    end
 end
 
 function FarmTabletUI:_refreshTopbar()
