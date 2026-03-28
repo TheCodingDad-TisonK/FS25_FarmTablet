@@ -86,6 +86,34 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Silo inventory and current sell prices",
     },
+    {
+        id = FT.APP.TIME_CONTROLS, group = "farm",
+        name = "ft_ui_app_time_controls", navLabel = "TIME",
+        icon = "time",              order = 17,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Set time scale and skip to a time of day",
+    },
+    {
+        id = FT.APP.HOTSPOT_MGR, group = "farm",
+        name = "ft_ui_app_hotspot_manager", navLabel = "PINS",
+        icon = "hotspot",           order = 18,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "View and remove map hotspots",
+    },
+    {
+        id = FT.APP.NOTES,      group = "farm",
+        name = "ft_ui_app_notes",      navLabel = "NOTE",
+        icon = "notes",             order = 19,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Checkbox-style farm todo list",
+    },
+    {
+        id = FT.APP.FARM_ADMIN, group = "farm",
+        name = "ft_ui_app_farm_admin", navLabel = "ADM",
+        icon = "admin",             order = 20,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Admin controls: money, time, vehicle repair/fuel",
+    },
     -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
     -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
     -- mission is loaded and the companion mod's global manager is confirmed present.

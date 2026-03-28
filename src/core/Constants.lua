@@ -135,6 +135,10 @@ FT.APP_COLOR = {
     used_plus           = {0.20, 0.78, 0.90, 1.00}, -- cyan
     roleplay_phone      = {0.90, 0.35, 0.85, 1.00}, -- magenta
     storage             = {0.92, 0.78, 0.25, 1.00}, -- wheat gold
+    time_controls       = {0.30, 0.78, 1.00, 1.00}, -- sky blue
+    hotspot_manager     = {1.00, 0.72, 0.10, 1.00}, -- amber
+    notes               = {0.55, 0.90, 0.35, 1.00}, -- lime green
+    farm_admin          = {0.95, 0.30, 0.30, 1.00}, -- red
 }
 
 -- Helper: get the accent color for a given app id
@@ -165,6 +169,10 @@ FT.APP = {
     USED_PLUS        = "used_plus",
     ROLEPLAY_PHONE   = "roleplay_phone",
     STORAGE          = "storage",
+    TIME_CONTROLS    = "time_controls",
+    HOTSPOT_MGR      = "hotspot_manager",
+    NOTES            = "notes",
+    FARM_ADMIN       = "farm_admin",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.
