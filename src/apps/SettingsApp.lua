@@ -246,59 +246,6 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
     y = self:drawRule(y - FT.py(4), 0.3)
     y = y - FT.py(6)
 
-    -- ── GAME RADIO ────────────────────────────────────────
-    y = self:drawSection(y, "GAME RADIO")
-    y = y - SECT_GAP
-
-    local radioActive  = false
-    local radioVehicle = false
-    if g_settingsModel and SettingsModel and SettingsModel.SETTING then
-        local okA, valA = pcall(function()
-            return g_settingsModel:getValue(SettingsModel.SETTING.RADIO_IS_ACTIVE)
-        end)
-        if okA then radioActive = (valA == true) end
-        local okV, valV = pcall(function()
-            return g_settingsModel:getValue(SettingsModel.SETTING.RADIO_VEHICLE_ONLY)
-        end)
-        if okV then radioVehicle = (valV == true) end
-    end
-
-    y = y - BTN_H
-    self:drawButton(y, radioActive and "GAME RADIO: ON" or "GAME RADIO: OFF",
-        radioActive and FT.C.POSITIVE or FT.C.MUTED, {
-        onClick = function()
-            playClickSound(s)
-            if g_settingsModel and SettingsModel and SettingsModel.SETTING then
-                pcall(function()
-                    g_settingsModel:setValue(SettingsModel.SETTING.RADIO_IS_ACTIVE, not radioActive)
-                end)
-            end
-            refresh(self)
-        end
-    })
-    y = y - BTN_GAP
-
-    y = y - BTN_H
-    self:drawButton(y, radioVehicle and "VEHICLE ONLY: YES" or "VEHICLE ONLY: NO",
-        radioVehicle and FT.C.POSITIVE or FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            playClickSound(s)
-            if g_settingsModel and SettingsModel and SettingsModel.SETTING then
-                pcall(function()
-                    g_settingsModel:setValue(SettingsModel.SETTING.RADIO_VEHICLE_ONLY, not radioVehicle)
-                end)
-            end
-            refresh(self)
-        end
-    })
-    self.r:appText(cx + FT.px(2), y - FT.py(2), FT.FONT.TINY,
-        "When on, game radio only plays while inside a vehicle",
-        RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-    y = y - HINT_H - BTN_GAP
-
-    y = self:drawRule(y - FT.py(4), 0.3)
-    y = y - FT.py(6)
-
     -- ── GENERAL ───────────────────────────────────────────
     y = self:drawSection(y, "GENERAL")
     y = y - SECT_GAP

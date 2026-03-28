@@ -1,192 +1,134 @@
 -- =========================================================
 -- FarmTablet v2 – Radio App
--- Streams live internet radio using FS25's built-in
--- createStreamedSample / loadStreamedSample engine API.
--- Music persists while the tablet is open or closed;
--- playback stops cleanly when the game session ends.
+-- Controls the game's built-in internet radio player and
+-- provides a guide for adding custom stations via the
+-- player-profile streamingInternetRadios.xml file.
 -- =========================================================
-
--- ── Station catalogue ─────────────────────────────────────
--- Free, publicly available HTTP MP3 streams.
--- Station URLs are correct at time of writing — check the
--- mod repo for updates if a stream stops connecting.
-local STATIONS = {
-    { name = "Groove Salad",   genre = "Ambient",      url = "http://ice.somafm.com/groovesalad-256-mp3"              },
-    { name = "Lush",           genre = "Chillout",     url = "http://ice.somafm.com/lush-128-mp3"                     },
-    { name = "Country Roads",  genre = "Country",      url = "http://ice.somafm.com/countryroads-128-mp3"             },
-    { name = "Metal Detector", genre = "Metal",        url = "http://ice.somafm.com/metal-128-mp3"                    },
-    { name = "Space Station",  genre = "Space",        url = "http://ice.somafm.com/spacestation-128-mp3"             },
-    { name = "DEF CON Radio",  genre = "Electronic",   url = "http://ice.somafm.com/defcon-256-mp3"                   },
-    { name = "Radio Paradise", genre = "Rock / Mix",   url = "http://stream.radioparadise.com/mp3-128"                },
-    { name = "BBC World Svc",  genre = "News / Talk",  url = "http://stream.live.vc.bbcmedia.co.uk/bbc_world_service" },
-    { name = "WBGO Jazz 88.3", genre = "Jazz",         url = "http://wbgo.streamguys.net/wbgo128"                     },
-}
-
--- ── Module-level state ────────────────────────────────────
--- These survive tablet open/close so music keeps playing.
-local _sampleId   = nil    -- streamed sample entity ID (nil or 0 = invalid)
-local _stationIdx = 1      -- selected station (1-based)
-local _volume     = 0.7    -- stream volume  0.0–1.0
-local _playing    = false  -- is a stream currently active?
-
--- ── Streaming helpers ─────────────────────────────────────
-
-local function _ensureSample()
-    if _sampleId and _sampleId ~= 0 then return true end
-    local ok, id = pcall(createStreamedSample, "FT_Radio", false)
-    if ok and id and id ~= 0 then
-        _sampleId = id
-        return true
-    end
-    _sampleId = nil
-    return false
-end
-
-local function _stopStream()
-    if _sampleId and _sampleId ~= 0 then
-        pcall(stopStreamedSample, _sampleId)
-    end
-    _playing = false
-end
-
-local function _startStream(idx)
-    _stationIdx = ((idx - 1) % #STATIONS) + 1
-    _stopStream()
-    if not _ensureSample() then return end
-    local st = STATIONS[_stationIdx]
-    pcall(loadStreamedSample,      _sampleId, st.url)
-    pcall(setStreamedSampleVolume, _sampleId, _volume)
-    pcall(playStreamedSample,      _sampleId, -1)
-    _playing = true
-end
-
--- ── Cleanup on game session end ───────────────────────────
-FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, function()
-    if _sampleId and _sampleId ~= 0 then
-        pcall(stopStreamedSample, _sampleId)
-        _sampleId = nil
-    end
-    _playing = false
-end)
 
 -- ── Drawer ────────────────────────────────────────────────
 
 FarmTabletUI:registerDrawer(FT.APP.RADIO, function(self)
-    local AC = FT.appColor(FT.APP.RADIO)
+    local AC  = FT.appColor(FT.APP.RADIO)
+    local s   = self.settings
 
     if self:drawHelpPage("_radioHelp", FT.APP.RADIO, "Radio", AC, {
-        { title = "INTERNET RADIO",
-          body  = "Streams live internet radio via FS25's audio engine.\n" ..
-                  "Requires an active internet connection.\n" ..
-                  "Music keeps playing after you close the tablet." },
-        { title = "CONTROLS",
-          body  = "◀ PREV / NEXT ▶  — cycle through 9 stations.\n" ..
-                  "PLAY starts the selected stream.  STOP ends it.\n" ..
-                  "VOL − and VOL + adjust stream volume in 10% steps." },
-        { title = "STATIONS",
-          body  = "Groove Salad · Lush · Country Roads · Metal\n" ..
-                  "Space Station · DEF CON · Radio Paradise\n" ..
-                  "BBC World Service · WBGO Jazz 88.3\n\n" ..
-                  "Streams courtesy of SomaFM, Radio Paradise, BBC & WBGO." },
+        { title = "GAME RADIO CONTROLS",
+          body  = "Toggles the game's built-in internet radio player.\n\n" ..
+                  "RADIO ON/OFF — enable or disable the radio globally.\n" ..
+                  "VEHICLE ONLY — when on, radio only plays while you\n" ..
+                  "are seated inside a vehicle." },
+        { title = "ADDING CUSTOM STATIONS",
+          body  = "The game reads internet streams from:\n" ..
+                  "Documents\\My Games\\FarmingSimulator2025\\\n" ..
+                  "streamingInternetRadios.xml\n\n" ..
+                  "Add any MP3 stream URL using the format shown\n" ..
+                  "in the STATIONS GUIDE section of this app.\n" ..
+                  "Restart the game after editing the file." },
     }) then return end
 
-    local startY = self:drawAppHeader("Radio",
-        _playing and "● LIVE" or "○ Stopped")
-    local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
-    local st   = STATIONS[_stationIdx]
+    local startY = self:drawAppHeader("Radio", "Game Radio Controls")
+    local x, cy, cw, _ = self:contentInner()
+    local y     = startY
+    local BTN_H = FT.py(22)
+    local GAP   = FT.py(6)
 
-    -- button row measurements (reused throughout)
-    local btnH  = FT.py(22)
-    local halfW = (cw - FT.px(4)) / 2
+    -- ── Read current game radio state ─────────────────────
+    local radioActive  = false
+    local radioVehicle = false
+    if g_settingsModel and SettingsModel and SettingsModel.SETTING then
+        local okA, valA = pcall(function()
+            return g_settingsModel:getValue(SettingsModel.SETTING.RADIO_IS_ACTIVE)
+        end)
+        if okA then radioActive = (valA == true) end
+        local okV, valV = pcall(function()
+            return g_settingsModel:getValue(SettingsModel.SETTING.RADIO_VEHICLE_ONLY)
+        end)
+        if okV then radioVehicle = (valV == true) end
+    end
 
-    -- ── Station card ──────────────────────────────────────
-    y = y - FT.py(6)
-    local cardH = FT.py(46)
-    self.r:appRect(x - FT.px(4), y - cardH, cw + FT.px(8), cardH, FT.C.BG_CARD)
-    self.r:appText(x + FT.px(8), y - FT.py(10),
-        FT.FONT.HEADER, st.name, RenderText.ALIGN_LEFT,
-        _playing and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM)
-    self.r:appText(x + FT.px(8), y - FT.py(26),
-        FT.FONT.SMALL, st.genre .. "  ·  " .. _stationIdx .. " / " .. #STATIONS,
+    -- ── CONTROLS section ──────────────────────────────────
+    y = self:drawSection(y, "CONTROLS")
+    y = y - GAP
+
+    y = y - BTN_H
+    local btnOn = self.r:button(x, y, cw, BTN_H,
+        radioActive and "● RADIO: ON" or "○ RADIO: OFF",
+        radioActive and FT.C.BTN_PRIMARY or FT.C.BTN_NEUTRAL, {
+        onClick = function()
+            if g_settingsModel and SettingsModel and SettingsModel.SETTING then
+                pcall(function()
+                    g_settingsModel:setValue(SettingsModel.SETTING.RADIO_IS_ACTIVE, not radioActive)
+                end)
+            end
+        end
+    })
+    table.insert(self._contentBtns, btnOn)
+    y = y - GAP
+
+    y = y - BTN_H
+    local btnVeh = self.r:button(x, y, cw, BTN_H,
+        radioVehicle and "VEHICLE ONLY: YES" or "VEHICLE ONLY: NO",
+        radioVehicle and FT.C.BTN_ACTIVE or FT.C.BTN_NEUTRAL, {
+        onClick = function()
+            if g_settingsModel and SettingsModel and SettingsModel.SETTING then
+                pcall(function()
+                    g_settingsModel:setValue(SettingsModel.SETTING.RADIO_VEHICLE_ONLY, not radioVehicle)
+                end)
+            end
+        end
+    })
+    table.insert(self._contentBtns, btnVeh)
+    self.r:appText(x + FT.px(2), y - FT.py(3),
+        FT.FONT.TINY, "Radio only plays while seated inside a vehicle",
         RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-    self.r:appText(x + FT.px(8), y - FT.py(40),
-        FT.FONT.TINY, st.url, RenderText.ALIGN_LEFT, FT.C.MUTED)
-    y = y - cardH - FT.py(6)
+    y = y - FT.py(14) - GAP
 
-    -- ── Prev / Next ───────────────────────────────────────
-    self.r:button(x, y - btnH, halfW, btnH, "◀  PREV", FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            local prev = ((_stationIdx - 2) % #STATIONS) + 1
-            if _playing then _startStream(prev) else _stationIdx = prev end
-        end
-    })
-    self.r:button(x + halfW + FT.px(4), y - btnH, halfW, btnH, "NEXT  ▶", FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            local nxt = (_stationIdx % #STATIONS) + 1
-            if _playing then _startStream(nxt) else _stationIdx = nxt end
-        end
-    })
-    y = y - btnH - FT.py(6)
+    -- ── STATIONS GUIDE section ────────────────────────────
+    y = self:drawRule(y - FT.py(4), 0.3)
+    y = y - FT.py(6)
+    y = self:drawSection(y, "STATIONS GUIDE")
+    y = y - GAP
 
-    -- ── Play / Stop ───────────────────────────────────────
-    self.r:button(x, y - btnH, halfW, btnH, "▶  PLAY",
-        _playing and FT.C.BTN_NEUTRAL or FT.C.BTN_PRIMARY, {
-        onClick = function()
-            if not _playing then _startStream(_stationIdx) end
-        end
-    })
-    self.r:button(x + halfW + FT.px(4), y - btnH, halfW, btnH, "■  STOP",
-        _playing and FT.C.BTN_DANGER or FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            _stopStream()
-        end
-    })
-    y = y - btnH - FT.py(6)
+    local info = {
+        "Add streams to:",
+        "Documents/My Games/FarmingSimulator2025/",
+        "streamingInternetRadios.xml",
+        "",
+        "Format:",
+        '<streamingInternetRadios>',
+        '  <streamingInternetRadio',
+        '    href="http://stream.url/mp3" />',
+        '</streamingInternetRadios>',
+        "",
+        "Restart the game after editing.",
+        "",
+        "── Suggested streams ────────────────",
+        "Groove Salad (Ambient):",
+        "ice.somafm.com/groovesalad-256-mp3",
+        "Country Roads:",
+        "ice.somafm.com/countryroads-128-mp3",
+        "Radio Paradise (Rock/Mix):",
+        "stream.radioparadise.com/mp3-128",
+        "WBGO Jazz 88.3:",
+        "wbgo.streamguys.net/wbgo128",
+        "BBC World Service:",
+        "stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+    }
 
-    -- ── Volume ────────────────────────────────────────────
-    local volBtnW = FT.px(56)
-    local barX    = x + volBtnW + FT.px(6)
-    local barW    = cw - volBtnW * 2 - FT.px(12)
-    local volPct  = math.floor(_volume * 100 + 0.5)
-
-    self.r:button(x, y - btnH, volBtnW, btnH, "VOL −", FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            _volume = math.max(0.0, _volume - 0.1)
-            if _sampleId and _sampleId ~= 0 then
-                pcall(setStreamedSampleVolume, _sampleId, _volume)
-            end
+    for _, line in ipairs(info) do
+        if y < cy + FT.py(6) then break end
+        local color = FT.C.TEXT_DIM
+        if line:sub(1,2) == "──" then
+            color = AC
+        elseif line:sub(1,1) == "<" or line:sub(1,2) == "  " then
+            color = FT.C.TEXT_NORMAL
+        elseif line:find("ice%.somafm") or line:find("radioparadise") or
+               line:find("wbgo") or line:find("bbcmedia") then
+            color = FT.C.MUTED
         end
-    })
-    self.r:button(x + volBtnW + barW + FT.px(12), y - btnH, volBtnW, btnH, "VOL +", FT.C.BTN_NEUTRAL, {
-        onClick = function()
-            _volume = math.min(1.0, _volume + 0.1)
-            if _sampleId and _sampleId ~= 0 then
-                pcall(setStreamedSampleVolume, _sampleId, _volume)
-            end
-        end
-    })
-    -- Volume bar + percentage centred between the two buttons
-    local barMidY = y - btnH + (btnH * 0.5)
-    self.r:progressBar(barX, barMidY, barW, volPct, 100, FT.C.BRAND)
-    self.r:appText(barX + barW * 0.5, barMidY + FT.py(9),
-        FT.FONT.TINY, volPct .. "%", RenderText.ALIGN_CENTER, FT.C.TEXT_NORMAL)
-    y = y - btnH - FT.py(8)
-
-    -- ── Station list ──────────────────────────────────────
-    if y > minY + FT.py(14) then
-        self.r:appText(x, y, FT.FONT.TINY, "ALL STATIONS",
-            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-        y = y - FT.py(14)
-        for i, station in ipairs(STATIONS) do
-            if y < minY then break end
-            self.r:appText(x + FT.px(4), y, FT.FONT.TINY,
-                string.format("%d.  %-16s [%s]", i, station.name, station.genre),
-                RenderText.ALIGN_LEFT,
-                (i == _stationIdx) and AC or FT.C.TEXT_DIM)
-            y = y - FT.py(12)
-        end
+        self.r:appText(x + FT.px(2), y, FT.FONT.TINY, line,
+            RenderText.ALIGN_LEFT, color)
+        y = y - FT.py(11)
     end
 
     self:drawInfoIcon("_radioHelp", AC)
