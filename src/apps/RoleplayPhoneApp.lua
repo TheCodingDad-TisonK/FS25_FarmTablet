@@ -43,7 +43,7 @@ local function buildPartyList()
     local npcSystem = g_currentMission and g_currentMission.npcFavorSystem
     if npcSystem and npcSystem.entityManager then
         local ok, npcs = pcall(function()
-            return npcSystem.entityManager:getAll and npcSystem.entityManager:getAll() or {}
+            return npcSystem.entityManager.getAll and npcSystem.entityManager:getAll() or {}
         end)
         if ok and npcs then
             for _, npc in ipairs(npcs) do
