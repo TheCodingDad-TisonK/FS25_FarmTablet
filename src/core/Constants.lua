@@ -4,7 +4,7 @@
 -- =========================================================
 FT = FT or {}
 
-FT.VERSION = "2.1.6.0"
+FT.VERSION = "2.1.7.0"
 
 -- ── Design Tokens ─────────────────────────────────────────
 -- Reference dimensions (at 1080p; scaled at runtime)
@@ -133,6 +133,7 @@ FT.APP_COLOR = {
     worker_costs     = {0.95, 0.58, 0.20, 1.00},  -- amber-orange
     random_world_events = {0.70, 0.35, 0.90, 1.00}, -- purple
     used_plus           = {0.20, 0.78, 0.90, 1.00}, -- cyan
+    roleplay_phone      = {0.90, 0.35, 0.85, 1.00}, -- magenta
 }
 
 -- Helper: get the accent color for a given app id
@@ -161,6 +162,7 @@ FT.APP = {
     WORKER_COSTS     = "worker_costs",
     RANDOM_EVENTS    = "random_world_events",
     USED_PLUS        = "used_plus",
+    ROLEPLAY_PHONE   = "roleplay_phone",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.

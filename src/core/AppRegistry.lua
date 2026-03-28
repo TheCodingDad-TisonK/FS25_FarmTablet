@@ -285,5 +285,20 @@ function AppRegistry:autoDetect()
         })
     end
 
+    -- RoleplayPhone / Built-in Invoices
+    -- Always registered — built-in FT_InvoiceManager provides fallback data even
+    -- without FS25_RoleplayPhone. If the phone mod is present its API is used instead.
+    -- TODO: update detection key once FS25_RoleplayPhone publishes its global name.
+    if not self:has(FT.APP.ROLEPLAY_PHONE) then
+        Logging.info("[FarmTablet] autoDetect: Registering Invoices app (built-in + RoleplayPhone integration)")
+        self:register({
+            id = FT.APP.ROLEPLAY_PHONE, group = "mods",
+            name = "ft_ui_app_roleplay_phone", navLabel = "INV",
+            icon = "invoice", order = 29,
+            developer = "TisonK", version = "Integrated",
+            description = "Invoice tracker — built-in + RoleplayPhone integration",
+        })
+    end
+
     Logging.info("[FarmTablet] autoDetect complete — %d apps registered", #self:getAll())
 end

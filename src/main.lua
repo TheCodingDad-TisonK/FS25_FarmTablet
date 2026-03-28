@@ -23,6 +23,9 @@ source(modDirectory .. "src/utils/FunctionHooks.lua")
 source(modDirectory .. "src/utils/Renderer.lua")
 source(modDirectory .. "src/utils/DataProvider.lua")
 
+-- Data managers
+source(modDirectory .. "src/InvoiceManager.lua")
+
 -- System & UI
 source(modDirectory .. "src/FarmTabletSystem.lua")
 source(modDirectory .. "src/FarmTabletUI.lua")
@@ -48,6 +51,7 @@ source(modDirectory .. "src/apps/MarketDynamicsApp.lua")
 source(modDirectory .. "src/apps/WorkerCostsApp.lua")
 source(modDirectory .. "src/apps/RandomWorldEventsApp.lua")
 source(modDirectory .. "src/apps/UsedPlusApp.lua")
+source(modDirectory .. "src/apps/RoleplayPhoneApp.lua")
 
 local farmTabletManager
 

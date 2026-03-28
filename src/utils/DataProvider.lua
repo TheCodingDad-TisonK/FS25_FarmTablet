@@ -192,8 +192,9 @@ function FT_DataProvider:getWeather()
         end
         local env = g_currentMission.environment
 
-        -- FS25 weather object sits at env.weather
-        local weather = env.weather
+        -- FS25 v1.17+: weather lives at env.weatherSystem.
+        -- Older builds / some mods expose env.weather as a fallback.
+        local weather = env.weatherSystem or env.weather
         if not weather then return nil end
 
         -- ── Rain / precipitation ──────────────────────────
@@ -286,34 +287,52 @@ function FT_DataProvider:getWeather()
         else                     w.condition = "Clear";         w.condKey = "clear"
         end
 
-        -- ── Forecast ──────────────────────────────────────
-        -- FS25 stores forecast as weather.forecast (array of WeatherForecast objects)
-        -- Some versions: weather.forecastItems, weather.dailyForecast
-        local rawForecast = weather.forecast
-                         or weather.forecastItems
-                         or weather.dailyForecast
-                         or nil
+        -- ── Projected 5-day Forecast ──────────────────────
+        -- FS25 has no public forecast Lua API (confirmed: SeasonalCropStress
+        -- WeatherIntegration.lua comment).  We build a projection from:
+        --   • Near-term (days 1-2): current cloud coverage → rain probability
+        --   • Far-term  (days 3-5): seasonal base rain probability, blended in
+        -- Temperature drifts ±1 C per day toward the seasonal mean.
+        do
+            -- Seasonal base rain probabilities (spring/summer/autumn/winter)
+            local SEASONAL_RAIN = {[0]=0.30, [1]=0.12, [2]=0.28, [3]=0.35}
+            local season = env.currentSeason
+            season = (type(season) == "number") and math.floor(season) or 0
+            local seasonRain = SEASONAL_RAIN[season] or 0.25
 
-        -- Wrap non-table values defensively
-        if rawForecast ~= nil and type(rawForecast) ~= "table" then
-            rawForecast = nil
-        end
+            -- Best cloud coverage reading for the projection
+            local cloudFC = cloud  -- already clamped 0-1 above
+            if env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
+                cloudFC = env.cloudUpdater:getCloudCoverage()
+                if cloudFC > 1.0 then cloudFC = cloudFC / 100 end
+            end
 
-        -- Build normalised forecast array
-        if rawForecast then
             local fc = {}
-            for i, entry in ipairs(rawForecast) do
-                if i > 7 then break end
-                -- Normalise various field names into a consistent record
+            for day = 1, 5 do
+                -- Blend: day 1 = 100% cloud-based, day 5 = 100% seasonal
+                local blend   = (day - 1) / 4   -- 0.0 → 1.0
+                local rainProb = cloudFC * 0.7 * (1 - blend) + seasonRain * blend
+
+                -- Slight temperature drift toward seasonal typical
+                local seasonalMid = ({[0]=12, [1]=24, [2]=14, [3]=2})[season] or 15
+                local projTemp = math.floor(temp + (seasonalMid - temp) * blend * 0.3)
+
+                local condKey, condition
+                if     rainProb > 0.60 then condKey, condition = "storm",    "Stormy"
+                elseif rainProb > 0.35 then condKey, condition = "rain",     "Rainy"
+                elseif cloudFC  > 0.55 then condKey, condition = "overcast", "Overcast"
+                elseif cloudFC  > 0.25 then condKey, condition = "cloudy",   "Partly Cloudy"
+                else                        condKey, condition = "clear",    "Clear"
+                end
+
                 table.insert(fc, {
-                    weatherType    = entry.weatherType or entry.conditionType
-                                  or entry.condition or entry.type or entry.name,
-                    temperature    = entry.temperature or entry.avgTemperature,
-                    maxTemperature = entry.maxTemperature or entry.highTemperature,
-                    minTemperature = entry.minTemperature or entry.lowTemperature,
+                    condition   = condition,
+                    condKey     = condKey,
+                    temperature = projTemp,
+                    rainProb    = math.floor(rainProb * 100),
                 })
             end
-            w.forecast = #fc > 0 and fc or nil
+            w.forecast = fc
         end
 
         return w
