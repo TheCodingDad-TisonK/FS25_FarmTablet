@@ -405,38 +405,76 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
     end
 
     -- ── Invoice list renderer (shared for both sections) ──
+    -- y = bottom anchor of each row (same convention as AppStoreApp).
+    -- Card bottom = y - py(4); text lines sit ABOVE y; buttons at y + py(2).
     local function drawInvoiceList(title, list)
         if #list == 0 then return end
         y = self:drawSection(y, title)
+        local appId = FT.APP.ROLEPLAY_PHONE
         for _, inv in ipairs(list) do
-            self.r:appRect(x - FT.px(4), y - FT.py(4), w + FT.px(8), FT.py(34), FT.C.BG_CARD)
+            local status    = inv.status or FT_InvoiceManager.STATUS.PENDING
+            local isPaid    = (status == FT_InvoiceManager.STATUS.PAID    or status == "paid")
+            local isOverdue = (status == FT_InvoiceManager.STATUS.OVERDUE or status == "overdue")
+            local isActive  = not isPaid
+            local hasDue    = (inv.dueDay or 0) > 0
 
+            -- Badge color
             local badgeColor = FT.C.WARNING
-            local statusLabel = (inv.status or "pending"):upper()
-            if inv.status == FT_InvoiceManager.STATUS.PAID or inv.status == "paid" then
-                badgeColor = FT.C.POSITIVE
-            elseif inv.status == FT_InvoiceManager.STATUS.OVERDUE or inv.status == "overdue" then
-                badgeColor = FT.C.NEGATIVE
+            if isPaid        then badgeColor = FT.C.POSITIVE
+            elseif isOverdue then badgeColor = FT.C.NEGATIVE end
+            local statusLabel = status:upper()
+
+            -- Card height + text-line baselines (all relative to y = bottom anchor)
+            -- Active rows  : PAY + CANCEL buttons at y+py(2), height py(14)
+            -- Paid rows    : display only, no buttons
+            local cardH, line1Y, line2Y, dueY
+            if isActive then
+                if hasDue then
+                    cardH  = FT.py(56)
+                    line1Y = y + FT.py(44)
+                    line2Y = y + FT.py(32)
+                    dueY   = y + FT.py(20)
+                else
+                    cardH  = FT.py(44)
+                    line1Y = y + FT.py(34)
+                    line2Y = y + FT.py(22)
+                end
+            else
+                if hasDue then
+                    cardH  = FT.py(42)
+                    line1Y = y + FT.py(26)
+                    line2Y = y + FT.py(14)
+                    dueY   = y + FT.py(2)
+                else
+                    cardH  = FT.py(30)
+                    line1Y = y + FT.py(14)
+                    line2Y = y + FT.py(2)
+                end
             end
 
-            local party = (inv.party ~= nil and inv.party ~= "") and inv.party or "Unknown"
-            self.r:appText(x + FT.px(4), y - FT.py(10),
-                FT.FONT.BODY, party, RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
-            self.r:appText(x + w - FT.px(4), y - FT.py(10),
-                FT.FONT.TINY, statusLabel, RenderText.ALIGN_RIGHT, badgeColor)
-            y = y - FT.py(14)
+            -- Card background
+            self.r:appRect(x - FT.px(4), y - FT.py(4), w + FT.px(8), cardH, FT.C.BG_CARD)
 
+            -- Line 1: party name (left) + status badge (right)
+            local party = (inv.party and inv.party ~= "") and inv.party or "Unknown"
+            self.r:appText(x + FT.px(4), line1Y,
+                FT.FONT.BODY, party, RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
+            self.r:appText(x + w - FT.px(4), line1Y,
+                FT.FONT.TINY, statusLabel, RenderText.ALIGN_RIGHT, badgeColor)
+
+            -- Line 2: description (left) + amount (right)
             local desc = inv.description or ""
             if #desc > 38 then desc = desc:sub(1, 36) .. "…" end
-            self.r:appText(x + FT.px(4), y - FT.py(8),
+            self.r:appText(x + FT.px(4), line2Y,
                 FT.FONT.SMALL, desc, RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-            self.r:appText(x + w - FT.px(4), y - FT.py(8),
+            self.r:appText(x + w - FT.px(4), line2Y,
                 FT.FONT.SMALL, data:formatMoney(inv.amount or 0),
                 RenderText.ALIGN_RIGHT, FT.C.TEXT_NORMAL)
-            y = y - FT.py(14)
 
-            if (inv.dueDay or 0) > 0 then
-                local today = (g_currentMission and g_currentMission.environment and g_currentMission.environment.currentDay) or 0
+            -- Line 3: due date (if set)
+            if hasDue then
+                local today = (g_currentMission and g_currentMission.environment
+                               and g_currentMission.environment.currentDay) or 0
                 local daysLeft = inv.dueDay - today
                 local dueStr
                 if daysLeft < 0 then
@@ -446,13 +484,47 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
                 else
                     dueStr = string.format("Due in %d day%s", daysLeft, daysLeft ~= 1 and "s" or "")
                 end
-                local dueColor = daysLeft < 0 and FT.C.NEGATIVE or (daysLeft <= 3 and FT.C.WARNING or FT.C.TEXT_DIM)
-                self.r:appText(x + FT.px(4), y - FT.py(7),
+                local dueColor = daysLeft < 0 and FT.C.NEGATIVE
+                                 or (daysLeft <= 3 and FT.C.WARNING or FT.C.TEXT_DIM)
+                self.r:appText(x + FT.px(4), dueY,
                     FT.FONT.TINY, dueStr, RenderText.ALIGN_LEFT, dueColor)
-                y = y - FT.py(10)
             end
 
-            y = y - FT.py(4)
+            -- Action buttons (pending / overdue only)
+            if isActive then
+                local btnH  = FT.py(14)
+                local btnY  = y + FT.py(2)
+                local gap   = FT.px(6)
+                local btnW  = (w - gap) * 0.5
+                local invId = inv.id
+                local btnPay = self.r:button(x, btnY, btnW, btnH, "PAY",
+                    FT.C.BTN_PRIMARY, {
+                        onClick = function()
+                            local mgr = g_currentMission and g_currentMission.ftInvoiceManager
+                            if mgr then
+                                mgr:updateStatus(invId, FT_InvoiceManager.STATUS.PAID)
+                                mgr:save()
+                            end
+                            self:switchApp(appId)
+                        end
+                    })
+                local btnCancel = self.r:button(x + btnW + gap, btnY, btnW, btnH, "CANCEL",
+                    FT.C.BTN_DANGER, {
+                        onClick = function()
+                            local mgr = g_currentMission and g_currentMission.ftInvoiceManager
+                            if mgr then
+                                mgr:deleteInvoice(invId)
+                                mgr:save()
+                            end
+                            self:switchApp(appId)
+                        end
+                    })
+                table.insert(self._contentBtns, btnPay)
+                table.insert(self._contentBtns, btnCancel)
+            end
+
+            -- Advance y cursor past this card + gap
+            y = y - cardH - FT.py(6)
         end
     end
 
