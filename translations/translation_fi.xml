@@ -46,6 +46,7 @@
         <text name="ft_ui_app_random_world_events" text="Random Events"/>
         <text name="ft_ui_app_used_plus" text="UsedPlus"/>
         <text name="ft_ui_app_roleplay_phone" text="Invoices"/>
+        <text name="ft_ui_app_storage" text="Storage"/>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- HELP STRINGS                                    -->

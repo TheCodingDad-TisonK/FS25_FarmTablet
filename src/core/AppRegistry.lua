@@ -79,6 +79,13 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Bucket/loader load counter",
     },
+    {
+        id = FT.APP.STORAGE,    group = "farm",
+        name = "ft_ui_app_storage",    navLabel = "STR",
+        icon = "storage",           order = 16,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Silo inventory and current sell prices",
+    },
     -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
     -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
     -- mission is loaded and the companion mod's global manager is confirmed present.
