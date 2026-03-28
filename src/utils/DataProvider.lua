@@ -192,8 +192,9 @@ function FT_DataProvider:getWeather()
         end
         local env = g_currentMission.environment
 
-        -- FS25 weather object sits at env.weather
-        local weather = env.weather
+        -- FS25 v1.17+: weather lives at env.weatherSystem.
+        -- Older builds / some mods expose env.weather as a fallback.
+        local weather = env.weatherSystem or env.weather
         if not weather then return nil end
 
         -- ── Rain / precipitation ──────────────────────────
@@ -286,34 +287,52 @@ function FT_DataProvider:getWeather()
         else                     w.condition = "Clear";         w.condKey = "clear"
         end
 
-        -- ── Forecast ──────────────────────────────────────
-        -- FS25 stores forecast as weather.forecast (array of WeatherForecast objects)
-        -- Some versions: weather.forecastItems, weather.dailyForecast
-        local rawForecast = weather.forecast
-                         or weather.forecastItems
-                         or weather.dailyForecast
-                         or nil
+        -- ── Projected 5-day Forecast ──────────────────────
+        -- FS25 has no public forecast Lua API (confirmed: SeasonalCropStress
+        -- WeatherIntegration.lua comment).  We build a projection from:
+        --   • Near-term (days 1-2): current cloud coverage → rain probability
+        --   • Far-term  (days 3-5): seasonal base rain probability, blended in
+        -- Temperature drifts ±1 C per day toward the seasonal mean.
+        do
+            -- Seasonal base rain probabilities (spring/summer/autumn/winter)
+            local SEASONAL_RAIN = {[0]=0.30, [1]=0.12, [2]=0.28, [3]=0.35}
+            local season = env.currentSeason
+            season = (type(season) == "number") and math.floor(season) or 0
+            local seasonRain = SEASONAL_RAIN[season] or 0.25
 
-        -- Wrap non-table values defensively
-        if rawForecast ~= nil and type(rawForecast) ~= "table" then
-            rawForecast = nil
-        end
+            -- Best cloud coverage reading for the projection
+            local cloudFC = cloud  -- already clamped 0-1 above
+            if env.cloudUpdater and env.cloudUpdater.getCloudCoverage then
+                cloudFC = env.cloudUpdater:getCloudCoverage()
+                if cloudFC > 1.0 then cloudFC = cloudFC / 100 end
+            end
 
-        -- Build normalised forecast array
-        if rawForecast then
             local fc = {}
-            for i, entry in ipairs(rawForecast) do
-                if i > 7 then break end
-                -- Normalise various field names into a consistent record
+            for day = 1, 5 do
+                -- Blend: day 1 = 100% cloud-based, day 5 = 100% seasonal
+                local blend   = (day - 1) / 4   -- 0.0 → 1.0
+                local rainProb = cloudFC * 0.7 * (1 - blend) + seasonRain * blend
+
+                -- Slight temperature drift toward seasonal typical
+                local seasonalMid = ({[0]=12, [1]=24, [2]=14, [3]=2})[season] or 15
+                local projTemp = math.floor(temp + (seasonalMid - temp) * blend * 0.3)
+
+                local condKey, condition
+                if     rainProb > 0.60 then condKey, condition = "storm",    "Stormy"
+                elseif rainProb > 0.35 then condKey, condition = "rain",     "Rainy"
+                elseif cloudFC  > 0.55 then condKey, condition = "overcast", "Overcast"
+                elseif cloudFC  > 0.25 then condKey, condition = "cloudy",   "Partly Cloudy"
+                else                        condKey, condition = "clear",    "Clear"
+                end
+
                 table.insert(fc, {
-                    weatherType    = entry.weatherType or entry.conditionType
-                                  or entry.condition or entry.type or entry.name,
-                    temperature    = entry.temperature or entry.avgTemperature,
-                    maxTemperature = entry.maxTemperature or entry.highTemperature,
-                    minTemperature = entry.minTemperature or entry.lowTemperature,
+                    condition   = condition,
+                    condKey     = condKey,
+                    temperature = projTemp,
+                    rainProb    = math.floor(rainProb * 100),
                 })
             end
-            w.forecast = #fc > 0 and fc or nil
+            w.forecast = fc
         end
 
         return w
@@ -556,6 +575,126 @@ function FT_DataProvider:getNearbyVehicles(radiusM)
     end
     table.sort(out, function(a,b) return a.distance < b.distance end)
     return out
+end
+
+-- ── Storage & Sell Prices ─────────────────────────────────
+
+-- Returns aggregated fill levels across all player-owned silos.
+-- out = { siloCount, totalCap, crops = { {fillTypeIndex, name, amount} } }
+-- Crops are sorted largest-first.
+function FT_DataProvider:getStorages(farmId)
+    return self:_cached("storages_"..farmId, 3000, function()
+        local out = { siloCount = 0, totalCap = 0, crops = {} }
+        if not (g_currentMission and g_currentMission.placeableSystem) then
+            return out
+        end
+
+        local amounts = {}
+
+        for _, placeable in pairs(g_currentMission.placeableSystem.placeables) do
+            if placeable.spec_silo
+               and placeable.getOwnerFarmId
+               and placeable:getOwnerFarmId() == farmId then
+
+                out.siloCount = out.siloCount + 1
+
+                -- Capacity: sum all storage slots in the silo
+                local spec = placeable.spec_silo
+                if spec.storages then
+                    for _, storage in pairs(spec.storages) do
+                        out.totalCap = out.totalCap + (storage.capacity or 0)
+                    end
+                end
+
+                -- Fill levels: {[fillTypeIndex] = amount}
+                if placeable.getFillLevels then
+                    local levels = placeable:getFillLevels()
+                    if levels then
+                        for fillTypeIdx, amount in pairs(levels) do
+                            if type(amount) == "number" and amount > 0 then
+                                amounts[fillTypeIdx] = (amounts[fillTypeIdx] or 0) + amount
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        for fillTypeIdx, amount in pairs(amounts) do
+            if g_fillTypeManager then
+                local ft2 = g_fillTypeManager:getFillTypeByIndex(fillTypeIdx)
+                if ft2 then
+                    table.insert(out.crops, {
+                        fillTypeIndex = fillTypeIdx,
+                        name          = ft2.title or ft2.name or ("Type "..fillTypeIdx),
+                        amount        = math.floor(amount),
+                    })
+                end
+            end
+        end
+
+        table.sort(out.crops, function(a, b) return a.amount > b.amount end)
+        return out
+    end)
+end
+
+-- Returns best sell prices across all active selling stations on the map.
+-- out = { [fillTypeIndex] = { name, bestPrice ($/1000L), bestStation, stations = {{name,price}} } }
+function FT_DataProvider:getSellPrices()
+    return self:_cached("sell_prices", 5000, function()
+        local out = {}
+        if not (g_currentMission and g_currentMission.storageSystem) then
+            return out
+        end
+
+        local stations = g_currentMission.storageSystem:getUnloadingStations()
+        if not stations then return out end
+
+        for _, station in pairs(stations) do
+            if station.isSellingPoint and station.getEffectiveFillTypePrice then
+                -- Station display name
+                local stationName = "Sell Point"
+                if station.owningPlaceable then
+                    local sp = station.owningPlaceable
+                    stationName = (sp.getName and sp:getName())
+                               or (sp.getFullName and sp:getFullName())
+                               or stationName
+                end
+
+                -- Iterate all fill types; price > 0 means station accepts it
+                if g_fillTypeManager and g_fillTypeManager.fillTypes then
+                    for fillTypeIdx, fillType in pairs(g_fillTypeManager.fillTypes) do
+                        if type(fillTypeIdx) == "number" and fillTypeIdx > 1 then
+                            local ok, price = pcall(function()
+                                return station:getEffectiveFillTypePrice(fillTypeIdx)
+                            end)
+                            if ok and price and price > 0 then
+                                local p1000 = math.floor(price * 1000)
+                                if not out[fillTypeIdx] then
+                                    out[fillTypeIdx] = {
+                                        name        = fillType.title or fillType.name or ("Type "..fillTypeIdx),
+                                        bestPrice   = 0,
+                                        bestStation = "",
+                                        stations    = {},
+                                    }
+                                end
+                                table.insert(out[fillTypeIdx].stations, {
+                                    name  = stationName,
+                                    price = p1000,
+                                })
+                                if p1000 > out[fillTypeIdx].bestPrice then
+                                    out[fillTypeIdx].bestPrice   = p1000
+                                    out[fillTypeIdx].bestStation = stationName
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        return out
+    end)
 end
 
 -- ── Helpers ───────────────────────────────────────────────

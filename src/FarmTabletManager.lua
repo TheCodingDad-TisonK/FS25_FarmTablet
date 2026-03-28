@@ -18,6 +18,11 @@ function FarmTabletManager.new(mission, modDirectory, modName)
     self.settings        = Settings.new(self.settingsManager)
     self.settings:load()
 
+    -- Invoice manager — always initialised (provides data for RoleplayPhoneApp).
+    -- Attached to g_currentMission so FS25_RoleplayPhone can reach it cross-mod.
+    self.invoiceManager = FT_InvoiceManager.new()
+    mission.ftInvoiceManager = self.invoiceManager
+
     -- Core systems — FarmTabletSystem is safe on all contexts (pure data).
     -- FarmTabletUI and InputHandler are client-only (rendering + keyboard input).
     self.system = FarmTabletSystem.new(self.settings)
@@ -83,6 +88,11 @@ function FarmTabletManager.new(mission, modDirectory, modName)
 end
 
 function FarmTabletManager:onMissionLoaded()
+    -- Load persisted invoices now that savegameDirectory is available
+    if self.invoiceManager then
+        self.invoiceManager:load()
+    end
+
     self.system:initialize()
 
     -- inputHandler and UI only exist on clients (see constructor)
@@ -92,10 +102,10 @@ function FarmTabletManager:onMissionLoaded()
 
     -- Welcome notification: client-only (HUD does not exist on server peers)
     if self.mission:getIsClient() and self.settings.enabled and self.settings.showTabletNotifications then
-        local title = (g_i18n and g_i18n:getText("ft_ui_welcome_title")) or "Farm Tablet v2"
+        local title = string.format("Farm Tablet %s", FT.VERSION or "v2")
         local msg   = string.format(
             (g_i18n and g_i18n:getText("ft_ui_welcome_message")) or "Press %s to open",
-            self.settings.tabletKeybind
+            self.settings.tabletKeybind or "T"
         )
         self:showNotification(title, msg)
     end
@@ -135,6 +145,7 @@ function FarmTabletManager:showNotification(title, message)
 end
 
 function FarmTabletManager:delete()
+    if self.invoiceManager then self.invoiceManager:save() end
     if self.settings then self.settings:save() end
     if self.inputHandler then self.inputHandler:unregisterKeyBinding() end
     if self.system then self.system:delete() end
