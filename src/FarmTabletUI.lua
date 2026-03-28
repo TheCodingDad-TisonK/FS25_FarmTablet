@@ -71,6 +71,11 @@ function FarmTabletUI.new(settings, system, modDirectory)
     self._emEdgeStartX    = 0
     self._emEdgeStartW    = 1.0
 
+    -- Camera lock while tablet is open (normal mode)
+    self._tabletCamRotX = nil
+    self._tabletCamRotY = nil
+    self._tabletCamRotZ = nil
+
     -- Camera lock for edit mode
     self._emCamRotX = nil
     self._emCamRotY = nil
@@ -119,6 +124,14 @@ function FarmTabletUI:openTablet()
         end
     end
 
+    -- Capture camera rotation so we can freeze it every frame while open
+    if getCamera and getRotation then
+        local cam = getCamera()
+        if cam and cam ~= 0 then
+            self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ = getRotation(cam)
+        end
+    end
+
     FT_EventBus:emit(FT_EventBus.EVENTS.TABLET_OPENED)
 end
 
@@ -149,6 +162,10 @@ function FarmTabletUI:closeTablet()
     if g_inputBinding then
         g_inputBinding:setShowMouseCursor(false)
     end
+
+    self._tabletCamRotX = nil
+    self._tabletCamRotY = nil
+    self._tabletCamRotZ = nil
 
     FT_EventBus:emit(FT_EventBus.EVENTS.TABLET_CLOSED)
 end
@@ -905,6 +922,14 @@ function FarmTabletUI:update(dt)
 
     -- Edit mode per-frame logic (camera freeze, cursor assert, auto-exit)
     self:_updateEditMode(dt)
+
+    -- Freeze camera rotation while tablet is open (edit mode handles its own freeze)
+    if not self._editModeActive and self._tabletCamRotX and getCamera and setRotation then
+        local cam = getCamera()
+        if cam and cam ~= 0 then
+            setRotation(cam, self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ)
+        end
+    end
 
     -- Poll scroll wheel for sidebar navigation (FS25 has no mouseWheelEvent callback)
     self:_pollSidebarScroll()
