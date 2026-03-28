@@ -92,10 +92,10 @@ function FarmTabletManager:onMissionLoaded()
 
     -- Welcome notification: client-only (HUD does not exist on server peers)
     if self.mission:getIsClient() and self.settings.enabled and self.settings.showTabletNotifications then
-        local title = (g_i18n and g_i18n:getText("ft_ui_welcome_title")) or "Farm Tablet v2"
+        local title = string.format("Farm Tablet %s", FT.VERSION or "v2")
         local msg   = string.format(
             (g_i18n and g_i18n:getText("ft_ui_welcome_message")) or "Press %s to open",
-            self.settings.tabletKeybind
+            self.settings.tabletKeybind or "T"
         )
         self:showNotification(title, msg)
     end

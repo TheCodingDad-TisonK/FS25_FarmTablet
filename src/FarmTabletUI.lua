@@ -125,8 +125,8 @@ function FarmTabletUI:openTablet()
     end
 
     -- Capture camera rotation so we can freeze it every frame while open
-    if getCamera and getRotation then
-        local cam = getCamera()
+    if g_cameraManager and getRotation then
+        local cam = g_cameraManager:getActiveCamera()
         if cam and cam ~= 0 then
             self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ = getRotation(cam)
         end
@@ -930,8 +930,8 @@ function FarmTabletUI:update(dt)
         if g_inputBinding and g_inputBinding.setShowMouseCursor then
             g_inputBinding:setShowMouseCursor(true)
         end
-        if self._tabletCamRotX and getCamera and setRotation then
-            local cam = getCamera()
+        if self._tabletCamRotX and g_cameraManager and setRotation then
+            local cam = g_cameraManager:getActiveCamera()
             if cam and cam ~= 0 then
                 setRotation(cam, self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ)
             end
@@ -1224,9 +1224,9 @@ function FarmTabletUI:_enterEditMode()
     end
 
     -- Freeze camera
-    if getCamera then
-        local cam = getCamera()
-        if cam and cam ~= 0 and getRotation then
+    if g_cameraManager and getRotation then
+        local cam = g_cameraManager:getActiveCamera()
+        if cam and cam ~= 0 then
             self._emCamRotX, self._emCamRotY, self._emCamRotZ = getRotation(cam)
         end
     end
@@ -1522,8 +1522,8 @@ function FarmTabletUI:_updateEditMode(dt)
     end
 
     -- Freeze camera rotation
-    if self._emCamRotX and getCamera and setRotation then
-        local cam = getCamera()
+    if self._emCamRotX and g_cameraManager and setRotation then
+        local cam = g_cameraManager:getActiveCamera()
         if cam and cam ~= 0 then
             setRotation(cam, self._emCamRotX, self._emCamRotY, self._emCamRotZ)
         end
