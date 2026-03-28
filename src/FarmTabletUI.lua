@@ -923,11 +923,18 @@ function FarmTabletUI:update(dt)
     -- Edit mode per-frame logic (camera freeze, cursor assert, auto-exit)
     self:_updateEditMode(dt)
 
-    -- Freeze camera rotation while tablet is open (edit mode handles its own freeze)
-    if not self._editModeActive and self._tabletCamRotX and getCamera and setRotation then
-        local cam = getCamera()
-        if cam and cam ~= 0 then
-            setRotation(cam, self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ)
+    -- Freeze camera while tablet is open (edit mode handles its own freeze)
+    -- Must re-assert cursor every frame — the engine resets it otherwise,
+    -- which re-enables mouse camera rotation.
+    if not self._editModeActive then
+        if g_inputBinding and g_inputBinding.setShowMouseCursor then
+            g_inputBinding:setShowMouseCursor(true)
+        end
+        if self._tabletCamRotX and getCamera and setRotation then
+            local cam = getCamera()
+            if cam and cam ~= 0 then
+                setRotation(cam, self._tabletCamRotX, self._tabletCamRotY, self._tabletCamRotZ)
+            end
         end
     end
 
