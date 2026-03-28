@@ -387,26 +387,12 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
     y = y - FT.py(28)
     y = self:drawRule(y, 0.3)
 
-    -- ── + NEW button (built-in mode only) ─────────────────
-    if not usingPhone and invoiceMgr then
-        local btnW = FT.px(80)
-        local btn = self.r:button(
-            x + w - btnW - FT.px(2), y - FT.py(16),
-            btnW, FT.py(14),
-            "+ NEW", FT.C.BTN_PRIMARY,
-            { onClick = function()
-                initForm(self)
-                self._invoiceFormOpen = true
-                self:switchApp(FT.APP.ROLEPLAY_PHONE)
-            end }
-        )
-        table.insert(self._contentBtns, btn)
-        y = y - FT.py(18)
-    end
-
     -- ── Invoice list renderer (shared for both sections) ──
     -- y = bottom anchor of each row (same convention as AppStoreApp).
     -- Card bottom = y - py(4); text lines sit ABOVE y; buttons at y + py(2).
+    -- All rows share the same card height per due-date state for a uniform list.
+    --   No due date : py(44)  — active: PAY+CANCEL  | paid: DELETE (right)
+    --   With due    : py(56)  — same button rule
     local function drawInvoiceList(title, list)
         if #list == 0 then return end
         y = self:drawSection(y, title)
@@ -424,32 +410,17 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
             elseif isOverdue then badgeColor = FT.C.NEGATIVE end
             local statusLabel = status:upper()
 
-            -- Card height + text-line baselines (all relative to y = bottom anchor)
-            -- Active rows  : PAY + CANCEL buttons at y+py(2), height py(14)
-            -- Paid rows    : display only, no buttons
+            -- Card height + text baselines — same for paid/active, only hasDue differs
             local cardH, line1Y, line2Y, dueY
-            if isActive then
-                if hasDue then
-                    cardH  = FT.py(56)
-                    line1Y = y + FT.py(44)
-                    line2Y = y + FT.py(32)
-                    dueY   = y + FT.py(20)
-                else
-                    cardH  = FT.py(44)
-                    line1Y = y + FT.py(34)
-                    line2Y = y + FT.py(22)
-                end
+            if hasDue then
+                cardH  = FT.py(56)
+                line1Y = y + FT.py(44)
+                line2Y = y + FT.py(32)
+                dueY   = y + FT.py(20)
             else
-                if hasDue then
-                    cardH  = FT.py(42)
-                    line1Y = y + FT.py(26)
-                    line2Y = y + FT.py(14)
-                    dueY   = y + FT.py(2)
-                else
-                    cardH  = FT.py(30)
-                    line1Y = y + FT.py(14)
-                    line2Y = y + FT.py(2)
-                end
+                cardH  = FT.py(44)
+                line1Y = y + FT.py(34)
+                line2Y = y + FT.py(22)
             end
 
             -- Card background
@@ -490,13 +461,14 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
                     FT.FONT.TINY, dueStr, RenderText.ALIGN_LEFT, dueColor)
             end
 
-            -- Action buttons (pending / overdue only)
+            -- Action buttons
+            local btnH  = FT.py(14)
+            local btnY  = y + FT.py(2)
+            local invId = inv.id
             if isActive then
-                local btnH  = FT.py(14)
-                local btnY  = y + FT.py(2)
-                local gap   = FT.px(6)
-                local btnW  = (w - gap) * 0.5
-                local invId = inv.id
+                -- PAY (left half) + CANCEL (right half)
+                local gap  = FT.px(6)
+                local btnW = (w - gap) * 0.5
                 local btnPay = self.r:button(x, btnY, btnW, btnH, "PAY",
                     FT.C.BTN_PRIMARY, {
                         onClick = function()
@@ -521,6 +493,21 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
                     })
                 table.insert(self._contentBtns, btnPay)
                 table.insert(self._contentBtns, btnCancel)
+            else
+                -- DELETE (right-aligned, paid invoices only)
+                local delW   = FT.px(60)
+                local btnDel = self.r:button(x + w - delW, btnY, delW, btnH, "DELETE",
+                    FT.C.BTN_NEUTRAL, {
+                        onClick = function()
+                            local mgr = g_currentMission and g_currentMission.ftInvoiceManager
+                            if mgr then
+                                mgr:deleteInvoice(invId)
+                                mgr:save()
+                            end
+                            self:switchApp(appId)
+                        end
+                    })
+                table.insert(self._contentBtns, btnDel)
             end
 
             -- Advance y cursor past this card + gap
@@ -547,6 +534,27 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
                 RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
         end
         y = y - FT.py(36)
+    end
+
+    -- ── Bottom chrome: info icon + NEW button ────────────────
+    -- Both sit at contentY (below the scrollable area, always visible).
+    -- + NEW is placed immediately left of the info icon.
+    if not usingPhone and invoiceMgr then
+        local _, contentY, _, _ = self:contentInner()
+        local iSz  = FT.px(18)                     -- matches drawInfoIcon square size
+        local gap  = FT.px(4)
+        local btnW = FT.px(60)
+        local newBtn = self.r:button(
+            x + w - iSz - gap - btnW, contentY,
+            btnW, iSz,
+            "+ NEW", FT.C.BTN_PRIMARY,
+            { onClick = function()
+                initForm(self)
+                self._invoiceFormOpen = true
+                self:switchApp(FT.APP.ROLEPLAY_PHONE)
+            end }
+        )
+        table.insert(self._contentBtns, newBtn)
     end
 
     self:drawInfoIcon("_rpPhoneHelp", AC)
