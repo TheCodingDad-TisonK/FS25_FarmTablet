@@ -4,7 +4,7 @@
 -- =========================================================
 FT = FT or {}
 
-FT.VERSION = "2.1.5.0"
+FT.VERSION = "2.1.6.0"
 
 -- ── Design Tokens ─────────────────────────────────────────
 -- Reference dimensions (at 1080p; scaled at runtime)
@@ -132,6 +132,7 @@ FT.APP_COLOR = {
     market_dynamics  = {0.30, 0.78, 0.95, 1.00},  -- cyan-blue
     worker_costs     = {0.95, 0.58, 0.20, 1.00},  -- amber-orange
     random_world_events = {0.70, 0.35, 0.90, 1.00}, -- purple
+    used_plus           = {0.20, 0.78, 0.90, 1.00}, -- cyan
 }
 
 -- Helper: get the accent color for a given app id
@@ -159,6 +160,7 @@ FT.APP = {
     MARKET_DYNAMICS  = "market_dynamics",
     WORKER_COSTS     = "worker_costs",
     RANDOM_EVENTS    = "random_world_events",
+    USED_PLUS        = "used_plus",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.

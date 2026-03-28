@@ -269,5 +269,21 @@ function AppRegistry:autoDetect()
         end
     end
 
+    -- UsedPlus
+    -- Bridge: g_vehicleSaleManager is set globally by UsedPlus main.lua
+    -- Also check g_currentMission.usedPlusAPI (cross-mod bridge, also set by UsedPlus)
+    local hasUsedPlus = (getfenv(0)["g_vehicleSaleManager"] ~= nil)
+                     or (g_currentMission and g_currentMission.usedPlusAPI ~= nil)
+    if hasUsedPlus and not self:has(FT.APP.USED_PLUS) then
+        Logging.info("[FarmTablet] autoDetect: UsedPlus detected")
+        self:register({
+            id = FT.APP.USED_PLUS, group = "mods",
+            name = "ft_ui_app_used_plus", navLabel = "USED",
+            icon = "used_plus", order = 28,
+            developer = "TisonK", version = "Integrated",
+            description = "UsedPlus — active sale listings and finance deals",
+        })
+    end
+
     Logging.info("[FarmTablet] autoDetect complete — %d apps registered", #self:getAll())
 end
