@@ -137,6 +137,7 @@ end
 function FarmTabletManager:delete()
     if self.settings then self.settings:save() end
     if self.inputHandler then self.inputHandler:unregisterKeyBinding() end
+    if self.system then self.system:delete() end
     if self.ui then self.ui:delete() end
     Logging.info("[FarmTablet v2] Shutdown complete.")
 end

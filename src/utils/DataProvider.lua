@@ -19,7 +19,10 @@ local CACHE_TTL_MS = 2000  -- refresh every 2 seconds
 
 function FT_DataProvider.new()
     local self = setmetatable({}, FT_DataProvider_mt)
-    self._cache = {}
+    self._cache            = {}
+    self._sessionIncome    = {}   -- [farmId] = accumulated income this session
+    self._sessionExpenses  = {}   -- [farmId] = accumulated expenses this session
+    self._origChangeBalance = nil -- saved original Farm.changeBalance for cleanup
     return self
 end
 
@@ -80,49 +83,49 @@ function FT_DataProvider:getFarmName(farmId)
     return nil
 end
 
--- FS25 does not expose a statsItems list on g_currentMission.statistics.
--- Income and expense totals come from farm.stats — a key/value table
--- updated by the game engine each session.
+-- Income and expenses are tracked by hooking Farm.changeBalance.
+-- FS25 has no stats table with per-category money keys; all money
+-- flows through farm:changeBalance(amount, moneyType).  We accumulate
+-- session totals ourselves so any mod (IncomeMod, TaxMod, NPCFavor
+-- contractor pay, UsedPlus deals, etc.) is automatically captured.
+-- Call initSessionTracking() once after mission load.
 function FT_DataProvider:getIncome(farmId)
-    return self:_cached("income_"..farmId, 3000, function()
-        if not g_farmManager then return 0 end
-        local farm = g_farmManager:getFarmById(farmId)
-        if not farm or not farm.stats then return 0 end
-
-        local incomeKeys = {
-            "fieldSelling", "woodSelling", "balesSelling", "milkSelling",
-            "woolSelling", "eggsSelling", "animalsSelling", "manureSelling",
-            "compostSelling", "digestateSelling", "propertyIncome",
-            "missionIncome", "contractIncome",
-        }
-        local total = 0
-        for _, key in ipairs(incomeKeys) do
-            local v = farm.stats[key]
-            if type(v) == "number" and v > 0 then total = total + v end
-        end
-        return math.floor(total)
-    end)
+    return math.floor(self._sessionIncome[farmId] or 0)
 end
 
 function FT_DataProvider:getExpenses(farmId)
-    return self:_cached("expenses_"..farmId, 3000, function()
-        if not g_farmManager then return 0 end
-        local farm = g_farmManager:getFarmById(farmId)
-        if not farm or not farm.stats then return 0 end
+    return math.floor(self._sessionExpenses[farmId] or 0)
+end
 
-        local expenseKeys = {
-            "vehicleRunningCost", "vehicleRepairCost", "loanInterest",
-            "propertyMaintenance", "workerWage", "seedCost", "fertilizerCost",
-            "herbicideCost", "limeCost", "purchasedAnimals", "purchasedVehicles",
-            "purchasedFarmland", "purchasedBuildings",
-        }
-        local total = 0
-        for _, key in ipairs(expenseKeys) do
-            local v = farm.stats[key]
-            if type(v) == "number" and v > 0 then total = total + v end
+-- Hook Farm.changeBalance to accumulate session income/expenses.
+-- Safe to call multiple times — installs the hook only once.
+function FT_DataProvider:initSessionTracking()
+    if self._origChangeBalance then return end  -- already hooked
+    if not Farm or not Farm.changeBalance then return end
+
+    local data = self
+    local orig = Farm.changeBalance
+    self._origChangeBalance = orig
+
+    Farm.changeBalance = function(farm, amount, moneyType)
+        orig(farm, amount, moneyType)
+        if type(amount) ~= "number" or amount == 0 then return end
+        local fid = farm.farmId or (farm.getId and farm:getId()) or 0
+        if not fid or fid == 0 then return end
+        if amount > 0 then
+            data._sessionIncome[fid] = (data._sessionIncome[fid] or 0) + amount
+        else
+            data._sessionExpenses[fid] = (data._sessionExpenses[fid] or 0) + math.abs(amount)
         end
-        return math.floor(total)
-    end)
+    end
+end
+
+-- Restore Farm.changeBalance to its original on unload.
+function FT_DataProvider:stopSessionTracking()
+    if self._origChangeBalance then
+        Farm.changeBalance = self._origChangeBalance
+        self._origChangeBalance = nil
+    end
 end
 
 -- ── Farm Stats ────────────────────────────────────────────

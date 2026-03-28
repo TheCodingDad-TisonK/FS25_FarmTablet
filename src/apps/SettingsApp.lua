@@ -356,6 +356,27 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
     })
     y = y - BTN_GAP
 
+    -- ── ABOUT ─────────────────────────────────────────────
+    y = y - FT.py(10)
+    y = self:drawRule(y, 0.3)
+    y = self:drawSection(y, "ABOUT")
+
+    y = self:drawRow(y, "Version", "v" .. FT.VERSION)
+    y = self:drawRow(y, "Author",  "TisonK")
+    y = y - FT.py(4)
+    self.r:appText(x, y, FT.FONT.SMALL, "Docs / Releases:", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    y = y - FT.py(14)
+    self.r:appText(x, y, FT.FONT.SMALL,
+        "github.com/TheCodingDad-TisonK/FS25_FarmTablet",
+        RenderText.ALIGN_LEFT, FT.C.TEXT_NORMAL)
+    y = y - FT.py(18)
+    self.r:appText(x, y, FT.FONT.SMALL, "Bug Reports / Issues:", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    y = y - FT.py(14)
+    self.r:appText(x, y, FT.FONT.SMALL,
+        "github.com/TheCodingDad-TisonK/FS25_FarmTablet/issues",
+        RenderText.ALIGN_LEFT, FT.C.BRAND)
+    y = y - FT.py(6)
+
     -- ── Tell the system total content height so it can enable scrolling ──
     local totalH = contentStartY - y
     self:setContentHeight(totalH)

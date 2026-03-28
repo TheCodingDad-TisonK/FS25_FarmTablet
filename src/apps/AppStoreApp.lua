@@ -16,21 +16,22 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
                   "This is a shortcut — you can also click the icon in\n" ..
                   "the left sidebar at any time." },
         { title = "MOD INTEGRATIONS",
-          body  = "Companion mod apps (Income, Tax, NPC Favor, Crop\n" ..
-                  "Stress, Soil Fertilizer) appear here automatically\n" ..
+          body  = "Companion mod apps appear here automatically\n" ..
                   "when their mod is loaded in your savegame.\n" ..
-                  "No setup needed." },
+                  "Supported: Income, Tax, NPC Favor, Crop Stress,\n" ..
+                  "Soil Fertilizer, Market Dynamics, Worker Costs,\n" ..
+                  "Random World Events. No setup needed." },
         { title = "VERSION / DEVELOPER",
           body  = "Built-in apps show 'Built-in' as their version.\n" ..
                   "Third-party companion apps show their own version\n" ..
                   "number and developer name." },
     }) then return end
 
-    local apps   = self.system.registry:getAll()
-    local startY = self:drawAppHeader("App Store", #apps .. " installed")
+    local apps     = self.system.registry:getAll()
+    local scrollY  = self:getContentScrollY()
+    local afterHdr = self:drawAppHeader("App Store", #apps .. " installed")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
+    local y = afterHdr + scrollY
 
     local groups     = {}
     local groupOrder = {}
@@ -44,10 +45,9 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
 
     for _, gid in ipairs(groupOrder) do
         local list = groups[gid]
-        if #list > 0 and y > minY + FT.py(20) then
+        if #list > 0 then
             y = self:drawSection(y, groupLabels[gid] or gid:upper())
             for _, app in ipairs(list) do
-                if y < minY then break end
                 self.r:appRect(x - FT.px(4), y - FT.py(4), cw + FT.px(8), FT.py(30), FT.C.BG_CARD)
                 local dispName = (g_i18n and g_i18n:getText(app.name)) or app.navLabel or app.id
                 self.r:appText(x + FT.px(8),  y + FT.py(10), FT.FONT.BODY, dispName,
@@ -70,5 +70,22 @@ FarmTabletUI:registerDrawer(FT.APP.APP_STORE, function(self)
         end
     end
 
+    self:setContentHeight(afterHdr - y)
     self:drawInfoIcon("_appStoreHelp", AC)
+
+    -- ── Scroll indicator bar ──────────────────────────────
+    local cx, cy, cw, ch = self:contentInner()
+    local scrollMax = self._contentScrollMax or 0
+    if scrollMax > 0 then
+        local barX    = cx + cw + FT.px(4)
+        local barW    = FT.px(4)
+        self.r:appRect(barX, cy, barW, ch, {0.12, 0.14, 0.20, 0.85})
+        local thumbH  = math.max(FT.py(14), ch * (ch / (ch + scrollMax)))
+        local scrolled = self._contentScrollY or 0
+        local thumbY  = cy + ch - thumbH - (ch - thumbH) * (scrolled / scrollMax)
+        self.r:appRect(barX, thumbY, barW, thumbH,
+            {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.80})
+        self.r:appText(barX + barW + FT.px(4), cy + ch - FT.py(10),
+            FT.FONT.TINY, "scroll", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    end
 end)

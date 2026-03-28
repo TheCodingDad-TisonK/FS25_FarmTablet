@@ -4,6 +4,35 @@
 
 local CHANGELOG = {
     {
+        version = "2.1.5.0",
+        date    = "2026",
+        changes = {
+            "Fix: App Store now scrolls (all mod apps visible)",
+            "Fix: Updates app now scrolls (all entries visible)",
+            "New: About section in Settings with version + links",
+        },
+    },
+    {
+        version = "2.1.4.0",
+        date    = "2026",
+        changes = {
+            "New: Market Dynamics integration app",
+            "New: Worker Costs integration app",
+            "New: Random World Events integration app",
+            "Fix: cross-mod detection for NPC/Soil/CropStress apps",
+        },
+    },
+    {
+        version = "2.1.3.0",
+        date    = "2025",
+        changes = {
+            "Added background color picker in Settings",
+            "Fix: translations missing from zip package",
+            "Fix: SettingsUI key name alignment",
+            "Fix: companion mod setting changes server-only in MP",
+        },
+    },
+    {
         version = "2.1.2.1",
         date    = "2025",
         changes = {
@@ -92,19 +121,17 @@ FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
                   "GitHub or KingMods to get new features and fixes." },
     }) then return end
 
-    local startY = self:drawAppHeader("Updates", "Changelog")
+    local scrollY  = self:getContentScrollY()
+    local afterHdr = self:drawAppHeader("Updates", "Changelog")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
+    local y = afterHdr + scrollY
 
     for _, entry in ipairs(CHANGELOG) do
-        if y < minY then break end
         self.r:appRect(x - FT.px(4), y - FT.py(2), cw + FT.px(8), FT.py(18), FT.C.BG_CARD)
         self.r:appText(x + FT.px(6),      y + FT.py(4), FT.FONT.BODY, "v" .. entry.version, RenderText.ALIGN_LEFT,  FT.C.BRAND)
         self.r:appText(x + cw - FT.px(4), y + FT.py(4), FT.FONT.TINY, entry.date,           RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
         y = y - FT.py(22)
         for _, change in ipairs(entry.changes) do
-            if y < minY then break end
             self.r:appRect(x + FT.px(6), y + FT.py(5), FT.px(4), FT.px(4), FT.C.BRAND_DIM)
             local txt = change
             if #txt > 46 then txt = txt:sub(1,44) .. ">" end
@@ -114,5 +141,22 @@ FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
         y = y - FT.py(6)
     end
 
+    self:setContentHeight(afterHdr - y)
     self:drawInfoIcon("_updatesHelp", AC)
+
+    -- ── Scroll indicator bar ──────────────────────────────
+    local cx, cy, cw, ch = self:contentInner()
+    local scrollMax = self._contentScrollMax or 0
+    if scrollMax > 0 then
+        local barX    = cx + cw + FT.px(4)
+        local barW    = FT.px(4)
+        self.r:appRect(barX, cy, barW, ch, {0.12, 0.14, 0.20, 0.85})
+        local thumbH  = math.max(FT.py(14), ch * (ch / (ch + scrollMax)))
+        local scrolled = self._contentScrollY or 0
+        local thumbY  = cy + ch - thumbH - (ch - thumbH) * (scrolled / scrollMax)
+        self.r:appRect(barX, thumbY, barW, thumbH,
+            {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.80})
+        self.r:appText(barX + barW + FT.px(4), cy + ch - FT.py(10),
+            FT.FONT.TINY, "scroll", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+    end
 end)

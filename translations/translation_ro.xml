@@ -41,6 +41,10 @@
         <text name="ft_ui_app_npc_favor" text="Favoare NPC"/>
         <text name="ft_ui_app_crop_stress" text="Stresul culturilor"/>
         <text name="ft_ui_app_soil_fertilizer" text="Îngrășământ pentru sol"/>
+        <text name="ft_ui_app_market_dynamics" text="Market Dynamics"/>
+        <text name="ft_ui_app_worker_costs" text="Worker Costs"/>
+        <text name="ft_ui_app_random_world_events" text="Random Events"/>
+        <text name="ft_ui_app_used_plus" text="UsedPlus"/>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- HELP STRINGS                                    -->

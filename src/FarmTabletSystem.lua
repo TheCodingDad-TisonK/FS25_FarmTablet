@@ -40,7 +40,12 @@ function FarmTabletSystem:initialize()
     if self.isInitialized then return end
     self.isInitialized = true
     self.registry:autoDetect()
+    self.data:initSessionTracking()
     self:log("System initialized. Apps: %d", #self.registry:getAll())
+end
+
+function FarmTabletSystem:delete()
+    self.data:stopSessionTracking()
 end
 
 -- reset workshopSelectedVehicle and soilSelectedField on close so stale

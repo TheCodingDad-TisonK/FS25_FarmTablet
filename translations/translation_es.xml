@@ -41,6 +41,10 @@
         <text name="ft_ui_app_npc_favor" text="Favor del PNJ"/>
         <text name="ft_ui_app_crop_stress" text="Estrés de los cultivos"/>
         <text name="ft_ui_app_soil_fertilizer" text="Fertilizante del suelo"/>
+        <text name="ft_ui_app_market_dynamics" text="Market Dynamics"/>
+        <text name="ft_ui_app_worker_costs" text="Worker Costs"/>
+        <text name="ft_ui_app_random_world_events" text="Random Events"/>
+        <text name="ft_ui_app_used_plus" text="UsedPlus"/>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- HELP STRINGS                                    -->
