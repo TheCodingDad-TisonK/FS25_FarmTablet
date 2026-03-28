@@ -135,6 +135,7 @@ FT.APP_COLOR = {
     used_plus           = {0.20, 0.78, 0.90, 1.00}, -- cyan
     roleplay_phone      = {0.90, 0.35, 0.85, 1.00}, -- magenta
     storage             = {0.92, 0.78, 0.25, 1.00}, -- wheat gold
+    radio               = {0.95, 0.28, 0.35, 1.00}, -- broadcast red
 }
 
 -- Helper: get the accent color for a given app id
@@ -165,6 +166,7 @@ FT.APP = {
     USED_PLUS        = "used_plus",
     ROLEPLAY_PHONE   = "roleplay_phone",
     STORAGE          = "storage",
+    RADIO            = "radio",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.
