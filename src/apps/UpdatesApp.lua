@@ -4,6 +4,28 @@
 
 local CHANGELOG = {
     {
+        version = "2.1.8.0",
+        date    = "2026",
+        changes = {
+            "New: Time Controls app — time scale presets + skip to time of day",
+            "New: Hotspot Manager — list/remove map pins, clear all (confirm)",
+            "New: Notes app — checkbox todo list, saves per savegame",
+            "New: Farm Admin — money, time, repair all, fill all fuel",
+            "Fix: tablet content refreshes every 4s while open",
+        },
+    },
+    {
+        version = "2.1.7.0",
+        date    = "2026",
+        changes = {
+            "New: Storage app — silo inventory and current sell prices",
+            "New: Invoices app with in-tablet creation form",
+            "New: RoleplayPhone integration foundation",
+            "New: UsedPlus integration app",
+            "Fix: camera lock and mouse cursor while tablet open",
+        },
+    },
+    {
         version = "2.1.5.0",
         date    = "2026",
         changes = {
