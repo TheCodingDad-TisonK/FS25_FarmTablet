@@ -1,0 +1,39 @@
+{
+  "2026-03-29": [
+    {
+      "referrer": "github.com",
+      "count": 173,
+      "uniques": 47
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 123,
+      "uniques": 59
+    },
+    {
+      "referrer": "Google",
+      "count": 29,
+      "uniques": 15
+    },
+    {
+      "referrer": "forbidden-mods.de",
+      "count": 3,
+      "uniques": 2
+    },
+    {
+      "referrer": "Bing",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "DuckDuckGo",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "claude.ai",
+      "count": 1,
+      "uniques": 1
+    }
+  ]
+}
