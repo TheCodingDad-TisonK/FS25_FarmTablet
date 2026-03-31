@@ -114,6 +114,13 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Admin controls: money, time, vehicle repair/fuel",
     },
+    {
+        id = FT.APP.FIELD_JOBS, group = "farm",
+        name = "ft_ui_app_field_jobs", navLabel = "JOBS",
+        icon = "jobs",              order = 21,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Log field work sessions — field, vehicle, task, duration",
+    },
     -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
     -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
     -- mission is loaded and the companion mod's global manager is confirmed present.
@@ -322,8 +329,8 @@ function AppRegistry:autoDetect()
 
     -- RoleplayPhone / Built-in Invoices
     -- Always registered — built-in FT_InvoiceManager provides fallback data even
-    -- without FS25_RoleplayPhone. If the phone mod is present its API is used instead.
-    -- TODO: update detection key once FS25_RoleplayPhone publishes its global name.
+    -- without FS25_RoleplayPhone. If the phone mod is present, RoleplayPhoneApp.lua
+    -- detects it at draw time via getfenv(0)["RoleplayPhone_checkInstalled"].
     if not self:has(FT.APP.ROLEPLAY_PHONE) then
         Logging.info("[FarmTablet] autoDetect: Registering Invoices app (built-in + RoleplayPhone integration)")
         self:register({

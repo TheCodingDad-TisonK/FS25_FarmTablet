@@ -138,6 +138,7 @@ FT.APP_COLOR = {
     time_controls       = {0.30, 0.78, 1.00, 1.00}, -- sky blue
     hotspot_manager     = {1.00, 0.72, 0.10, 1.00}, -- amber
     notes               = {0.55, 0.90, 0.35, 1.00}, -- lime green
+    field_jobs          = {0.30, 0.75, 1.00, 1.00}, -- sky blue
     farm_admin          = {0.95, 0.30, 0.30, 1.00}, -- red
 }
 
@@ -173,6 +174,7 @@ FT.APP = {
     HOTSPOT_MGR      = "hotspot_manager",
     NOTES            = "notes",
     FARM_ADMIN       = "farm_admin",
+    FIELD_JOBS       = "field_jobs",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.

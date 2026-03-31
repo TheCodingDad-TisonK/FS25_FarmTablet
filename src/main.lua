@@ -57,6 +57,7 @@ source(modDirectory .. "src/apps/TimeControlsApp.lua")
 source(modDirectory .. "src/apps/HotspotManagerApp.lua")
 source(modDirectory .. "src/apps/NotesApp.lua")
 source(modDirectory .. "src/apps/FarmAdminApp.lua")
+source(modDirectory .. "src/apps/FieldJobsApp.lua")
 
 local farmTabletManager
 
