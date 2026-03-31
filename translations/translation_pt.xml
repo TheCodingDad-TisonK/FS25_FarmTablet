@@ -47,6 +47,11 @@
         <text name="ft_ui_app_used_plus" text="UsedPlus"/>
         <text name="ft_ui_app_roleplay_phone" text="Invoices"/>
         <text name="ft_ui_app_storage" text="Storage"/>
+        <text name="ft_ui_app_time_controls" text="Time Controls"/>
+        <text name="ft_ui_app_hotspot_manager" text="Hotspot Manager"/>
+        <text name="ft_ui_app_notes" text="Notes"/>
+        <text name="ft_ui_app_farm_admin" text="Farm Admin"/>
+        <text name="ft_ui_app_field_jobs" text="Trabalhos no Campo"/>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- HELP STRINGS                                    -->
