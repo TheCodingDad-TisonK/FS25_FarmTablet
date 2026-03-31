@@ -82,5 +82,17 @@
     "views_unique": 29,
     "clones_total": 100,
     "clones_unique": 40
+  },
+  "2026-03-29": {
+    "views_total": 63,
+    "views_unique": 31,
+    "clones_total": 69,
+    "clones_unique": 43
+  },
+  "2026-03-30": {
+    "views_total": 27,
+    "views_unique": 16,
+    "clones_total": 51,
+    "clones_unique": 31
   }
 }
