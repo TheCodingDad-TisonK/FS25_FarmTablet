@@ -195,7 +195,8 @@ FarmTabletUI:registerDrawer(FT.APP.NPC_FAVOR, function(self)
 
     local startY = self:drawAppHeader("NPC Favor", "")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
 
     local npcSys = g_NPCSystem or (g_currentMission and g_currentMission.npcFavorSystem)
@@ -289,7 +290,9 @@ FarmTabletUI:registerDrawer(FT.APP.NPC_FAVOR, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_npcHelp", AC)
+    self:drawScrollBar()
 end)
 
 
@@ -322,7 +325,8 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
 
     local startY = self:drawAppHeader("Crop Stress", "Seasonal")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
     local accent = AC
 
@@ -430,7 +434,9 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_cropStressHelp", AC)
+    self:drawScrollBar()
 end)
 
 
@@ -467,7 +473,8 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
 
     local startY = self:drawAppHeader("Soil Fertilizer", "")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
     local accent = AC
 
@@ -597,7 +604,9 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
     if info.daysSinceHarvest and info.daysSinceHarvest > 0 then y = self:drawRow(y, "Days Since Harvest", tostring(info.daysSinceHarvest)) end
     if info.needsFertilization then y = self:drawRow(y, "Needs Fertilizer", "YES", nil, FT.C.WARNING) end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_soilHelp", AC)
+    self:drawScrollBar()
 end)
 
 

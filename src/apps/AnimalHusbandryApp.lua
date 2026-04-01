@@ -44,7 +44,8 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
         return
     end
 
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
 
     local function barColor(pct)
@@ -54,7 +55,6 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
     end
 
     for _, pen in ipairs(pens) do
-        if y < minY + FT.py(40) then break end
         local cardH = FT.py(10)
             + (pen.hasFood        and pen.foodPct  ~= nil and FT.py(24) or 0)
             + (pen.hasWater       and pen.waterPct ~= nil and FT.py(24) or 0)
@@ -99,5 +99,7 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
         y = y - FT.py(6)
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_animalsHelp", AC)
-end)
+    self:drawScrollBar()
+    end)

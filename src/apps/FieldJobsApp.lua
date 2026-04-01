@@ -677,15 +677,11 @@ function _drawHistoryView(self)
 
     local rowH  = FT.py(20)
     local minY  = contentY + FT.py(6)
+    local scrollY = self:getContentScrollY()
+    y = y + scrollY
 
     for i, j in ipairs(_jobHistory) do
-        if y < minY then
-            local remaining = #_jobHistory - (i - 1)
-            self.r:appText(x + cw/2, minY, FT.FONT.TINY,
-                "... " .. remaining .. " more",
-                RenderText.ALIGN_CENTER, FT.C.MUTED)
-            break
-        end
+        if y < minY then break end
 
         -- Alternating row bg
         if i % 2 == 0 then
@@ -719,4 +715,8 @@ function _drawHistoryView(self)
 
         y = y - rowH
     end
+
+    -- Enable scroll wheel and scroll bar for long history lists
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
 end

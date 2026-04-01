@@ -249,4 +249,5 @@ FarmTabletUI:registerDrawer(FT.APP.NOTES, function(self)
 
     self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_notesHelp", AC)
+    self:drawScrollBar()
 end)

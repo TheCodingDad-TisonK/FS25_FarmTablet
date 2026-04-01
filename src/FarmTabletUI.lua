@@ -727,6 +727,36 @@ function FarmTabletUI:setContentHeight(totalH)
     self._contentScrollY = math.min(self._contentScrollY or 0, self._contentScrollMax)
 end
 
+--- Draws a vertical scroll bar indicator on the right edge of the content area.
+--- Call this at the end of a drawer function if the app supports scrolling.
+function FarmTabletUI:drawScrollBar()
+    local scrollMax = self._contentScrollMax or 0
+    if scrollMax <= 0 then return end
+
+    local cx, cy, cw, ch = self:contentInner()
+    local barX     = cx + cw + FT.px(4)
+    local barY     = cy
+    local barH     = ch
+    local barW     = FT.px(4)
+
+    -- Track (dark background)
+    self.r:appRect(barX, barY, barW, barH, {0.12, 0.14, 0.20, 0.85})
+
+    -- Thumb — height represents the ratio of visible content to total content
+    local total    = ch + scrollMax
+    local thumbH   = math.max(FT.py(14), barH * (ch / total))
+    local scrolled = self._contentScrollY or 0
+    local thumbY   = barY + barH - thumbH - (barH - thumbH) * (scrolled / scrollMax)
+
+    -- Draw thumb with brand color
+    self.r:appRect(barX, thumbY, barW, thumbH,
+        {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.80})
+
+    -- Tiny "scroll" label hint
+    self.r:appText(barX + barW + FT.px(4), barY + barH - FT.py(10),
+        FT.FONT.TINY, "scroll", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
+end
+
 --- Returns the raw content area (x, y, w, h) with no padding applied.
 function FarmTabletUI:content()
     return FT.LAYOUT.contentX, FT.LAYOUT.contentY,

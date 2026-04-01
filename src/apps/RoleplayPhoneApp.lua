@@ -382,7 +382,8 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
     local data   = self.system.data
     local startY = self:drawAppHeader("Invoices", usingPhone and "RoleplayPhone" or "Built-in")
     local x, contentY, w, _ = self:contentInner()
-    local y = startY
+    local scrollY = self:getContentScrollY()
+    local y = startY + scrollY
 
     self.r:appText(x + FT.px(4), y - FT.py(8),
         FT.FONT.TINY, "RECEIVABLE", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
@@ -582,5 +583,7 @@ FarmTabletUI:registerDrawer(FT.APP.ROLEPLAY_PHONE, function(self)
         table.insert(self._contentBtns, newBtn)
     end
 
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
     self:drawInfoIcon("_rpPhoneHelp", AC)
 end)

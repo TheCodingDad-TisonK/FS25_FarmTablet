@@ -33,7 +33,8 @@ FarmTabletUI:registerDrawer(FT.APP.BUCKET, function(self)
 
     local startY = self:drawAppHeader("Bucket Tracker", "")
     local x, contentY, cw, _ = self:contentInner()
-    local y = startY
+    local scrollY = self:getContentScrollY()
+    local y = startY + scrollY
 
     -- Summary cards
     y = y - FT.py(4)
@@ -83,9 +84,7 @@ FarmTabletUI:registerDrawer(FT.APP.BUCKET, function(self)
         self.r:appText(x + FT.px(20), y, FT.FONT.TINY, "MATERIAL", RenderText.ALIGN_LEFT,  FT.C.TEXT_DIM)
         self.r:appText(x + cw,        y, FT.FONT.TINY, "WEIGHT",   RenderText.ALIGN_RIGHT, FT.C.TEXT_DIM)
         y = y - FT.py(14)
-        local start = math.max(1, #bt.history - 7)
-        for i = #bt.history, start, -1 do
-            if y < minY then break end
+        for i = #bt.history, 1, -1 do
             local load = bt.history[i]
             self.r:appText(x,             y, FT.FONT.TINY,  tostring(load.n),              RenderText.ALIGN_LEFT,  FT.C.TEXT_DIM)
             self.r:appText(x + FT.px(20), y, FT.FONT.SMALL, load.typeName or "Unknown",    RenderText.ALIGN_LEFT,  FT.C.TEXT_NORMAL)
@@ -102,5 +101,7 @@ FarmTabletUI:registerDrawer(FT.APP.BUCKET, function(self)
             end })
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_bucketHelp", AC)
+    self:drawScrollBar()
 end)

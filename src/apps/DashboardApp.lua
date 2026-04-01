@@ -45,7 +45,8 @@ FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
 
     local startY = self:drawAppHeader("Dashboard", data:getFarmName(farmId) or "")
     local x, contentY, w, _ = self:contentInner()
-    local y = startY
+    local scrollY = self:getContentScrollY()
+    local y = startY + scrollY
 
     -- Hero: Balance
     y = y - FT.py(4)
@@ -102,5 +103,7 @@ FarmTabletUI:registerDrawer(FT.APP.DASHBOARD, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_dashHelp", AC)
+    self:drawScrollBar()
 end)

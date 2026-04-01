@@ -106,7 +106,8 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
     local subtitle = storage.siloCount == 1 and "1 silo" or (storage.siloCount .. " silos")
     local startY = self:drawAppHeader("Storage", subtitle)
     local x, contentY, cw, _ = self:contentInner()
-    local y = startY
+    local scrollY = self:getContentScrollY()
+    local y = startY + scrollY
 
     if storage.siloCount == 0 then
         self.r:appText(x, y - FT.py(12), FT.FONT.BODY,
@@ -117,8 +118,6 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
         return
     end
 
-    local minY = contentY + FT.py(8)
-
     -- ── INVENTORY ─────────────────────────────────────────
     y = self:drawSection(y, "INVENTORY")
 
@@ -126,14 +125,8 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
         y = self:drawRow(y, "Silos are empty", "")
     else
         for _, crop in ipairs(storage.crops) do
-            if y < minY then break end
             y = self:drawRow(y, crop.name, string.format("%d L", crop.amount))
         end
-    end
-
-    if y < minY + FT.py(30) then
-        self:drawInfoIcon("_storageHelp", AC)
-        return
     end
 
     y = y - FT.py(6)
@@ -144,7 +137,6 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
 
     local shownAny = false
     for _, crop in ipairs(storage.crops) do
-        if y < minY then break end
         local pd = prices[crop.fillTypeIndex]
         if pd and pd.bestPrice > 0 then
             shownAny = true
@@ -174,11 +166,6 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
         y = self:drawRow(y, "No sell price data found", "")
     end
 
-    if y < minY + FT.py(30) then
-        self:drawInfoIcon("_storageHelp", AC)
-        return
-    end
-
     y = y - FT.py(6)
     y = self:drawRule(y, 0.3)
 
@@ -187,7 +174,6 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
 
     local compShown = false
     for _, crop in ipairs(storage.crops) do
-        if y < minY then break end
         local pd = prices[crop.fillTypeIndex]
         if pd and pd.stations and #pd.stations > 1 then
             compShown = true
@@ -206,7 +192,6 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
             table.sort(sorted, function(a, b) return a.price > b.price end)
 
             for _, s in ipairs(sorted) do
-                if y < minY then break end
                 local vc = (s.price == pd.bestPrice) and FT.C.POSITIVE or FT.C.TEXT_NORMAL
                 y = self:drawRow(y, "  " .. s.name,
                     data:formatMoney(s.price), nil, vc)
@@ -220,5 +205,7 @@ FarmTabletUI:registerDrawer(FT.APP.STORAGE, function(self)
         y = self:drawRow(y, "Single station — no comparison available", "")
     end
 
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
     self:drawInfoIcon("_storageHelp", AC)
 end)

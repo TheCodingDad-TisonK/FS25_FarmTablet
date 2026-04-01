@@ -48,7 +48,8 @@ FarmTabletUI:registerDrawer(FT.APP.USED_PLUS, function(self)
 
     local startY = self:drawAppHeader("UsedPlus", "Marketplace")
     local x, contentY, w, _ = self:contentInner()
-    local y = startY
+    local scrollY = self:getContentScrollY()
+    local y = startY + scrollY
 
     -- ── Credit score (top-right hero) ─────────────────────
     if api and api.getCreditScore then
@@ -176,5 +177,7 @@ FarmTabletUI:registerDrawer(FT.APP.USED_PLUS, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
     self:drawInfoIcon("_usedPlusHelp", AC)
 end)
