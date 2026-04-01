@@ -4,6 +4,24 @@
 
 local CHANGELOG = {
     {
+        version = "2.2.0.0",
+        date    = "2026",
+        changes = {
+            "Improvement: Added Scroll helper to support all apps with long content",
+            "New: Added Ukrainian translation",
+            "Chore: Bumped version to 2.2.0.0",
+        },
+    },
+    {
+        version = "2.1.9.0",
+        date    = "2026",
+        changes = {
+            "Storage: historical peak price tracking — saved per savegame",
+            "Storage: peak shown under each crop (orange = below peak, green = at peak)",
+            "Storage: price comparison section — all stations sorted best-first",
+        },
+    },
+    {
         version = "2.1.9.0",
         date    = "2026",
         changes = {
