@@ -48,6 +48,9 @@ function Settings:resetToDefaults(saveImmediately)
     self.tabletWidthMult         = 1.0   -- independent width stretch (0.5 – 2.0)
     self.tabletBgColorIndex      = 1     -- index into FT.BG_PALETTE (1 = Deep Space)
 
+    -- Dashboard widget visibility (comma-separated widget IDs)
+    self.dashWidgets = "balance,loan,income,expenses,net_pl,fields,vehicles,season,day,time,weather"
+
     if saveImmediately then
         self:save()
         print("Farm Tablet: Settings reset to defaults")
@@ -97,7 +100,12 @@ function Settings:validateSettings()
     self.tabletWidthMult     = math.max(0.5, math.min(2.0, self.tabletWidthMult     or 1.0))
     self.tabletPosX          = math.max(0.0, math.min(1.0, self.tabletPosX          or 0.5))
     self.tabletPosY          = math.max(0.0, math.min(1.0, self.tabletPosY          or 0.5))
-    self.tabletBgColorIndex  = math.max(1,               math.floor(self.tabletBgColorIndex or 1))
+    self.tabletBgColorIndex  = math.max(1, math.floor(self.tabletBgColorIndex or 1))
+
+    -- Dashboard widgets: ensure it's a non-empty string
+    if type(self.dashWidgets) ~= "string" or self.dashWidgets == "" then
+        self.dashWidgets = "balance,loan,income,expenses,net_pl,fields,vehicles,season,day,time,weather"
+    end
 end
 
 function Settings:save()

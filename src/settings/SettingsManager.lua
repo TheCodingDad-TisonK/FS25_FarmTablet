@@ -58,6 +58,8 @@ function SettingsManager:loadSettings(settingsObject)
             settingsObject.tabletScale             = xml:getFloat(self.XMLTAG..".tabletScale",            1.0)
             settingsObject.tabletWidthMult         = xml:getFloat(self.XMLTAG..".tabletWidthMult",        1.0)
             settingsObject.tabletBgColorIndex      = xml:getInt(self.XMLTAG..".tabletBgColorIndex",       1)
+            settingsObject.dashWidgets             = xml:getString(self.XMLTAG..".dashWidgets",
+                "balance,loan,income,expenses,net_pl,fields,vehicles,season,day,time,weather")
             xml:delete()
             return
         end
@@ -93,6 +95,9 @@ function SettingsManager:saveSettings(settingsObject)
         xml:setFloat(self.XMLTAG..".tabletScale",            settingsObject.tabletScale or 1.0)
         xml:setFloat(self.XMLTAG..".tabletWidthMult",        settingsObject.tabletWidthMult or 1.0)
         xml:setInt(self.XMLTAG..".tabletBgColorIndex",       settingsObject.tabletBgColorIndex or 1)
+        xml:setString(self.XMLTAG..".dashWidgets",
+            settingsObject.dashWidgets or
+            "balance,loan,income,expenses,net_pl,fields,vehicles,season,day,time,weather")
 
         xml:save()
         xml:delete()
