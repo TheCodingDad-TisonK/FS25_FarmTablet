@@ -47,19 +47,18 @@ function SettingsGUI:unregisterConsoleCommands()
 end
 
 function SettingsGUI:consoleCommandHelp()
-    print("=== Farm Tablet Console Commands ===")
-    print("tablet - Show this help")
-    print("TabletEnable/Disable - Toggle mod")
-    print("TabletOpen/Close - Open/close tablet")
-    print("TabletToggle - Toggle tablet")
-    print("TabletKeybind [key] - Set open key")
-    print("TabletSetNotifications true|false - Toggle notifications")
-    print("TabletSetStartupApp [id] - Set startup app (e.g. dashboard, weather)")
-    print("TabletApp [id] - Switch to app immediately")
-    print("TabletShowSettings - Show current settings")
-    print("TabletResetSettings - Reset to defaults")
-    print("===================================")
-    return "Type 'help' for more info"
+    return "=== Farm Tablet Console Commands ===\n" ..
+           "tablet - Show this help\n" ..
+           "TabletEnable/Disable - Toggle mod\n" ..
+           "TabletOpen/Close - Open/close tablet\n" ..
+           "TabletToggle - Toggle tablet\n" ..
+           "TabletKeybind [key] - Set open key\n" ..
+           "TabletSetNotifications true|false - Toggle notifications\n" ..
+           "TabletSetStartupApp [id] - Set startup app (e.g. dashboard, weather)\n" ..
+           "TabletApp [id] - Switch to app immediately\n" ..
+           "TabletShowSettings - Show current settings\n" ..
+           "TabletResetSettings - Reset to defaults\n" ..
+           "==================================="
 end
 
 function SettingsGUI:consoleCommandTabletApp(appId)
@@ -192,7 +191,6 @@ function SettingsGUI:consoleCommandTabletShowSettings()
             tostring(settings.soundEffects),
             tostring(settings.debugMode)
         )
-        print(info)
         return info
     end
     

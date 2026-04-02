@@ -53,7 +53,7 @@ function Settings:resetToDefaults(saveImmediately)
 
     if saveImmediately then
         self:save()
-        print("Farm Tablet: Settings reset to defaults")
+        Logging.info("Farm Tablet: Settings reset to defaults")
     end
 end
 
