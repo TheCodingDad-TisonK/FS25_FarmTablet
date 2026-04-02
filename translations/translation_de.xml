@@ -51,6 +51,7 @@
         <text name="ft_ui_app_hotspot_manager" text="Hotspot Manager"/>
         <text name="ft_ui_app_notes" text="Notes"/>
         <text name="ft_ui_app_farm_admin" text="Farm Admin"/>
+        <text name="ft_ui_app_contracts" text="Aufträge"/>
         <text name="ft_ui_app_field_jobs" text="Feldarbeiten"/>
 
         <!-- ═══════════════════════════════════════════════ -->

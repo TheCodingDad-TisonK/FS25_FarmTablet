@@ -52,6 +52,7 @@
         <text name="ft_ui_app_notes" text="Notes"/>
         <text name="ft_ui_app_farm_admin" text="Farm Admin"/>
         <text name="ft_ui_app_field_jobs" text="Field Jobs"/>
+        <text name="ft_ui_app_contracts" text="Contracts"/>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- HELP STRINGS                                    -->

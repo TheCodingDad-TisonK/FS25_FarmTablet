@@ -140,6 +140,7 @@ FT.APP_COLOR = {
     notes               = {0.55, 0.90, 0.35, 1.00}, -- lime green
     field_jobs          = {0.30, 0.75, 1.00, 1.00}, -- sky blue
     farm_admin          = {0.95, 0.30, 0.30, 1.00}, -- red
+    contracts           = {0.95, 0.72, 0.15, 1.00}, -- amber-gold
 }
 
 -- Helper: get the accent color for a given app id
@@ -175,6 +176,7 @@ FT.APP = {
     NOTES            = "notes",
     FARM_ADMIN       = "farm_admin",
     FIELD_JOBS       = "field_jobs",
+    CONTRACTS        = "contracts",
 }
 
 -- Helper: scale a reference pixel value to normalized coords.

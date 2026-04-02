@@ -121,6 +121,13 @@ AppRegistry.BUILTIN_APPS = {
         developer = "FarmTablet",   version = "Built-in",
         description = "Log field work sessions — field, vehicle, task, duration",
     },
+    {
+        id = FT.APP.CONTRACTS,  group = "farm",
+        name = "ft_ui_app_contracts",  navLabel = "CON",
+        icon = "contracts",         order = 22,
+        developer = "FarmTablet",   version = "Built-in",
+        description = "Active contracts — completion, reward, time remaining",
+    },
     -- NOTE: Companion-mod apps (Income, Tax, NPC Favor, Crop Stress, Soil Fertilizer)
     -- are NOT pre-registered here. They are added dynamically by autoDetect() once the
     -- mission is loaded and the companion mod's global manager is confirmed present.
