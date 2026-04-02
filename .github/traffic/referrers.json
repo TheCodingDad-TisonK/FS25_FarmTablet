@@ -77,5 +77,42 @@
       "count": 1,
       "uniques": 1
     }
+  ],
+  "2026-04-02": [
+    {
+      "referrer": "github.com",
+      "count": 188,
+      "uniques": 55
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 95,
+      "uniques": 41
+    },
+    {
+      "referrer": "Google",
+      "count": 29,
+      "uniques": 12
+    },
+    {
+      "referrer": "Bing",
+      "count": 4,
+      "uniques": 3
+    },
+    {
+      "referrer": "forbidden-mods.de",
+      "count": 3,
+      "uniques": 2
+    },
+    {
+      "referrer": "der-ls-treffpunkt.de",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "search.brave.com",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }
