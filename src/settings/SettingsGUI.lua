@@ -31,6 +31,21 @@ function SettingsGUI:registerConsoleCommands()
     Logging.info("Farm Tablet console commands registered")
 end
 
+function SettingsGUI:unregisterConsoleCommands()
+    removeConsoleCommand("TabletEnable")
+    removeConsoleCommand("TabletDisable")
+    removeConsoleCommand("TabletOpen")
+    removeConsoleCommand("TabletClose")
+    removeConsoleCommand("TabletToggle")
+    removeConsoleCommand("TabletKeybind")
+    removeConsoleCommand("TabletSetNotifications")
+    removeConsoleCommand("TabletSetStartupApp")
+    removeConsoleCommand("TabletApp")
+    removeConsoleCommand("TabletShowSettings")
+    removeConsoleCommand("TabletResetSettings")
+    removeConsoleCommand("tablet")
+end
+
 function SettingsGUI:consoleCommandHelp()
     print("=== Farm Tablet Console Commands ===")
     print("tablet - Show this help")

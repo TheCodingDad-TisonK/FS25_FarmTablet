@@ -43,9 +43,8 @@ end
 --- Falls back to 1 (the default single-player farm) if the player object
 --- is not yet available or does not expose getFarmId().
 function FT_DataProvider:getPlayerFarmId()
-    if g_currentMission and g_currentMission.player then
-        local p = g_currentMission.player
-        return (p.getFarmId and p:getFarmId()) or p.farmId or 1
+    if g_localPlayer then
+        return (g_localPlayer.getFarmId and g_localPlayer:getFarmId()) or g_localPlayer.farmId or 1
     end
     return 1
 end
@@ -512,10 +511,10 @@ end
 
 function FT_DataProvider:getNearbyVehicles(radiusM)
     radiusM = radiusM or 20
-    if not (g_currentMission and g_currentMission.player) then return {} end
+    if not g_localPlayer then return {} end
 
     local px, py, pz
-    local player = g_currentMission.player
+    local player = g_localPlayer
     local seatedVehicle = player.getCurrentVehicle and player:getCurrentVehicle()
 
     if seatedVehicle and seatedVehicle.rootNode then

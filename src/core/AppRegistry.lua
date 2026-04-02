@@ -239,7 +239,6 @@ function AppRegistry:autoDetect()
     -- Seasonal Crop Stress
     -- Bridge: mission.cropStressManager set by SeasonalCropStress in Mission00.load
     local hasCropStress = (g_currentMission and g_currentMission.cropStressManager ~= nil)
-                       or (getfenv(0)["g_cropStressManager"] ~= nil)
     if hasCropStress and not self:has(FT.APP.CROP_STRESS) then
         Logging.info("[FarmTablet] autoDetect: Crop Stress detected")
         self:register({
@@ -254,7 +253,6 @@ function AppRegistry:autoDetect()
     -- Soil Fertilizer
     -- Bridge: mission.soilFertilityManager set by SoilFertilizer in Mission00.load
     local hasSoil = (g_currentMission and g_currentMission.soilFertilityManager ~= nil)
-                 or (getfenv(0)["g_SoilFertilityManager"] ~= nil)
     if hasSoil and not self:has(FT.APP.SOIL_FERT) then
         Logging.info("[FarmTablet] autoDetect: Soil Fertilizer detected")
         self:register({
@@ -314,8 +312,7 @@ function AppRegistry:autoDetect()
     -- UsedPlus
     -- Bridge: g_vehicleSaleManager is set globally by UsedPlus main.lua
     -- Also check g_currentMission.usedPlusAPI (cross-mod bridge, also set by UsedPlus)
-    local hasUsedPlus = (getfenv(0)["g_vehicleSaleManager"] ~= nil)
-                     or (g_currentMission and g_currentMission.usedPlusAPI ~= nil)
+    local hasUsedPlus = (g_currentMission and g_currentMission.usedPlusAPI ~= nil)
     if hasUsedPlus and not self:has(FT.APP.USED_PLUS) then
         Logging.info("[FarmTablet] autoDetect: UsedPlus detected")
         self:register({
