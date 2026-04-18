@@ -114,14 +114,14 @@ function FarmTabletUI:openTablet()
 
     if g_inputBinding then
         g_inputBinding:setShowMouseCursor(true)
-        self._oldMouseEvent = g_currentMission.mouseEvent
-        g_currentMission.mouseEvent = function(mission, px, py, isDown, isUp, btn)
-            if self:_onMouse(px, py, isDown, isUp, btn) then return true end
-            if self._oldMouseEvent then
-                return self._oldMouseEvent(mission, px, py, isDown, isUp, btn)
+        self._mouseListener = {_ui = self}
+        function self._mouseListener:mouseEvent(posX, posY, isDown, isUp, button, eventUsed)
+            if not eventUsed and self._ui:_onMouse(posX, posY, isDown, isUp, button) then
+                return true
             end
-            return false
+            return eventUsed
         end
+        addModEventListener(self._mouseListener)
     end
 
     -- Capture camera rotation so we can freeze it every frame while open
@@ -154,9 +154,9 @@ function FarmTabletUI:closeTablet()
 
     if g_currentMission then
         g_currentMission:removeDrawable(self)
-        if self._oldMouseEvent then
-            g_currentMission.mouseEvent = self._oldMouseEvent
-            self._oldMouseEvent = nil
+        if self._mouseListener then
+            removeModEventListener(self._mouseListener)
+            self._mouseListener = nil
         end
     end
     if g_inputBinding then
@@ -1296,34 +1296,21 @@ end
 -- ── Mouse handler registration ────────────────────────────
 
 function FarmTabletUI:_registerEditMouseHandler()
-    -- Inject our edit-mode mouse handler before the normal tablet handler
-    -- We store it so we can remove it on exit
-    self._editMouseHandler = function(mission, px, py, isDown, isUp, btn)
-        if self:_onEditMouse(px, py, isDown, isUp, btn) then return true end
-        return false
-    end
-
-    if g_currentMission then
-        local prevHandler = g_currentMission.mouseEvent
-        self._editPrevMouseEvent = prevHandler
-        g_currentMission.mouseEvent = function(mission, px, py, isDown, isUp, btn)
-            if self._editMouseHandler and self._editMouseHandler(mission, px, py, isDown, isUp, btn) then
-                return true
-            end
-            if self._editPrevMouseEvent then
-                return self._editPrevMouseEvent(mission, px, py, isDown, isUp, btn)
-            end
-            return false
+    self._editMouseListener = {_ui = self}
+    function self._editMouseListener:mouseEvent(posX, posY, isDown, isUp, button, eventUsed)
+        if not eventUsed and self._ui:_onEditMouse(posX, posY, isDown, isUp, button) then
+            return true
         end
+        return eventUsed
     end
+    addModEventListener(self._editMouseListener)
 end
 
 function FarmTabletUI:_unregisterEditMouseHandler()
-    if g_currentMission and self._editPrevMouseEvent then
-        g_currentMission.mouseEvent = self._editPrevMouseEvent
+    if self._editMouseListener then
+        removeModEventListener(self._editMouseListener)
+        self._editMouseListener = nil
     end
-    self._editMouseHandler    = nil
-    self._editPrevMouseEvent  = nil
 end
 
 -- ── Edit-mode mouse logic ─────────────────────────────────
