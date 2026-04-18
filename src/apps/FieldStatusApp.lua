@@ -21,7 +21,7 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
                   "Grey   = Fallow / empty field." },
         { title = "SCROLLING",
           body  = "If you own more fields than fit on screen the list\n" ..
-                  "scrolls. A count of hidden rows is shown at the bottom." },
+                  "scrolls automatically. Use the mouse wheel to scroll." },
     }) then return end
 
     local data   = self.system.data
@@ -30,6 +30,7 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
 
     local startY = self:drawAppHeader("Field Manager", #fields .. " fields")
     local x, contentY, cw, contentH = self:contentInner()
+    local scrollY = self:getContentScrollY()
 
     if #fields == 0 then
         self.r:appText(x, startY - FT.py(12), FT.FONT.BODY,
@@ -48,7 +49,7 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
         end
     end
 
-    local y  = startY - FT.py(2)
+    local y  = startY - FT.py(2) + scrollY
     local bx = x
     if countReady   > 0 then bx = bx + self.r:badge(bx, y, countReady..  " READY", FT.C.BTN_PRIMARY)   + FT.px(4) end
     if countGrowing > 0 then bx = bx + self.r:badge(bx, y, countGrowing.." GROW",  FT.C.BTN_NEUTRAL)   + FT.px(4) end
@@ -65,11 +66,8 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
 
     local rowH  = FT.py(19)
     local altBg = {0.09, 0.11, 0.16, 0.50}
-    local minY  = contentY + FT.py(8)
-    local rowsDrawn = 0
 
     for i, field in ipairs(fields) do
-        if y < minY then break end
         if i % 2 == 0 then
             self.r:appRect(x - FT.px(4), y - FT.py(4), cw + FT.px(8), rowH, altBg)
         end
@@ -84,14 +82,9 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
         end
         self.r:appText(x + cw, y, FT.FONT.SMALL, field.stateName, RenderText.ALIGN_RIGHT, field.stateColor or FT.C.MUTED)
         y = y - rowH
-        rowsDrawn = rowsDrawn + 1
     end
 
-    if rowsDrawn < #fields then
-        self.r:appText(x + cw / 2, minY + FT.py(4), FT.FONT.TINY,
-            "... " .. (#fields - rowsDrawn) .. " more fields",
-            RenderText.ALIGN_CENTER, FT.C.TEXT_DIM)
-    end
-
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
     self:drawInfoIcon("_fieldsHelp", AC)
 end)

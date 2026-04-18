@@ -42,8 +42,8 @@ FarmTabletUI:registerDrawer(FT.APP.DIGGING, function(self)
 
     local px, py, pz = 0, 0, 0
     local hasPlayer = false
-    if g_currentMission and g_currentMission.player and g_currentMission.player.rootNode then
-        px, py, pz = getWorldTranslation(g_currentMission.player.rootNode)
+    if g_localPlayer and g_localPlayer.rootNode then
+        px, py, pz = getWorldTranslation(g_localPlayer.rootNode)
         hasPlayer = true
     end
 

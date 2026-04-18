@@ -4,6 +4,15 @@
 
 local CHANGELOG = {
     {
+        version = "2.2.0.0",
+        date    = "2026",
+        changes = {
+            "Improvement: Added Scroll helper to support all apps with long content",
+            "New: Added Ukrainian translation",
+            "Chore: Bumped version to 2.2.0.0",
+        },
+    },
+    {
         version = "2.1.9.0",
         date    = "2026",
         changes = {
@@ -176,18 +185,5 @@ FarmTabletUI:registerDrawer(FT.APP.UPDATES, function(self)
     self:drawInfoIcon("_updatesHelp", AC)
 
     -- ── Scroll indicator bar ──────────────────────────────
-    local cx, cy, cw, ch = self:contentInner()
-    local scrollMax = self._contentScrollMax or 0
-    if scrollMax > 0 then
-        local barX    = cx + cw + FT.px(4)
-        local barW    = FT.px(4)
-        self.r:appRect(barX, cy, barW, ch, {0.12, 0.14, 0.20, 0.85})
-        local thumbH  = math.max(FT.py(14), ch * (ch / (ch + scrollMax)))
-        local scrolled = self._contentScrollY or 0
-        local thumbY  = cy + ch - thumbH - (ch - thumbH) * (scrolled / scrollMax)
-        self.r:appRect(barX, thumbY, barW, thumbH,
-            {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.80})
-        self.r:appText(barX + barW + FT.px(4), cy + ch - FT.py(10),
-            FT.FONT.TINY, "scroll", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-    end
+    self:drawScrollBar()
 end)

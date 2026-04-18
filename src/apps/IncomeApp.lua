@@ -195,7 +195,8 @@ FarmTabletUI:registerDrawer(FT.APP.NPC_FAVOR, function(self)
 
     local startY = self:drawAppHeader("NPC Favor", "")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
 
     local npcSys = g_NPCSystem or (g_currentMission and g_currentMission.npcFavorSystem)
@@ -289,7 +290,9 @@ FarmTabletUI:registerDrawer(FT.APP.NPC_FAVOR, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_npcHelp", AC)
+    self:drawScrollBar()
 end)
 
 
@@ -322,7 +325,8 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
 
     local startY = self:drawAppHeader("Crop Stress", "Seasonal")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
     local accent = AC
 
@@ -337,14 +341,20 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
         return
     end
 
-    -- CropStressManager uses self.soilSystem (SoilMoistureSystem) and self.stressModifier
-    local moistureSys = mgr.soilSystem or mgr.soilMoistureSystem or mgr.moistureSystem
-    local stressMod   = mgr.stressModifier or mgr.cropStressModifier or mgr.stress
+    local moistureSys = mgr.soilMoistureSystem or mgr.moistureSystem or mgr.moisture
+    local stressMod   = mgr.cropStressModifier  or mgr.stressModifier  or mgr.stress
 
-    -- SoilMoistureSystem.fieldData = { [fieldId] = { moisture = 0.0-1.0, ... } }
-    local moistureFieldData = moistureSys and moistureSys.fieldData
-    -- CropStressModifier.fieldStress = { [fieldId] = stressValue }
-    local stressData = stressMod and (stressMod.fieldStress or stressMod.stressData)
+    local moistureData = nil
+    if moistureSys then
+        moistureData = moistureSys.fieldMoisture or moistureSys.moistureData or moistureSys.fields
+    end
+    if not moistureData then moistureData = mgr.fieldMoisture or mgr.moistureData end
+
+    local stressData = nil
+    if stressMod then
+        stressData = stressMod.fieldStress or stressMod.stressData or stressMod.fields
+    end
+    if not stressData then stressData = mgr.fieldStress or mgr.stressData end
 
     local settings = mgr.settings
     if settings and settings.enabled ~= nil then
@@ -358,7 +368,7 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
         y = y - FT.py(26)
     end
 
-    if not moistureFieldData and not stressData then
+    if not moistureData and not stressData then
         self.r:appText(x, y - FT.py(10), FT.FONT.BODY,
             "Moisture data not yet available.", RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
         self.r:appText(x, y - FT.py(28), FT.FONT.SMALL,
@@ -375,7 +385,7 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
             if type(k) == "number" and not seen[k] then seen[k] = true; table.insert(fieldIds, k) end
         end
     end
-    addIds(moistureFieldData); addIds(stressData)
+    addIds(moistureData); addIds(stressData)
     table.sort(fieldIds)
 
     if #fieldIds == 0 then
@@ -396,14 +406,9 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
     for _, fid in ipairs(fieldIds) do
         if y <= minY + FT.py(16) then break end
 
-        -- Prefer the public getMoisture() method; fall back to raw fieldData entry
         local rawMoist = nil
-        if moistureSys and moistureSys.getMoisture then
-            rawMoist = moistureSys:getMoisture(fid)
-        elseif moistureFieldData and moistureFieldData[fid] then
-            local d = moistureFieldData[fid]
-            rawMoist = type(d) == "table" and d.moisture or d
-        end
+        if moistureData and moistureData[fid] ~= nil then rawMoist = moistureData[fid]
+        elseif moistureSys and moistureSys.getMoisture then rawMoist = moistureSys:getMoisture(fid) end
         local moistPct = rawMoist and math.floor(rawMoist > 1.0 and rawMoist or rawMoist * 100) or nil
 
         local rawStress = stressData and stressData[fid]
@@ -429,7 +434,9 @@ FarmTabletUI:registerDrawer(FT.APP.CROP_STRESS, function(self)
         end
     end
 
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_cropStressHelp", AC)
+    self:drawScrollBar()
 end)
 
 
@@ -466,7 +473,8 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
 
     local startY = self:drawAppHeader("Soil Fertilizer", "")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
     local minY = contentY + FT.py(8)
     local accent = AC
 
@@ -591,35 +599,14 @@ FarmTabletUI:registerDrawer(FT.APP.SOIL_FERT, function(self)
         local phColor = (info.pH >= 6.0 and info.pH <= 7.5) and FT.C.POSITIVE or FT.C.WARNING
         y = self:drawRow(y, "pH", string.format("%.1f", info.pH), nil, phColor)
     end
-    if info.organicMatter  then y = self:drawRow(y, "Organic Matter", string.format("%.1f%%", info.organicMatter)) end
-
-    -- Crop history and rotation status
+    if info.organicMatter  then y = self:drawRow(y, "Organic Matter",    string.format("%.1f%%", info.organicMatter)) end
     if info.lastCrop and info.lastCrop ~= "" then y = self:drawRow(y, "Last Crop", info.lastCrop) end
-    if info.lastCrop2 and info.lastCrop2 ~= "" then y = self:drawRow(y, "Prev Crop", info.lastCrop2, nil, FT.C.TEXT_DIM) end
-    if info.rotationStatus then
-        local rColor = info.rotationStatus == "Bonus"   and FT.C.POSITIVE
-                    or info.rotationStatus == "Fatigue" and FT.C.NEGATIVE
-                    or FT.C.TEXT_DIM
-        y = self:drawRow(y, "Rotation", info.rotationStatus, nil, rColor)
-    end
-
     if info.daysSinceHarvest and info.daysSinceHarvest > 0 then y = self:drawRow(y, "Days Since Harvest", tostring(info.daysSinceHarvest)) end
     if info.needsFertilization then y = self:drawRow(y, "Needs Fertilizer", "YES", nil, FT.C.WARNING) end
 
-    -- Field health pressures
-    local weed    = info.weedPressure    or 0
-    local pest    = info.pestPressure    or 0
-    local disease = info.diseasePressure or 0
-    if weed > 0 or pest > 0 or disease > 0 then
-        y = y - FT.py(4)
-        y = self:drawRule(y, 0.25)
-        y = self:drawSection(y, "FIELD HEALTH")
-        if weed    > 0 then y = self:drawRow(y, "Weed Pressure",    weed    .. "%", nil, weed    >= 50 and FT.C.NEGATIVE or FT.C.WARNING) end
-        if pest    > 0 then y = self:drawRow(y, "Pest Pressure",    pest    .. "%", nil, pest    >= 50 and FT.C.NEGATIVE or FT.C.WARNING) end
-        if disease > 0 then y = self:drawRow(y, "Disease Pressure", disease .. "%", nil, disease >= 50 and FT.C.NEGATIVE or FT.C.WARNING) end
-    end
-
+    self:setContentHeight(startY - y + scrollY)
     self:drawInfoIcon("_soilHelp", AC)
+    self:drawScrollBar()
 end)
 
 

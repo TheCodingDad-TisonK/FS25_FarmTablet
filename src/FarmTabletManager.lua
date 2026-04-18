@@ -141,6 +141,8 @@ function FarmTabletManager:showNotification(title, message)
     if not self.mission:getIsClient() then return end
     if self.mission.hud and self.mission.hud.showBlinkingWarning then
         self.mission.hud:showBlinkingWarning(title .. ": " .. message, 4000)
+    elseif self.mission.addIngameNotification then
+        self.mission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_CRITICAL, title .. ": " .. message)
     end
 end
 
@@ -150,6 +152,7 @@ function FarmTabletManager:delete()
     if self.inputHandler then self.inputHandler:unregisterKeyBinding() end
     if self.system then self.system:delete() end
     if self.ui then self.ui:delete() end
+    if self.settingsGUI then self.settingsGUI:unregisterConsoleCommands() end
     Logging.info("[FarmTablet v2] Shutdown complete.")
 end
 

@@ -27,7 +27,7 @@ function FT_Renderer:_newOverlay(x, y, w, h, color, sliceId)
 
     if ov ~= nil then
         if color then ov:setColor(unpack(color)) end
-        ov:setVisible(true)
+        ov:setIsVisible(true)
     else
         Logging.warning("FarmTablet: Could not create overlay for sliceId: %s", tostring(sliceId))
     end

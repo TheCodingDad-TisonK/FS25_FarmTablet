@@ -57,8 +57,8 @@ FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
     local sel    = self.system.workshopSelectedVehicle
     local startY = self:drawAppHeader("Workshop", #workshops .. " shop / " .. #nearby .. " near")
     local x, contentY, cw, _ = self:contentInner()
-    local y    = startY
-    local minY = contentY + FT.py(8)
+    local scrollY = self:getContentScrollY()
+    local y    = startY + scrollY
 
     -- Validate selection is still nearby
     if sel then
@@ -99,9 +99,8 @@ FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
     local btnW = FT.px(46)
     local btnH = FT.py(18)
 
-    for i = 1, math.min(6, #nearby) do
+    for i = 1, #nearby do
         local v = nearby[i]
-        if y - btnH < minY then break end
         local isSel = (v.vehicle == sel)
         if isSel then
             self.r:appRect(x - FT.px(4), y - FT.py(4), cw + FT.px(8), btnH + FT.py(6),
@@ -163,8 +162,7 @@ FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
 
     if #workshops > 0 and wearPct > 2 then
         y = y - FT.py(8)
-        if y >= minY then
-            local _, repairBtn = self:drawButton(y, "REPAIR VEHICLE", FT.C.BTN_PRIMARY, {
+        local _, repairBtn = self:drawButton(y, "REPAIR VEHICLE", FT.C.BTN_PRIMARY, {
                 onClick = function()
                     local ws = workshops[1]
                     local repaired = false
@@ -193,8 +191,9 @@ FarmTabletUI:registerDrawer(FT.APP.WORKSHOP, function(self)
                     end
                 end
             })
-        end
     end
 
+    self:setContentHeight(startY - y + scrollY)
+    self:drawScrollBar()
     self:drawInfoIcon("_workshopHelp", AC)
 end)

@@ -385,25 +385,5 @@ FarmTabletUI:registerDrawer(FT.APP.SETTINGS, function(self)
     self:drawInfoIcon("_settingsHelp", FT.appColor(FT.APP.SETTINGS))
 
     -- ── Scroll indicator bar ──────────────────────────────
-    local scrollMax = self._contentScrollMax or 0
-    if scrollMax > 0 then
-        local barX     = cx + cw + FT.px(4)
-        local barY     = cy
-        local barH     = ch
-        local barW     = FT.px(4)
-        -- Track
-        self.r:appRect(barX, barY, barW, barH, {0.12, 0.14, 0.20, 0.85})
-        -- Thumb — represents how much of the content is visible
-        local visible  = ch
-        local total    = ch + scrollMax
-        local thumbH   = math.max(FT.py(14), barH * (visible / total))
-        local scrolled = self._contentScrollY or 0
-        local thumbY   = barY + barH - thumbH - (barH - thumbH) * (scrolled / scrollMax)
-        self.r:appRect(barX, thumbY, barW, thumbH,
-            {FT.C.BRAND[1], FT.C.BRAND[2], FT.C.BRAND[3], 0.80})
-        -- Hint text
-        self.r:appText(barX + barW + FT.px(4), barY + barH - FT.py(10),
-            FT.FONT.TINY, "scroll",
-            RenderText.ALIGN_LEFT, FT.C.TEXT_DIM)
-    end
+    self:drawScrollBar()
 end)

@@ -29,6 +29,7 @@ source(modDirectory .. "src/InvoiceManager.lua")
 -- System & UI
 source(modDirectory .. "src/FarmTabletSystem.lua")
 source(modDirectory .. "src/FarmTabletUI.lua")
+source(modDirectory .. "src/FarmTabletUIEditMode.lua")
 source(modDirectory .. "src/FarmTabletManager.lua")
 
 -- Built-in Apps
@@ -58,6 +59,7 @@ source(modDirectory .. "src/apps/HotspotManagerApp.lua")
 source(modDirectory .. "src/apps/NotesApp.lua")
 source(modDirectory .. "src/apps/FarmAdminApp.lua")
 source(modDirectory .. "src/apps/FieldJobsApp.lua")
+source(modDirectory .. "src/apps/ContractsApp.lua")
 
 local farmTabletManager
 
