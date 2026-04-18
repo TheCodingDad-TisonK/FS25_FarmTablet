@@ -114,14 +114,14 @@ function FarmTabletUI:openTablet()
 
     if g_inputBinding then
         g_inputBinding:setShowMouseCursor(true)
-        self._oldMouseEvent = g_currentMission.mouseEvent
-        g_currentMission.mouseEvent = function(mission, px, py, isDown, isUp, btn)
-            if self:_onMouse(px, py, isDown, isUp, btn) then return true end
-            if self._oldMouseEvent then
-                return self._oldMouseEvent(mission, px, py, isDown, isUp, btn)
+        self._mouseListener = {_ui = self}
+        function self._mouseListener:mouseEvent(posX, posY, isDown, isUp, button, eventUsed)
+            if not eventUsed and self._ui:_onMouse(posX, posY, isDown, isUp, button) then
+                return true
             end
-            return false
+            return eventUsed
         end
+        addModEventListener(self._mouseListener)
     end
 
     -- Capture camera rotation so we can freeze it every frame while open
@@ -154,9 +154,9 @@ function FarmTabletUI:closeTablet()
 
     if g_currentMission then
         g_currentMission:removeDrawable(self)
-        if self._oldMouseEvent then
-            g_currentMission.mouseEvent = self._oldMouseEvent
-            self._oldMouseEvent = nil
+        if self._mouseListener then
+            removeModEventListener(self._mouseListener)
+            self._mouseListener = nil
         end
     end
     if g_inputBinding then
