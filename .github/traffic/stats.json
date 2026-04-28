@@ -4715,21 +4715,21 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-04-28T06:30:47Z",
+    "timestamp": "2026-04-28T18:19:16Z",
     "date": "2026-04-28",
     "views": {
-      "count": 197,
-      "uniques": 74
+      "count": 195,
+      "uniques": 71
     },
     "clones": {
-      "count": 916,
-      "uniques": 319
+      "count": 932,
+      "uniques": 316
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 120,
-        "uniques": 45
+        "count": 117,
+        "uniques": 44
       },
       {
         "referrer": "Google",
@@ -4755,19 +4755,14 @@
         "referrer": "ntp.msn.com",
         "count": 1,
         "uniques": 1
-      },
-      {
-        "referrer": "search.brave.com",
-        "count": 1,
-        "uniques": 1
       }
     ],
     "popular_paths": [
       {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet",
         "title": "Overview",
-        "count": 131,
-        "uniques": 66
+        "count": 132,
+        "uniques": 63
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.2.1.0",
@@ -4778,12 +4773,6 @@
       {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.1.4.0",
         "title": "/releases/tag/v2.1.4.0",
-        "count": 9,
-        "uniques": 7
-      },
-      {
-        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md",
-        "title": "/blob/main/docs/general/apps-reference.md",
         "count": 7,
         "uniques": 6
       },
@@ -4794,21 +4783,21 @@
         "uniques": 6
       },
       {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md",
+        "title": "/blob/main/docs/general/apps-reference.md",
+        "count": 7,
+        "uniques": 5
+      },
+      {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet/releases",
         "title": "/releases",
-        "count": 5,
-        "uniques": 5
+        "count": 6,
+        "uniques": 6
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet/issues",
         "title": "/issues",
         "count": 3,
-        "uniques": 2
-      },
-      {
-        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/mod-integrations.md",
-        "title": "/blob/main/docs/general/mod-integrations.md",
-        "count": 2,
         "uniques": 2
       },
       {
@@ -4820,6 +4809,12 @@
       {
         "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/README.md",
         "title": "/blob/main/docs/README.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/getting-started.md",
+        "title": "/blob/main/docs/general/getting-started.md",
         "count": 2,
         "uniques": 1
       }
