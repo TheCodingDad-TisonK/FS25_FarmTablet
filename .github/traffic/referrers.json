@@ -755,5 +755,42 @@
       "count": 1,
       "uniques": 1
     }
+  ],
+  "2026-05-04": [
+    {
+      "referrer": "github.com",
+      "count": 86,
+      "uniques": 36
+    },
+    {
+      "referrer": "Google",
+      "count": 6,
+      "uniques": 6
+    },
+    {
+      "referrer": "Bing",
+      "count": 6,
+      "uniques": 5
+    },
+    {
+      "referrer": "DuckDuckGo",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "Yahoo",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "ntp.msn.com",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }

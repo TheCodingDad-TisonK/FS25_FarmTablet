@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-03T06:27:31Z
-**Days tracked:** 21 | **Download snapshots:** 126 (hourly)
+**Last updated:** 2026-05-04T06:40:00Z
+**Days tracked:** 22 | **Download snapshots:** 127 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 185 | 71 |
-| Git Clones | 1009 | 312 |
+| Page Views | 185 | 64 |
+| Git Clones | 1002 | 309 |
 
-> **Engagement:** 2.6 pages per visitor (14-day avg)
+> **Engagement:** 2.8 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 528 of 71 visitors cloned or downloaded (**743.6%**)
+> **14-day conversion:** 526 of 64 visitors cloned or downloaded (**821.8%**)
 >
-> Unique cloners: 312 | Release downloads: 216
+> Unique cloners: 309 | Release downloads: 217
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 216 |
-| Git Clones (14-day) | 1009 |
-| **Total Acquisitions** | **1225** |
+| Zip Downloads | 217 |
+| Git Clones (14-day) | 1002 |
+| **Total Acquisitions** | **1219** |
 
 ---
 
@@ -54,9 +54,9 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 92 | 40 |
-| Google | 7 | 7 |
-| Bing | 5 | 4 |
+| github.com | 86 | 36 |
+| Google | 6 | 6 |
+| Bing | 6 | 5 |
 | DuckDuckGo | 1 | 1 |
 | Yahoo | 1 | 1 |
 | kingmods.net | 1 | 1 |
@@ -80,16 +80,16 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_FarmTablet` | 135 | 63 |
-| `/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.2.1.0` | 17 | 14 |
-| `/TheCodingDad-TisonK/FS25_FarmTablet/releases` | 6 | 6 |
-| `/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.1.4.0` | 5 | 4 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet` | 137 | 58 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.2.1.0` | 11 | 11 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet/releases` | 7 | 7 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md` | 5 | 3 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/modDesc.xml` | 2 | 2 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/README.md` | 2 | 1 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/getting-started.md` | 2 | 1 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/issues` | 2 | 1 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/tree/main/docs` | 2 | 1 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet/blob/59ffbc70ce785f04629280c818f2d160d6252132/README.md` | 1 | 1 |
 
 ---
 

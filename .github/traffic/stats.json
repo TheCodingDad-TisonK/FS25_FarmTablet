@@ -5834,5 +5834,289 @@
     "stars": 3,
     "forks": 0,
     "watchers": 2
+  },
+  {
+    "timestamp": "2026-05-04T06:39:41Z",
+    "date": "2026-05-04",
+    "views": {
+      "count": 185,
+      "uniques": 64
+    },
+    "clones": {
+      "count": 1002,
+      "uniques": 309
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 86,
+        "uniques": 36
+      },
+      {
+        "referrer": "Google",
+        "count": 6,
+        "uniques": 6
+      },
+      {
+        "referrer": "Bing",
+        "count": 6,
+        "uniques": 5
+      },
+      {
+        "referrer": "DuckDuckGo",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "Yahoo",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "ntp.msn.com",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet",
+        "title": "Overview",
+        "count": 137,
+        "uniques": 58
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.2.1.0",
+        "title": "/releases/tag/v2.2.1.0",
+        "count": 11,
+        "uniques": 11
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/releases",
+        "title": "/releases",
+        "count": 7,
+        "uniques": 7
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md",
+        "title": "/blob/main/docs/general/apps-reference.md",
+        "count": 5,
+        "uniques": 3
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/modDesc.xml",
+        "title": "/blob/main/modDesc.xml",
+        "count": 2,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/README.md",
+        "title": "/blob/main/docs/README.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/getting-started.md",
+        "title": "/blob/main/docs/general/getting-started.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/issues",
+        "title": "/issues",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/tree/main/docs",
+        "title": "/tree/main/docs",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_FarmTablet/blob/59ffbc70ce785f04629280c818f2d160d6252132/README.md",
+        "title": "/blob/59ffbc70ce785f04629280c818f2d160d6252132/README.md",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 44,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.2.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 58,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.2.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 33,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.8.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 8,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.7.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 18,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.5.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 22,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.4.0"
+      },
+      {
+        "assets": [],
+        "tag": "v2.1.2.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 12,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 3,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.2.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 1,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 1,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 3,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [],
+        "tag": "v1.1.2.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v1.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v1.1.1.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v1.1.1.0"
+      },
+      {
+        "assets": [],
+        "tag": "v1.1.0.9"
+      },
+      {
+        "assets": [],
+        "tag": "v1.1.0.8"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v1.1.0.6"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_FarmTablet.zip"
+          }
+        ],
+        "tag": "v1.1.0.5"
+      },
+      {
+        "assets": [],
+        "tag": "v1.1.0.1"
+      },
+      {
+        "assets": [],
+        "tag": "v1.1.0.0"
+      }
+    ],
+    "stars": 3,
+    "forks": 0,
+    "watchers": 2
   }
 ]
