@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-04T18:16:27Z
-**Days tracked:** 22 | **Download snapshots:** 128 (hourly)
+**Last updated:** 2026-05-05T12:04:19Z
+**Days tracked:** 23 | **Download snapshots:** 130 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 185 | 64 |
-| Git Clones | 1002 | 309 |
+| Page Views | 188 | 64 |
+| Git Clones | 1008 | 314 |
 
-> **Engagement:** 2.8 pages per visitor (14-day avg)
+> **Engagement:** 2.9 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 526 of 64 visitors cloned or downloaded (**821.8%**)
+> **14-day conversion:** 532 of 64 visitors cloned or downloaded (**831.2%**)
 >
-> Unique cloners: 309 | Release downloads: 217
+> Unique cloners: 314 | Release downloads: 218
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 217 |
-| Git Clones (14-day) | 1002 |
-| **Total Acquisitions** | **1219** |
+| Zip Downloads | 218 |
+| Git Clones (14-day) | 1008 |
+| **Total Acquisitions** | **1226** |
 
 ---
 
@@ -54,13 +54,14 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 86 | 36 |
+| github.com | 84 | 35 |
 | Google | 6 | 6 |
 | Bing | 6 | 5 |
 | DuckDuckGo | 1 | 1 |
 | Yahoo | 1 | 1 |
 | kingmods.net | 1 | 1 |
 | ntp.msn.com | 1 | 1 |
+| search.brave.com | 1 | 1 |
 
 ---
 
@@ -80,10 +81,10 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_FarmTablet` | 137 | 58 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet` | 142 | 58 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/releases/tag/v2.2.1.0` | 11 | 11 |
-| `/TheCodingDad-TisonK/FS25_FarmTablet/releases` | 7 | 7 |
-| `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md` | 5 | 3 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet/releases` | 6 | 6 |
+| `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/apps-reference.md` | 4 | 2 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/modDesc.xml` | 2 | 2 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/README.md` | 2 | 1 |
 | `/TheCodingDad-TisonK/FS25_FarmTablet/blob/main/docs/general/getting-started.md` | 2 | 1 |
