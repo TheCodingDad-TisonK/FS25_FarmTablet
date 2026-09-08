@@ -263,6 +263,9 @@ FarmTabletUI:registerDrawer(FT.APP.ORGANIC, function(self)
             self.r:appText(x, y - FT.py(4), FT.FONT.SMALL,
                 "No compost batches. Start one from the SoilFertilizer console.",
                 RenderText.ALIGN_LEFT, FT.C.MUTED)
+            -- Advance past the line (same step as the not-available branch) so the
+            -- LIVESTOCK header does not land on top of it.
+            y = y - FT.py(22)
         else
             for _, b in ipairs(rows) do
                 local state = b.ready

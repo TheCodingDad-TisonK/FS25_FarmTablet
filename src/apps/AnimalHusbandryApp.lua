@@ -36,7 +36,7 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
 
     local scrollY = self:getContentScrollY()
     local y = startY + scrollY
-    local pad = FT.px(8)
+    local pad = FT.px(FT.SP.MD)   -- inner card pad (14), so the pens read as cards
 
     local function barColor(pct)
         if pct >= 60 then return FT.C.POSITIVE
@@ -69,10 +69,10 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
             metrics[#metrics + 1] = { label = FT.l10nAuto("STRAW/CLEAN"), pct = pen.cleanPct }
         end
 
-        local headerH = FT.py(22)
+        local headerH = FT.py(24)
         local metricH = #metrics * FT.py(20)
-        local cardH = headerH + metricH + FT.py(10)
-        if #metrics == 0 then cardH = FT.py(30) end
+        local cardH = headerH + metricH + FT.py(12)
+        if #metrics == 0 then cardH = FT.py(32) end
         local cardBottom = y - cardH
 
         self.r:appRect(x - FT.px(4), cardBottom, cw + FT.px(8), cardH, FT.C.BG_CARD)
@@ -83,7 +83,7 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
         else
             header = header .. "  (" .. FT.l10n("ft_common_empty_lower", "empty") .. ")"
         end
-        self.r:appText(x + pad, y - FT.py(6), FT.FONT.BODY, header, RenderText.ALIGN_LEFT,
+        self.r:appText(x + pad, y - FT.py(9), FT.FONT.BODY, header, RenderText.ALIGN_LEFT,
             pen.numAnimals > 0 and FT.C.TEXT_BRIGHT or FT.C.TEXT_DIM)
 
         local rowY = y - headerH
@@ -91,8 +91,8 @@ FarmTabletUI:registerDrawer(FT.APP.ANIMALS, function(self)
             rowY = drawMetric(rowY, m.label, m.pct)
         end
 
-        -- Pin to pre-sized card bottom, then gap before the next pen.
-        y = cardBottom - FT.py(8)
+        -- Pin to pre-sized card bottom, then a card gap (14) before the next pen.
+        y = cardBottom - FT.py(FT.SP.MD)
     end
 
     self:setContentHeight(startY - y + scrollY)

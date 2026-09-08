@@ -13,6 +13,46 @@ local function _dairyMgr()
         or getfenv(0)["g_dairyCoreManager"]
 end
 
+-- Human barn name for the card title. The same ladder as the Esc guest
+-- (DairyRfPdaGuest.barnLabel): a real name carried on the row wins, then the
+-- placeable's own getName() / nameCustom / nameL10n / store name, and only then
+-- the "Barn <id>" fallback. Tablet app only; the Esc guest is untouched.
+local function barnLabel(row)
+    if row == nil then
+        return FT.l10nFormat("ft_dairy_barn_id", "Barn %s", "?")
+    end
+    local human = row.nameCustom or row.displayName or row.barnName or row.name
+    if type(human) == "string" and human ~= "" then
+        return human
+    end
+    local barnId = row.barnId
+    local ps = (g_currentMission ~= nil) and g_currentMission.placeableSystem or nil
+    if barnId ~= nil and ps ~= nil and type(ps.getPlaceableByUniqueId) == "function" then
+        local ok, placeable = pcall(function() return ps:getPlaceableByUniqueId(barnId) end)
+        if ok and placeable ~= nil then
+            if type(placeable.getName) == "function" then
+                local okName, n = pcall(function() return placeable:getName() end)
+                if okName and type(n) == "string" and n ~= "" then return n end
+            end
+            if type(placeable.nameCustom) == "string" and placeable.nameCustom ~= "" then
+                return placeable.nameCustom
+            end
+            if type(placeable.nameL10n) == "string" and placeable.nameL10n ~= "" then
+                return placeable.nameL10n
+            end
+            local si = placeable.storeItem
+            if si ~= nil and type(si.name) == "string" and si.name ~= "" then
+                return si.name
+            end
+        end
+    end
+    local id = tostring(barnId or "?")
+    if #id > 24 then
+        id = id:sub(1, 22) .. "..."
+    end
+    return FT.l10nFormat("ft_dairy_barn_id", "Barn %s", id)
+end
+
 local function healthColor(pct)
     local p = tonumber(pct) or 0
     if p >= 85 then return FT.C.POSITIVE
@@ -390,7 +430,7 @@ FarmTabletUI:registerDrawer(FT.APP.DAIRY, function(self)
 
         self.r:appRect(x - FT.px(4), cardBottom, cw + FT.px(8), cardH, FT.C.BG_CARD)
 
-        local header = FT.l10nFormat("ft_dairy_barn_id", "Barn %s", tostring(row.barnId or "?"))
+        local header = barnLabel(row)
         self.r:appText(x + pad, y - FT.py(6), FT.FONT.BODY, header,
             RenderText.ALIGN_LEFT, FT.C.TEXT_BRIGHT)
 

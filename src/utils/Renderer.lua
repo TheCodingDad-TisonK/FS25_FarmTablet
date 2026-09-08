@@ -123,6 +123,11 @@ end
 --- callers must do that themselves if they want click handling.
 function FT_Renderer:button(x, y, w, h, label, color, meta)
     local ov = self:appRect(x, y, w, h, color or FT.C.BTN_NEUTRAL)
+    -- Boxed read on any background: a light top edge and a dark bottom edge on
+    -- the shared fill (existing tokens only, no new palette).
+    local edge = math.max(FT.py(1), 0.0009)
+    self:appRect(x, y + h - edge, w, edge, {1, 1, 1, 0.12})
+    self:appRect(x, y, w, edge, {0, 0, 0, 0.35})
     local txt = (FT.l10nAuto ~= nil and FT.l10nAuto(label) or tostring(label or ""))
     local len = string.len(tostring(txt or ""))
     local fontSize = FT.FONT.SMALL
@@ -167,17 +172,25 @@ function FT_Renderer:progressBar(x, y, w, value, maxVal, barColor)
     return y - h - FT.py(2)
 end
 
---- Draws a section heading with a coloured left accent bar.
+--- Draws a section heading: a boxed header row (BG_CARD) with the brand accent
+--- bar on its left edge. The box sits inside the 18px the caller reserves, so the
+--- y-cursor contract (drawSection returns y - FT.py(18)) is unchanged.
 function FT_Renderer:sectionHeader(x, y, contentW, label)
-    self:appRect(x, y - FT.py(2), FT.px(3), FT.py(13), FT.C.BRAND)
-    self:appText(x + FT.px(8), y, FT.FONT.SMALL, label,
+    local boxH = FT.py(16)
+    local boxY = y - FT.py(3)
+    self:appRect(x, boxY, contentW, boxH, FT.C.BG_CARD)
+    self:appRect(x, boxY, FT.px(3), boxH, FT.C.BRAND)
+    self:appText(x + FT.px(10), y, FT.FONT.SMALL, label,
         RenderText.ALIGN_LEFT, FT.C.TEXT_ACCENT)
 end
 
---- Draws a label/value row with the label left-aligned and value right-aligned.
---- Pass nil for value to draw the label only.
+--- Draws a label/value row as a boxed card (BG_CARD) with an inner pad: the label
+--- sits left-aligned and the value right-aligned inside the box, so the two read
+--- as one grouped line. Pass nil for value to draw the label only.
+--- The box is 19px of the 22px row pitch (FT.SP.ROW), leaving a 3px seam.
 function FT_Renderer:row(x, y, contentW, label, value, labelColor, valueColor)
-    local padX = FT.px(14)
+    local padX = FT.px(FT.SP.MD)
+    self:appRect(x, y - FT.py(6), contentW, FT.py(19), FT.C.BG_CARD)
     self:appText(x + padX, y, FT.FONT.BODY, label,
         RenderText.ALIGN_LEFT, labelColor or FT.C.TEXT_NORMAL)
     if value ~= nil then

@@ -55,7 +55,7 @@ FarmTabletUI:registerDrawer(FT.APP.FIELDS, function(self)
         end
     end
 
-    local y  = startY - FT.py(2) + scrollY
+    local y  = startY - FT.py(12) + scrollY   -- breath under the header rule before the badges
     local bx = x
     if countReady   > 0 then bx = bx + self.r:badge(bx, y, countReady.." "..ftText("ft_fields_badge_ready", "READY"), FT.C.BTN_PRIMARY)   + FT.px(4) end
     if countGrowing > 0 then bx = bx + self.r:badge(bx, y, countGrowing.." "..ftText("ft_fields_badge_grow", "GROW"),  FT.C.BTN_NEUTRAL)   + FT.px(4) end

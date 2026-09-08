@@ -242,6 +242,22 @@ local function _readRweSignal()
     return { present = true, event = ev, intensity = intensity }
 end
 
+-- getActiveEvent() hands back a table ({ name, intensity, category, remainingMs }
+-- from RandomWorldEvents, or the event definition from its category API), so the
+-- signal row reads a display field and never tostring()s the table.
+local function _rweEventLabel(ev)
+    local raw
+    if type(ev) == "table" then
+        raw = ev.title or ev.name or ev.displayName or ev.id or ev.eventId
+    else
+        raw = ev
+    end
+    if raw == nil or raw == "" then return "?" end
+    -- "field_mice_invasion" -> "Field mice invasion" (same rule as the RWE app).
+    local label = tostring(raw):gsub("_", " ")
+    return label:sub(1, 1):upper() .. label:sub(2)
+end
+
 local function _flowGaps(flows)
     -- Dollar-flow gaps that force PARTIAL on derived vitals / forecast.
     local gaps = {}
@@ -1186,7 +1202,7 @@ local function _drawFlowsPocket(self, snap, AC)
     end
     if snap.rwe and snap.rwe.event then
         y = self:drawRow(y, _T("ft_fc_signal_rwe", "World event"),
-            tostring(snap.rwe.event), nil, FT.C.TEXT_ACCENT)
+            _rweEventLabel(snap.rwe.event), nil, FT.C.TEXT_ACCENT)
     end
 
     self:setContentHeight(startY - y + scrollY)
