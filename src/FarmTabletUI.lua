@@ -1225,15 +1225,30 @@ end
 function FarmTabletUI:_drawNavCluster(sx, barY, barH, accent, starActive)
     local r = self.r
     local homeOn, backOn = self:_navState()
-    local btnH  = FT.py(20)
+    -- Home / Back / Star are boxed squares in the springboard tile / title-icon
+    -- treatment: charcoal BG_CARD fill with a white hairline. The hit rects on
+    -- _homeBtn / _backBtn / _starBtn, the enabled dimming and the _onMouse skip
+    -- of disabled controls are unchanged.
+    local btnW  = FT.px(24)
+    local btnH  = FT.py(24)
+    local gap   = FT.px(6)
     local glyph = {0.92, 0.95, 0.99, 0.95}
     local hbY   = barY + (barH - btnH) / 2
+    local hairH = math.max(FT.py(1), 0.0009)
+    local hairW = math.max(FT.px(1), 0.0006)
+    local function navBox(bx, enabled)
+        r:rect(bx, hbY, btnW, btnH, dimmed(FT.C.BG_CARD, enabled))
+        local line = dimmed({1, 1, 1, 0.22}, enabled)
+        r:rect(bx, hbY + btnH - hairH, btnW, hairH, line)   -- top
+        r:rect(bx, hbY, btnW, hairH, line)                  -- bottom
+        r:rect(bx, hbY, hairW, btnH, line)                  -- left
+        r:rect(bx + btnW - hairW, hbY, hairW, btnH, line)   -- right
+    end
 
-    -- HOME — a little house
-    local hbW = FT.px(34)
-    local hbX = sx + FT.px(6)
-    r:rect(hbX, hbY, hbW, btnH, dimmed({1,1,1,0.08}, homeOn))
-    local cx           = hbX + hbW / 2
+    -- HOME - a little house
+    local hbX = sx + gap
+    navBox(hbX, homeOn)
+    local cx           = hbX + btnW / 2
     local bodyW, bodyH = FT.px(13), FT.py(7)
     local roofW, roofH = FT.px(18), FT.py(6)
     local houseBottom  = hbY + (btnH - (bodyH + roofH)) / 2
@@ -1241,26 +1256,25 @@ function FarmTabletUI:_drawNavCluster(sx, barY, barH, accent, starActive)
     r:rect(cx - FT.px(2), houseBottom, FT.px(4), FT.py(4.5),
            dimmed({accent[1], accent[2], accent[3], 1}, homeOn))                                                  -- door
     drawTriUp(r, cx, houseBottom + bodyH, roofW, roofH, dimmed(glyph, homeOn))                                    -- roof
-    self._homeBtn = { x = hbX, y = barY, w = hbW, h = barH, enabled = homeOn }
+    self._homeBtn = { x = hbX, y = barY, w = btnW, h = barH, enabled = homeOn }
 
-    -- BACK — a left-pointing arrow
-    local bbW = FT.px(30)
-    local bbX = hbX + hbW + FT.px(6)
-    r:rect(bbX, hbY, bbW, btnH, dimmed({1,1,1,0.06}, backOn))
+    -- BACK - a left-pointing arrow
+    local bbX = hbX + btnW + gap
+    navBox(bbX, backOn)
     local acy = hbY + btnH / 2
     local headW, headH, shaftH = FT.px(7), FT.py(12), FT.py(3)
-    local tipX = bbX + FT.px(8)
+    local tipX = bbX + FT.px(5)
     drawTriLeft(r, tipX, acy, headW, headH, dimmed(glyph, backOn))                          -- arrowhead
     r:rect(tipX + headW * 0.5, acy - shaftH / 2, FT.px(10), shaftH, dimmed(glyph, backOn))  -- shaft
-    self._backBtn = { x = bbX, y = barY, w = bbW, h = barH, enabled = backOn }
+    self._backBtn = { x = bbX, y = barY, w = btnW, h = barH, enabled = backOn }
 
     -- STAR - opens / toggles the favourites page. Always available.
-    local sbW = FT.px(30)
-    local sbX = bbX + bbW + FT.px(6)
-    self:_drawStarGlyph(sbX, hbY, sbW, btnH, starActive == true)
-    self._starBtn = { x = sbX, y = barY, w = sbW, h = barH, enabled = true }
+    local sbX = bbX + btnW + gap
+    navBox(sbX, true)
+    self:_drawStarGlyph(sbX, hbY, btnW, btnH, starActive == true)
+    self._starBtn = { x = sbX, y = barY, w = btnW, h = barH, enabled = true }
 
-    return sbX + sbW
+    return sbX + btnW
 end
 
 function FarmTabletUI:_drawAppView()
