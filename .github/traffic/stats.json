@@ -42926,41 +42926,41 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-09-08T00:58:11Z",
+    "timestamp": "2026-09-08T18:27:12Z",
     "date": "2026-09-08",
     "views": {
-      "count": 530,
-      "uniques": 175
+      "count": 490,
+      "uniques": 168
     },
     "clones": {
-      "count": 292,
-      "uniques": 88
+      "count": 255,
+      "uniques": 81
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 236,
-        "uniques": 93
+        "count": 216,
+        "uniques": 90
       },
       {
         "referrer": "Google",
-        "count": 84,
-        "uniques": 45
-      },
-      {
-        "referrer": "realisticfarming.com",
-        "count": 7,
-        "uniques": 4
+        "count": 76,
+        "uniques": 40
       },
       {
         "referrer": "Bing",
-        "count": 6,
+        "count": 8,
         "uniques": 5
       },
       {
-        "referrer": "chatgpt.com",
-        "count": 4,
+        "referrer": "realisticfarming.com",
+        "count": 5,
         "uniques": 3
+      },
+      {
+        "referrer": "chatgpt.com",
+        "count": 3,
+        "uniques": 2
       },
       {
         "referrer": "kingmods.net",
@@ -42971,44 +42971,59 @@
         "referrer": "search.brave.com",
         "count": 2,
         "uniques": 1
+      },
+      {
+        "referrer": "yandex.kz",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "referrer": "forbidden-mods.de",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "yandex.ru",
+        "count": 1,
+        "uniques": 1
       }
     ],
     "popular_paths": [
       {
         "path": "/Realistic-Farming/FS25_FarmTablet",
         "title": "Overview",
-        "count": 278,
-        "uniques": 152
+        "count": 251,
+        "uniques": 147
       },
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/releases/tag/v2.5.2.15",
         "title": "/releases/tag/v2.5.2.15",
         "count": 54,
-        "uniques": 44
+        "uniques": 45
       },
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/releases",
         "title": "/releases",
-        "count": 49,
-        "uniques": 36
-      },
-      {
-        "path": "/Realistic-Farming/FS25_FarmTablet/blob/main/.github/images/ft-lockscreen.png",
-        "title": "/blob/main/.github/images/ft-lockscreen.png",
-        "count": 17,
-        "uniques": 14
+        "count": 53,
+        "uniques": 38
       },
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/blob/main/.github/images/ft-home.png",
         "title": "/blob/main/.github/images/ft-home.png",
-        "count": 14,
-        "uniques": 13
+        "count": 16,
+        "uniques": 15
+      },
+      {
+        "path": "/Realistic-Farming/FS25_FarmTablet/blob/main/.github/images/ft-lockscreen.png",
+        "title": "/blob/main/.github/images/ft-lockscreen.png",
+        "count": 16,
+        "uniques": 14
       },
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/blob/main/.github/images/ft-dashboard.png",
         "title": "/blob/main/.github/images/ft-dashboard.png",
-        "count": 10,
-        "uniques": 9
+        "count": 9,
+        "uniques": 8
       },
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/issues",
@@ -43025,7 +43040,7 @@
       {
         "path": "/Realistic-Farming/FS25_FarmTablet/releases/tag/v2.6.0.4-pre",
         "title": "/releases/tag/v2.6.0.4-pre",
-        "count": 8,
+        "count": 7,
         "uniques": 7
       },
       {
@@ -43057,7 +43072,7 @@
       {
         "assets": [
           {
-            "downloads": 289,
+            "downloads": 291,
             "name": "FS25_FarmTablet.zip"
           }
         ],
